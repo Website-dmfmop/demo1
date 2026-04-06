@@ -1,11 +1,76 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+/* ─── Animated Counter Hook ───────────────────────────────────────────── */
+function useCountUp(target, duration = 2000, startWhen = false) {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        if (!startWhen) return;
+        let start = 0;
+        const step = Math.ceil(target / (duration / 16));
+        const timer = setInterval(() => {
+            start += step;
+            if (start >= target) {
+                setCount(target);
+                clearInterval(timer);
+            } else {
+                setCount(start);
+            }
+        }, 16);
+        return () => clearInterval(timer);
+    }, [target, duration, startWhen]);
+
+    return count;
+}
+
+/* ─── Single stat counter item ────────────────────────────────────────── */
+function StatCounter({ num, suffix, label, colorClass, started }) {
+    const count = useCountUp(num, 2000, started);
+    return (
+        <div className="space-y-2">
+            <div className={`font-headline text-5xl md:text-6xl font-black ${colorClass}`}>
+                {count.toLocaleString()}{suffix}
+            </div>
+            <div className="text-xs font-headline tracking-[0.2em] font-bold uppercase text-white/60">
+                {label}
+            </div>
+        </div>
+    );
+}
+
 export default function Home() {
+    /* Intersection observer to trigger the counter when section scrolls into view */
+    const counterRef = useRef(null);
+    const [counterStarted, setCounterStarted] = useState(false);
+
+    useEffect(() => {
+        /* Small delay ensures browser finishes initial layout so the observer
+           does NOT fire immediately on page load for off-screen elements */
+        const timer = setTimeout(() => {
+            const observer = new IntersectionObserver(
+                ([entry]) => {
+                    if (entry.isIntersecting) {
+                        setCounterStarted(true);
+                        observer.disconnect();
+                    }
+                },
+                {
+                    threshold: 0.25,
+                    /* negative bottom margin means the element must scroll
+                       at least 100px past the bottom edge before firing */
+                    rootMargin: '0px 0px -100px 0px',
+                }
+            );
+            if (counterRef.current) observer.observe(counterRef.current);
+        }, 100);
+
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <div>
-
-                        <main>
+            <main>
                 {/* Hero Section */}
                 <section className="relative h-[921px] flex items-center overflow-hidden">
                     <div className="absolute inset-0 z-0">
@@ -14,77 +79,143 @@ export default function Home() {
                     </div>
                     <div className="relative z-10 max-w-7xl mx-auto px-8 w-full">
                         <div className="max-w-3xl">
-                            <span className="inline-block px-4 py-1 mb-6 bg-secondary-container text-on-secondary-container text-xs font-bold tracking-widest uppercase rounded-full">
-                                Foundation for Change
+                            <span className="inline-block px-4 py-1 mb-4 bg-secondary-container text-on-secondary-container text-xs font-bold tracking-widest uppercase rounded-full">
+                                DMF • Movement of Positivity
                             </span>
                             <h1 className="font-headline text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-8 tracking-tighter">
-                                ENABLING COMMUNITIES, <span className="text-secondary-container">PROMOTING <br /> JUSTICE</span>.
+                                ENABLING COMMUNITIES <span className="text-secondary-container"><div>PROMOTING </div> <div>JUSTICE.</div></span>
                             </h1>
-                            <p className="text-xl text-white/80 mb-10 leading-relaxed font-bold max-w-xl">
-                                A diplomatic legacy dedicated to grassroots transformation, social liberty, and sustainable equality across the nation.
+                            <p className="text-xl text-white/80 mb-3 leading-relaxed font-bold max-w-xl">
+                                A diplomatic legacy dedicated to grassroots transformation, social liberty, and sustainable equality accross the nation.
                             </p>
-                            <div className="flex flex-wrap gap-4">
-                                <Link to="/donate" className="px-8 py-4 bg-gradient-to-r from-[#2e7d32] to-secondary-container text-white font-headline font-bold rounded-md tracking-widest shadow-2xl hover:scale-105 transition-transform active:scale-95 uppercase text-sm inline-block text-center">
-                                    DONATE NOW
-                                </Link>
-                                <Link to="/missions" className="px-8 py-4 border border-white/30 text-white font-headline font-bold rounded-md tracking-widest hover:bg-white/10 transition-colors uppercase text-sm inline-block text-center">
-                                    Our Mission
-                                </Link>
+                        </div>
+                    </div>
+                </section>
+
+                {/* DMF About Strip */}
+                <section className="py-16 bg-surface-container-low px-8 border-b border-outline-variant/30">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                            <div className="md:col-span-2">
+                                <span className="text-secondary font-bold text-xs tracking-widest uppercase mb-3 block">About DMF</span>
+                                <h2 className="font-headline text-3xl font-bold text-primary mb-4">Dr. Dnyaneshwar Mule Foundation</h2>
+                                <p className="text-on-surface-variant leading-relaxed mb-4">
+                                    Since 2019, DMF is a globally recognized organization with deep roots in India, committed to providing innovative and beneficial solutions. During flood emergencies in Kolhapur Sangali district in Maharashtra, and subsequently during COVID-19, DMF strengthened its work and today conducts significant activities contributing to social change.
+                                </p>
+                                <p className="text-on-surface-variant leading-relaxed text-sm">
+                                    <strong className="text-primary">Dr. Dnyaneshwar Mule</strong> is the Founder &amp; President of DMF. The non-profit specializes in Social Innovation, Urban &amp; Rural mobilization, Capacity (skill) building, and Transforming Rural &amp; Urban Education Through Digital Classrooms and Innovation Labs.
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                {[
+                                    { num: '500K+', label: 'Beneficiaries', color: 'bg-primary text-white' },
+                                    { num: '2019', label: 'Founded', color: 'bg-secondary-container text-on-secondary-container' },
+                                    { num: '10K+', label: 'ICOE Reached', color: 'bg-[#2e7d32] text-white' },
+                                    { num: '230+', label: 'Youth Enrolled', color: 'bg-surface-container-lowest text-primary border border-outline-variant' },
+                                ].map((s, i) => (
+                                    <div key={i} className={`${s.color} rounded-xl p-5 text-center shadow-sm`}>
+                                        <div className="font-headline text-2xl font-black">{s.num}</div>
+                                        <div className="text-xs uppercase tracking-wider opacity-80 mt-1">{s.label}</div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
                 </section>
+
                 {/* Service Columns (Tonal Vertical Spines) */}
                 <section className="py-24 bg-surface px-8">
                     <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-16">
+                            <span className="text-secondary font-bold text-xs tracking-widest uppercase mb-3 block">The Mission</span>
+                            <h2 className="font-headline text-4xl font-bold text-primary">Creating a Society Based on</h2>
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                            {/* Justice Column */}
+                            {/* Positivity Column */}
                             <div className="relative bg-secondary-container p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl overflow-hidden">
                                 <div className="absolute top-0 right-0 p-8 opacity-10 scale-150">
-                                    <span className="material-symbols-outlined text-8xl" data-icon="gavel">gavel</span>
+                                    <span className="material-symbols-outlined text-8xl" data-icon="sunny">sunny</span>
                                 </div>
                                 <div className="relative z-10">
-                                    <span className="material-symbols-outlined text-primary text-5xl mb-6 block" data-icon="balance">balance</span>
-                                    <h3 className="font-headline text-3xl font-extrabold text-primary mb-4">JUSTICE</h3>
-                                    <p className="text-primary/80 font-medium mb-8 leading-relaxed">Advocating for the unheard, ensuring legal empowerment and equitable access to human rights for all citizens.</p>
-                                    <a className="inline-flex items-center gap-2 font-headline text-xs font-black tracking-widest text-primary uppercase border-b-2 border-primary/20 hover:border-primary transition-all" href="#">
+                                    <span className="material-symbols-outlined text-primary text-5xl mb-6 block" data-icon="sentiment_very_satisfied">sentiment_very_satisfied</span>
+                                    <h3 className="font-headline text-3xl font-extrabold text-primary mb-4">POSITIVITY</h3>
+                                    <p className="text-primary/80 font-medium mb-8 leading-relaxed">Building the Movement of Positivity (MOP) — fostering optimism, hope and constructive action in every community we serve.</p>
+                                    <Link className="inline-flex items-center gap-2 font-headline text-xs font-black tracking-widest text-primary uppercase border-b-2 border-primary/20 hover:border-primary transition-all" to="/missions">
                                         Learn More <span className="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
-                            {/* Liberty Column */}
+                            {/* Compassion Column */}
                             <div className="relative bg-surface-container-lowest p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl border border-outline-variant/10">
                                 <div className="absolute top-0 right-0 p-8 opacity-10 scale-150 text-primary">
-                                    <span className="material-symbols-outlined text-8xl" data-icon="auto_awesome">auto_awesome</span>
+                                    <span className="material-symbols-outlined text-8xl" data-icon="favorite">favorite</span>
                                 </div>
                                 <div className="relative z-10">
-                                    <span className="material-symbols-outlined text-primary text-5xl mb-6 block" data-icon="liberty">robot</span>
-                                    <h3 className="font-headline text-3xl font-extrabold text-primary mb-4">LIBERTY</h3>
-                                    <p className="text-on-surface-variant font-medium mb-8 leading-relaxed">Protecting freedom of expression and fostering environments where every individual can thrive without fear.</p>
-                                    <a className="inline-flex items-center gap-2 font-headline text-xs font-black tracking-widest text-primary uppercase border-b-2 border-primary/20 hover:border-primary transition-all" href="#">
+                                    <span className="material-symbols-outlined text-primary text-5xl mb-6 block" data-icon="favorite">favorite</span>
+                                    <h3 className="font-headline text-3xl font-extrabold text-primary mb-4">COMPASSION</h3>
+                                    <p className="text-on-surface-variant font-medium mb-8 leading-relaxed">Advocating for the unheard — ensuring legal empowerment and equitable access to human rights for all citizens, especially the marginalized.</p>
+                                    <Link className="inline-flex items-center gap-2 font-headline text-xs font-black tracking-widest text-primary uppercase border-b-2 border-primary/20 hover:border-primary transition-all" to="/missions">
                                         Learn More <span className="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
-                            {/* Equality Column */}
+                            {/* Creativity Column */}
                             <div className="relative bg-[#2e7d32] p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl overflow-hidden">
                                 <div className="absolute top-0 right-0 p-8 opacity-10 scale-150 text-white">
                                     <span className="material-symbols-outlined text-8xl" data-icon="diversity_3">diversity_3</span>
                                 </div>
                                 <div className="relative z-10">
-                                    <span className="material-symbols-outlined text-white text-5xl mb-6 block" data-icon="groups">groups</span>
-                                    <h3 className="font-headline text-3xl font-extrabold text-white mb-4">EQUALITY</h3>
-                                    <p className="text-white/80 font-medium mb-8 leading-relaxed">Bridging the socio-economic divide through targeted educational and healthcare interventions in rural areas.</p>
-                                    <a className="inline-flex items-center gap-2 font-headline text-xs font-black tracking-widest text-white uppercase border-b-2 border-white/20 hover:border-white transition-all" href="#">
+                                    <span className="material-symbols-outlined text-white text-5xl mb-6 block" data-icon="palette">palette</span>
+                                    <h3 className="font-headline text-3xl font-extrabold text-white mb-4">CREATIVITY</h3>
+                                    <p className="text-white/80 font-medium mb-8 leading-relaxed">Bridging the socio-economic divide through innovative educational, economic, social and cultural programs for least privileged segments.</p>
+                                    <Link className="inline-flex items-center gap-2 font-headline text-xs font-black tracking-widest text-white uppercase border-b-2 border-white/20 hover:border-white transition-all" to="/missions">
                                         Learn More <span className="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
-                {/* Impact Counter (Editorial Style) */}
-                <section className="py-24 bg-primary text-white relative overflow-hidden">
+
+                {/* ICOE Highlight Section */}
+                <section className="py-24 bg-surface-container-low px-8">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                            <div>
+                                <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">New Initiative — September 2025</span>
+                                <h2 className="font-headline text-4xl md:text-5xl font-extrabold text-primary leading-tight mb-6">
+                                    International Centre<br />of <span className="text-secondary-container">Excellence</span>
+                                </h2>
+                                <p className="text-on-surface-variant leading-relaxed mb-4">
+                                    A collaborative initiative between <strong className="text-primary">Khadki Cantonment Board </strong> and <strong className="text-primary">DMF</strong>, focused on social innovation, skill development, entrepreneurship, and global employment.
+                                </p>
+                                <p className="text-on-surface-variant leading-relaxed mb-8 text-sm">
+                                    Programs include Foreign Language Training (German, Japanese), Digital Skills, Women's Entrepreneurship, Career Guidance, and International Job Placement.
+                                </p>
+                                <Link to="/icoe" className="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-md font-headline text-xs font-bold tracking-widest hover:bg-primary-container transition-all">
+                                    EXPLORE ICOE <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                </Link>
+                            </div>
+                            <div className="grid grid-cols-2 gap-6">
+                                {[
+                                    { icon: 'language', title: 'Global Languages', desc: 'German (A1-B1) & Japanese training', color: 'border-secondary-container' },
+                                    { icon: 'devices', title: 'Digital Skills', desc: 'Excel, Digital Marketing, Tally Prime', color: 'border-primary' },
+                                    { icon: 'woman', title: "Women's Enterprise", desc: 'Sweet & Leather enterprise programs', color: 'border-[#2e7d32]' },
+                                    { icon: 'flight_takeoff', title: "Int'l Placement", desc: '200+ for Germany placements', color: 'border-secondary-container' },
+                                ].map((item, i) => (
+                                    <div key={i} className={`bg-surface-container-lowest p-6 rounded-xl border-l-4 ${item.color} shadow-sm hover:-translate-y-1 transition-all duration-300`}>
+                                        <span className="material-symbols-outlined text-primary text-3xl mb-3 block">{item.icon}</span>
+                                        <h4 className="font-headline font-bold text-primary text-base mb-1">{item.title}</h4>
+                                        <p className="text-on-surface-variant text-xs">{item.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Impact Counter — animated */}
+                <section ref={counterRef} className="py-24 bg-primary text-white relative overflow-hidden">
                     <div className="absolute inset-0 opacity-5">
                         <div className="grid grid-cols-6 h-full w-full">
                             <div className="border-r border-white/20"></div>
@@ -95,132 +226,71 @@ export default function Home() {
                         </div>
                     </div>
                     <div className="max-w-7xl mx-auto px-8 relative z-10">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-16 text-center md:text-left">
-                            <div className="space-y-2">
-                                <div className="font-headline text-6xl font-black text-secondary-container">500k+</div>
-                                <div className="text-xs font-headline tracking-[0.2em] font-bold uppercase text-white/60">Beneficiaries</div>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="font-headline text-6xl font-black text-white">120+</div>
-                                <div className="text-xs font-headline tracking-[0.2em] font-bold uppercase text-white/60">Active Projects</div>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="font-headline text-6xl font-black text-secondary-container">25+</div>
-                                <div className="text-xs font-headline tracking-[0.2em] font-bold uppercase text-white/60">Regions Impacted</div>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="font-headline text-6xl font-black text-white">15k</div>
-                                <div className="text-xs font-headline tracking-[0.2em] font-bold uppercase text-white/60">Volunteers</div>
-                            </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:text-left">
+                            <StatCounter num={500000} suffix="+" label="Beneficiaries"    colorClass="text-secondary-container" started={counterStarted} duration={5000} />
+                            <StatCounter num={10000}  suffix="+" label="ICOE Outreach"    colorClass="text-white"               started={counterStarted} duration={5000} />
+                            <StatCounter num={230}    suffix="+" label="Youth Enrolled"   colorClass="text-secondary-container" started={counterStarted} duration={5000} />
+                            <StatCounter num={200}    suffix="+" label="Int'l Placements" colorClass="text-white"               started={counterStarted} duration={5000} />
                         </div>
                     </div>
                 </section>
-                {/* Projects Grid (Broken Grid Layout) */}
+
+                {/* Projects Grid */}
                 <section className="py-32 bg-surface-container-low px-8 overflow-hidden">
                     <div className="max-w-7xl mx-auto">
+                        {/* Header */}
                         <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
                             <div className="max-w-xl">
                                 <h2 className="text-xs font-headline font-black text-secondary tracking-[0.3em] uppercase mb-4">Our Initiatives</h2>
                                 <p className="font-headline text-4xl md:text-5xl font-extrabold text-primary leading-tight">Catalyzing systemic change through action.</p>
                             </div>
-                            <a className="bg-primary text-white px-8 py-4 rounded-md font-headline text-xs font-bold tracking-widest hover:bg-primary-container transition-all" href="#">VIEW ALL PROJECTS</a>
+                            <Link to="/projects" className="bg-primary text-white px-8 py-4 rounded-md font-headline text-xs font-bold tracking-widest hover:bg-primary-container transition-all">VIEW ALL PROJECTS</Link>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-                            {/* Project 1 */}
-                            <div className="md:col-span-7 group">
-                                <div className="relative h-[500px] overflow-hidden rounded-xl">
-                                    <img alt="Smart Education" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Modern classroom setting with students engaged in technology-based learning in a bright, contemporary educational facility" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtQr2mJOURQYKT02nQB9xKpCMkVLha8TJYI6bGmV_f5TJGx23OAeakbOeTcE-BIyeSLtvRhV7HlULNabSUYB7DuoBrxD7PL6MEiv52Ak-XkMYyO7uuB4gl8ilc3SGqOBxF-ajCA69-ti3QE4CwnftgudpVOKfQhVShMmWJTLvrLmeNx_xQHiJ7xGJUIoDksOPcskrXow7IlS2dZfFAFUyt3cfzr631hAvyUYP9husgxNyhq7PiOEx8k5pAlfkeu7yJtHeDMd7g2IFt" />
+
+                        {/* Two images side-by-side */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                            {/* Project 1 — left half */}
+                            <div className="group">
+                                <div className="relative h-[480px] overflow-hidden rounded-xl">
+                                    <img alt="Smart Education" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="/Images/4.png" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent"></div>
                                     <div className="absolute bottom-0 left-0 p-10">
                                         <span className="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-black tracking-widest uppercase mb-4 inline-block">Education</span>
-                                        <h4 className="text-3xl font-headline font-bold text-white mb-2">Smart Village Academy</h4>
-                                        <p className="text-white/70 max-w-md">Deploying digital literacy and secondary education infrastructure in remote mountainous regions.</p>
+                                        <h4 className="text-3xl font-headline font-bold text-white mb-2">Digital Classrooms &amp; Innovation Labs</h4>
+                                        <p className="text-white/70 max-w-md">Transforming Rural &amp; Urban Education through Digital Classrooms — deploying tech infrastructure in underserved communities.</p>
                                     </div>
                                 </div>
                             </div>
-                            {/* Project 2 */}
-                            <div className="md:col-span-5 flex flex-col justify-center">
-                                <div className="relative h-[400px] overflow-hidden rounded-xl mb-8 group">
-                                    <img alt="Healthcare Drive" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Portrait of a medical professional providing care in a community clinic setting with soft clinical lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCL6HBr7j7Db4pVDHVyeURt0HRDSSpIWnzux_tDoWgk6XnZVV5IrbHfdB5UQSB7l9WXIeBzm1YehwLFjxJ2EIb7LvhSFKPFSkIf24Z7TaOB73l3D-7O1GGto84eeD8arFCRPnunx61p9xZH7obC4l1zGLSgHK5ye4SkW5pFLshfX-pjmUjmlNMmpphwOLYF5LnWhVUSyIrwrEBNsvHxQ_zRLMCg-YVo-8wc7BiG11s0z39hSvDnS0xBcIhnf3Izi1LGLDLwJ6rH5TVh" />
+
+                            {/* Project 2 — right half */}
+                            <div className="group">
+                                <div className="relative h-[480px] overflow-hidden rounded-xl">
+                                    <img alt="Community Mobilization" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="/Images/5.png" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#2e7d32]/90 via-transparent to-transparent"></div>
                                     <div className="absolute bottom-0 left-0 p-8">
-                                        <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 text-[10px] font-black tracking-widest uppercase mb-4 inline-block">Healthcare</span>
-                                        <h4 className="text-2xl font-headline font-bold text-white mb-2">Mobile Medical Units</h4>
+                                        <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 text-[10px] font-black tracking-widest uppercase mb-4 inline-block">Community</span>
+                                        <h4 className="text-2xl font-headline font-bold text-white mb-2">Community Mobilization — ICOE</h4>
                                     </div>
                                 </div>
-                                <div className="bg-surface-container-lowest p-8 rounded-xl shadow-sm border-l-4 border-secondary-container">
-                                    <p className="italic text-primary/70 font-medium mb-4">"The foundation provided a lifeline when our village was cut off. Their dedication is unmatched."</p>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-surface-variant"></div>
-                                        <div>
-                                            <p className="text-xs font-bold text-primary">Kiran Deshmukh</p>
-                                            <p className="text-[10px] text-on-surface-variant uppercase tracking-tighter">Community Leader, Satara</p>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+
+                        {/* Slogan / Quote — full width below both images */}
+                        <div className="bg-surface-container-lowest p-8 rounded-xl shadow-sm border-l-4 border-secondary-container">
+                            <p className="italic text-primary/70 font-medium mb-4 text-lg">"The mission is to create a society based on positivity, compassion and creativity. In a short period, the DMF has touched the lives of hundreds of people."</p>
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-white text-sm">person</span>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-primary">Dr. Dnyaneshwar Mule</p>
+                                    <p className="text-[10px] text-on-surface-variant uppercase tracking-tighter">Founder &amp; President, DMF</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
             </main>
-            {/* Footer */}
-            <footer className="bg-[#00003c] text-white pt-24 pb-0 relative overflow-hidden">
-                {/* Texture/Watermark */}
-                <div className="absolute inset-0 pointer-events-none opacity-5">
-                    <div className="absolute -bottom-20 -right-20 w-[600px] h-[600px] bg-primary-container rounded-full blur-[100px]"></div>
-                </div>
-                <div className="flex flex-col md:flex-row justify-between items-start w-full px-12 py-16 gap-12 max-w-7xl mx-auto relative z-10 border-t-4 border-t-[#fe9832]">
-                    <div className="flex-1 max-w-sm">
-                        <div className="text-2xl font-bold text-white font-headline mb-6 tracking-tighter">DR. DYANESHAWAR MULAY FOUNDATION</div>
-                        <p className="text-gray-300 font-body leading-relaxed mb-8">Building a future where justice, liberty, and equality are not just ideals, but a lived reality for every citizen.</p>
-                        <div className="flex gap-4">
-                            <a className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#fe9832] transition-colors" href="#"><span className="material-symbols-outlined text-lg" data-icon="share">share</span></a>
-                            <a className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#fe9832] transition-colors" href="#"><span className="material-symbols-outlined text-lg" data-icon="mail">mail</span></a>
-                            <a className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#fe9832] transition-colors" href="#"><span className="material-symbols-outlined text-lg" data-icon="link">link</span></a>
-                        </div>
-                    </div>
-                    <div className="flex gap-20">
-                        <div className="space-y-4">
-                            <h5 className="text-[#fe9832] font-headline font-bold text-sm tracking-widest uppercase mb-6">Quick Links</h5>
-                            <ul className="space-y-3">
-                                <li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Our History</a></li>
-                                <li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Board Members</a></li>
-                                <li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Annual Reports</a></li>
-                                <li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Careers</a></li>
-                            </ul>
-                        </div>
-                        <div className="space-y-4">
-                            <h5 className="text-[#fe9832] font-headline font-bold text-sm tracking-widest uppercase mb-6">Impact</h5>
-                            <ul className="space-y-3">
-                                <li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Case Studies</a></li>
-                                <li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Success Stories</a></li>
-                                <li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Partner with Us</a></li>
-                                <li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Volunteer</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="bg-white/5 p-8 rounded-xl backdrop-blur-sm border border-white/10 max-w-xs">
-                        <h5 className="font-headline font-bold text-sm tracking-widest uppercase text-white mb-4">Contact Us</h5>
-                        <p className="text-sm text-gray-300 mb-4">12th Floor, Diplomatic Enclave, Chanakyapuri, New Delhi - 110021</p>
-                        <p className="text-sm text-[#fe9832] font-bold">contact@mulayfoundation.org</p>
-                        <p className="text-sm text-gray-300 mt-2">+91 11 2345 6789</p>
-                    </div>
-                </div>
-                <div className="px-12 py-8 flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto border-t border-white/5 gap-4">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest">© 2024 Dr. Dyaneshawar Mulay Foundation. All Rights Reserved.</p>
-                    <div className="flex gap-8">
-                        <a className="text-gray-400 text-[10px] uppercase tracking-widest hover:text-white" href="#">Privacy Policy</a>
-                        <a className="text-gray-400 text-[10px] uppercase tracking-widest hover:text-white" href="#">Terms of Service</a>
-                    </div>
-                </div>
-                {/* Tricolor Band */}
-                <div className="w-full flex h-2">
-                    <div className="flex-1 bg-[#fe9832]"></div>
-                    <div className="flex-1 bg-white"></div>
-                    <div className="flex-1 bg-[#2e7d32]"></div>
-                </div>
-            </footer>
-
         </div>
     );
 }

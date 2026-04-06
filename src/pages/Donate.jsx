@@ -184,51 +184,6 @@ export default function Donate() {
 </section>
 </main>
 
-<footer className="bg-[#00003c] border-t-4 border-t-[#fe9832] border-b-4 border-b-[#2e7d32] text-white">
-<div className="flex flex-col md:flex-row justify-between items-start w-full px-12 py-16 gap-8 max-w-7xl mx-auto">
-<div className="max-w-md">
-<div className="text-2xl font-bold text-white mb-6">Dyaneshawar Mulay Foundation</div>
-<p className="font-manrope display-sm text-gray-300 leading-relaxed">
-                    Building a legacy of empowerment, education, and social justice through dedicated service and global diplomacy.
-                </p>
-</div>
-<div className="grid grid-cols-2 md:grid-cols-3 gap-12">
-<div className="space-y-4">
-<h4 className="text-[#fe9832] font-bold uppercase tracking-widest text-xs">Quick Links</h4>
-<ul className="space-y-2">
-<li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Mission</a></li>
-<li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Our Projects</a></li>
-<li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Resources</a></li>
-</ul>
-</div>
-<div className="space-y-4">
-<h4 className="text-[#fe9832] font-bold uppercase tracking-widest text-xs">Legal</h4>
-<ul className="space-y-2">
-<li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Privacy Policy</a></li>
-<li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Terms of Service</a></li>
-<li><a className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" href="#">Cookie Policy</a></li>
-</ul>
-</div>
-<div className="space-y-4">
-<h4 className="text-[#fe9832] font-bold uppercase tracking-widest text-xs">Contact Us</h4>
-<ul className="space-y-2 text-gray-300 text-sm">
-<li>New Delhi, India</li>
-<li>contact@mulayfoundation.org</li>
-<li>+91 (011) 2345 6789</li>
-</ul>
-</div>
-</div>
-</div>
-<div className="px-12 py-8 border-t border-white/10 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-<p className="text-xs text-gray-400">© 2024 Dr. Dyaneshawar Mulay Foundation. All Rights Reserved.</p>
-<div className="flex gap-6">
-<span className="material-symbols-outlined cursor-pointer hover:text-[#fe9832]">public</span>
-<span className="material-symbols-outlined cursor-pointer hover:text-[#fe9832]">diversity_3</span>
-<span className="material-symbols-outlined cursor-pointer hover:text-[#fe9832]">mail</span>
-</div>
-</div>
-</footer>
-
     </div>
   );
 }

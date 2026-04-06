@@ -166,49 +166,6 @@ export default function Projects() {
 </div>
 </section>
 </main>
-{/* Footer */}
-<footer className="bg-[#00003c] border-t-4 border-t-[#fe9832] border-b-4 border-b-[#2e7d32]">
-<div className="flex flex-col md:flex-row justify-between items-start w-full px-12 py-16 gap-8 max-w-7xl mx-auto">
-<div className="md:w-1/3">
-<div className="text-2xl font-bold text-white font-headline mb-6">Dr. Dyaneshawar Mulay Foundation</div>
-<p className="text-gray-300 font-body text-sm leading-relaxed mb-8">
-                    Advancing the ideals of global citizenship, constitutional values, and grassroots empowerment to build a resilient and inclusive future for all.
-                </p>
-<div className="flex gap-4">
-<a className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-[#fe9832] transition-colors" href="#">
-<span className="material-symbols-outlined text-lg">language</span>
-</a>
-<a className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-[#fe9832] transition-colors" href="#">
-<span className="material-symbols-outlined text-lg">alternate_email</span>
-</a>
-</div>
-</div>
-<div className="grid grid-cols-2 gap-16">
-<div>
-<h4 className="text-[#fe9832] font-headline font-bold text-sm uppercase tracking-widest mb-6">Quick Links</h4>
-<ul className="flex flex-col gap-4">
-<li><a className="text-gray-300 hover:text-white font-label text-sm transition-all hover:underline decoration-[#fe9832]" href="#">Home</a></li>
-<li><a className="text-[#fe9832] font-bold font-label text-sm transition-all" href="#">Current Projects</a></li>
-<li><a className="text-gray-300 hover:text-white font-label text-sm transition-all hover:underline decoration-[#fe9832]" href="#">Impact Reports</a></li>
-<li><a className="text-gray-300 hover:text-white font-label text-sm transition-all hover:underline decoration-[#fe9832]" href="#">Foundation News</a></li>
-</ul>
-</div>
-<div>
-<h4 className="text-[#fe9832] font-headline font-bold text-sm uppercase tracking-widest mb-6">Contact Us</h4>
-<ul className="flex flex-col gap-4">
-<li className="text-gray-300 font-label text-sm">New Delhi, India</li>
-<li><a className="text-gray-300 hover:text-white font-label text-sm transition-all hover:underline decoration-[#fe9832]" href="mailto:info@mulayfoundation.org">info@mulayfoundation.org</a></li>
-<li><a className="text-gray-300 hover:text-white font-label text-sm transition-all hover:underline decoration-[#fe9832]" href="#">Privacy Policy</a></li>
-</ul>
-</div>
-</div>
-</div>
-<div className="w-full px-12 py-8 bg-black/30 text-center border-t border-white/5">
-<p className="text-gray-400 font-body text-[10px] tracking-widest uppercase">
-                © 2024 Dr. Dyaneshawar Mulay Foundation. All Rights Reserved.
-            </p>
-</div>
-</footer>
 
     </div>
   );

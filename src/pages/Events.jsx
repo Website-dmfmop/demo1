@@ -150,42 +150,6 @@ export default function Events() {
 </div>
 </section>
 </main>
-{/* Footer Shell */}
-<footer className="bg-[#00003c] flex flex-col md:flex-row justify-between items-start w-full px-12 py-16 gap-8 border-t-4 border-t-[#fe9832] border-b-4 border-b-[#2e7d32] relative overflow-hidden">
-<div className="z-10 flex flex-col gap-6 max-w-sm">
-<div className="text-2xl font-bold text-white font-headline">Dr. Dyaneshawar Mulay Foundation</div>
-<p className="font-manrope text-white opacity-70 text-sm leading-relaxed">
-                Empowering communities through knowledge, diplomacy, and sustainable grassroots initiatives. Dedicated to the vision of a progressive and inclusive India.
-            </p>
-</div>
-<div className="z-10 flex flex-col gap-4">
-<span className="text-[#fe9832] font-manrope font-bold text-sm tracking-widest uppercase">Quick Links</span>
-<ul className="flex flex-col gap-3">
-<li><a className="text-gray-300 hover:text-white font-manrope text-sm hover:underline decoration-[#fe9832] transition-all" href="#">About Our Mission</a></li>
-<li><a className="text-gray-300 hover:text-white font-manrope text-sm hover:underline decoration-[#fe9832] transition-all" href="#">Strategic Projects</a></li>
-<li><a className="text-gray-300 hover:text-white font-manrope text-sm hover:underline decoration-[#fe9832] transition-all" href="#">Impact Reports</a></li>
-</ul>
-</div>
-<div className="z-10 flex flex-col gap-4">
-<span className="text-[#fe9832] font-manrope font-bold text-sm tracking-widest uppercase">Legal</span>
-<ul className="flex flex-col gap-3">
-<li><a className="text-gray-300 hover:text-white font-manrope text-sm hover:underline decoration-[#fe9832] transition-all" href="#">Privacy Policy</a></li>
-<li><a className="text-gray-300 hover:text-white font-manrope text-sm hover:underline decoration-[#fe9832] transition-all" href="#">Terms of Use</a></li>
-<li><a className="text-gray-300 hover:text-white font-manrope text-sm hover:underline decoration-[#fe9832] transition-all" href="#">Contact Us</a></li>
-</ul>
-</div>
-<div className="w-full mt-8 pt-8 border-t border-white/10 flex justify-between items-center z-10">
-<p className="font-manrope text-xs text-gray-400">© 2024 Dr. Dyaneshawar Mulay Foundation. All Rights Reserved.</p>
-<div className="flex gap-6">
-<a className="text-white/60 hover:text-[#fe9832] transition-colors" href="#"><span className="material-symbols-outlined text-xl">language</span></a>
-<a className="text-white/60 hover:text-[#fe9832] transition-colors" href="#"><span className="material-symbols-outlined text-xl">mail</span></a>
-</div>
-</div>
-{/* Background watermark effect from Design System */}
-<div className="absolute right-[-10%] bottom-[-10%] opacity-[0.03] select-none pointer-events-none">
-<span className="font-headline text-[300px] font-black text-white leading-none">DMF</span>
-</div>
-</footer>
 
     </div>
   );

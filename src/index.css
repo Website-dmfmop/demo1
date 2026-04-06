@@ -1,1 +1,32 @@
 /* Cleared default Vite CSS */
+
+/* ── Hide scrollbars globally ── */
+html, body {
+    overflow-x: hidden;
+    scrollbar-width: none;       /* Firefox */
+    -ms-overflow-style: none;   /* IE / Edge legacy */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+    display: none;              /* Chrome, Safari, Opera */
+}
+
+/* ── Slider keyframes ── */
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
+}
+@keyframes slideOutLeft {
+    from { transform: translateX(0);    opacity: 1; }
+    to   { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes slideOutRight {
+    from { transform: translateX(0);   opacity: 1; }
+    to   { transform: translateX(100%); opacity: 0; }
+}
