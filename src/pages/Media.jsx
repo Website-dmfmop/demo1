@@ -1,38 +1,128 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+/* ─── Data ────────────────────────────────────────────────────────────── */
+
 const MEDIA_ITEMS = [
-    { type: 'photo', category: 'Events', src: '/Images/about_page_1.png',   title: 'ICOE Inauguration — Khadki, Pune',           date: 'September 2025' },
-    { type: 'photo', category: 'Community', src: '/Images/about_page_2.png', title: 'Community Mobilization Drive',               date: 'October 2025' },
-    { type: 'photo', category: 'Events', src: '/Images/about_page_3.png',   title: 'Dr. Mule Addresses Youth Leaders',           date: 'November 2025' },
-    { type: 'photo', category: 'Programmes', src: '/Images/about_page_4.png', title: 'She Leads — Women Enterprise Workshop',     date: 'November 2025' },
-    { type: 'photo', category: 'Community', src: '/Images/about_page_5.png',  title: 'SkillReach Language Training Batch',        date: 'December 2025' },
-    { type: 'photo', category: 'Programmes', src: '/Images/2.png',           title: 'Digital Classrooms & Innovation Labs',       date: 'January 2026' },
-    { type: 'photo', category: 'Events', src: '/Images/3.png',              title: 'International Business Expo — Pune',         date: 'February 2026' },
-    { type: 'photo', category: 'Programmes', src: '/Images/4.png',          title: 'Smart Education Initiative Launch',          date: 'March 2026' },
-    { type: 'photo', category: 'Community', src: '/Images/5.png',           title: 'Healthcare Outreach — Khadki Cantonment',    date: 'March 2026' },
+    { category: 'Events',      src: '/Images/about_page_1.png', title: 'ICOE Inauguration — Khadki, Pune',            date: 'September 2025' },
+    { category: 'Community',   src: '/Images/about_page_2.png', title: 'Community Mobilization Drive',                date: 'October 2025'   },
+    { category: 'Events',      src: '/Images/about_page_3.png', title: 'Dr. Mule Addresses Youth Leaders',            date: 'November 2025'  },
+    { category: 'Programmes',  src: '/Images/about_page_4.png', title: 'She Leads — Women Enterprise Workshop',       date: 'November 2025'  },
+    { category: 'Community',   src: '/Images/about_page_5.png', title: 'SkillReach Language Training Batch',          date: 'December 2025'  },
+    { category: 'Programmes',  src: '/Images/2.png',            title: 'Digital Classrooms & Innovation Labs',        date: 'January 2026'   },
+    { category: 'Events',      src: '/Images/3.png',            title: 'International Business Expo — Pune',          date: 'February 2026'  },
+    { category: 'Programmes',  src: '/Images/4.png',            title: 'Smart Education Initiative Launch',           date: 'March 2026'     },
+    { category: 'Community',   src: '/Images/5.png',            title: 'Healthcare Outreach — Khadki Cantonment',     date: 'March 2026'     },
+    { category: 'Events',      src: '/Images/about_page_1.png', title: 'Annual Review & Strategy Summit — DMF',       date: 'January 2026'   },
+    { category: 'Programmes',  src: '/Images/about_page_4.png', title: 'German Language Batch A2 Completion Ceremony',date: 'February 2026'  },
+    { category: 'Community',   src: '/Images/about_page_2.png', title: 'Flood Relief Distribution — Sangli District', date: 'August 2020'    },
 ];
 
 const PRESS = [
-    { outlet: 'The Hindu', headline: 'DMF & KCB launch International Centre of Excellence to empower youth in Pune', date: 'Sep 2025', tag: 'ICOE', color: 'border-primary' },
-    { outlet: 'Pune Mirror', headline: 'She Leads programme sees 25 women form producer groups for sustainable enterprise', date: 'Nov 2025', tag: 'Women', color: 'border-secondary-container' },
-    { outlet: 'Maharashtra Times', headline: 'ICOE reaches 10,000 beneficiaries in six months — Dr. Dnyaneshwar Mule Foundation', date: 'Mar 2026', tag: 'Impact', color: 'border-[#2e7d32]' },
-    { outlet: 'Sakal', headline: 'International job placement pipeline for 200+ youth in Germany launched by DMF', date: 'Dec 2025', tag: 'Global', color: 'border-primary' },
+    { outlet: 'The Hindu',         headline: 'DMF & KCB launch International Centre of Excellence to empower youth in Pune',          date: 'Sep 2025',  tag: 'ICOE',     color: 'border-primary'           },
+    { outlet: 'Pune Mirror',       headline: 'She Leads programme sees 25 women form producer groups for sustainable enterprise',      date: 'Nov 2025',  tag: 'Women',    color: 'border-secondary-container'},
+    { outlet: 'Maharashtra Times', headline: 'ICOE reaches 10,000 beneficiaries in six months — Dr. Dnyaneshwar Mule Foundation',    date: 'Mar 2026',  tag: 'Impact',   color: 'border-[#2e7d32]'         },
+    { outlet: 'Sakal',             headline: 'International job placement pipeline for 200+ youth in Germany launched by DMF',        date: 'Dec 2025',  tag: 'Global',   color: 'border-primary'           },
+    { outlet: 'Lokmat',            headline: 'ICOE-KCB-DMF collaboration brings world-class skill training to Khadki defence families',date: 'Oct 2025', tag: 'Skills',   color: 'border-secondary-container'},
+    { outlet: 'Times of India',    headline: 'Former IFS diplomat Dr. Dnyaneshwar Mule builds grassroots innovation movement in Pune', date: 'Sep 2025', tag: 'Profile',  color: 'border-[#2e7d32]'         },
+    { outlet: 'Indian Express',    headline: 'Social innovation labs launched in colleges under DMF — academia-industry bridge',        date: 'Feb 2026', tag: 'Innovation',color: 'border-primary'           },
+    { outlet: 'Economic Times',    headline: 'DMF Nursing Institute GNM programme preparing globally competent healthcare workforce',  date: 'Mar 2026',  tag: 'Healthcare',color: 'border-secondary-container'},
+];
+
+const TESTIMONIALS = [
+    {
+        name: 'Priya Sharma',
+        role: 'German Language Graduate, ICOE',
+        quote: 'The German A1 to B1 programme at ICOE completely transformed my career prospects. Within three months of completing the course, I received a placement offer from a healthcare facility in Germany.',
+        icon: 'school',
+        color: 'bg-primary',
+    },
+    {
+        name: 'Rekha Jadhav',
+        role: 'She Leads — Women Entrepreneur',
+        quote: 'Through the She Leads programme, I started my own sweet-making enterprise with four other women from my neighbourhood. Today our producer group earns over ₹40,000 a month collectively.',
+        icon: 'storefront',
+        color: 'bg-[#2e7d32]',
+    },
+    {
+        name: 'Amit Kulkarni',
+        role: 'Digital Marketing Batch, ICOE',
+        quote: 'I had no idea about digital tools before joining ICOE. The Advanced Excel and Digital Marketing course gave me skills that helped me land a government data-analyst internship.',
+        icon: 'devices',
+        color: 'bg-secondary-container',
+    },
+    {
+        name: 'Lt. Col. (Retd.) R. Nair',
+        role: 'Parent of ICOE student',
+        quote: 'As a defence family, we were worried about career prospects for our daughter after relocation. ICOE provided exactly the right environment — professional, disciplined, and genuinely caring about outcomes.',
+        icon: 'military_tech',
+        color: 'bg-primary',
+    },
+];
+
+const MILESTONES = [
+    { icon: 'groups',        num: '10,000+',  label: 'ICOE Beneficiaries'   },
+    { icon: 'language',      num: '6',        label: 'Languages Taught'     },
+    { icon: 'flight_takeoff',num: '200+',     label: 'Global Placements'    },
+    { icon: 'woman',         num: '25',       label: 'Women Entrepreneurs'  },
+    { icon: 'school',        num: '230+',     label: 'Youth Enrolled'       },
+    { icon: 'handshake',     num: '8+',       label: 'Partner Institutions' },
+];
+
+const VIDEOS = [
+    {
+        title: 'ICOE Inauguration — Official Highlights',
+        desc: 'Watch the full ceremony of the International Centre of Excellence launch at Khadki Cantonment Board, Pune, with Dr. Dnyaneshwar Mule as Advisor.',
+        thumb: '/Images/about_page_1.png',
+        duration: '4:32',
+        tag: 'Events',
+    },
+    {
+        title: 'She Leads — Women Enterprise Stories',
+        desc: 'Hear firsthand stories from women entrepreneurs who transformed their lives through the She Leads programme at ICOE-KCB-DMF.',
+        thumb: '/Images/about_page_4.png',
+        duration: '6:15',
+        tag: 'Programmes',
+    },
+    {
+        title: 'SkillReach — German Language Success Stories',
+        desc: 'Meet the batch of youth who completed the German A1–B1 course and are now on the international job placement pipeline to Germany.',
+        thumb: '/Images/about_page_5.png',
+        duration: '5:48',
+        tag: 'Community',
+    },
+];
+
+const SOCIAL = [
+    { platform: 'Facebook',  handle: '@dmfmop',        icon: 'thumb_up',     color: 'bg-[#1877F2]', followers: '12K+' },
+    { platform: 'Instagram', handle: '@dmfmop',        icon: 'photo_camera', color: 'bg-[#E1306C]', followers: '8.5K+' },
+    { platform: 'Twitter/X', handle: '@dmfmop',        icon: 'rss_feed',     color: 'bg-[#1DA1F2]', followers: '4K+'  },
+    { platform: 'YouTube',   handle: 'DMF Foundation', icon: 'play_circle',  color: 'bg-[#FF0000]', followers: '2.1K+'},
+    { platform: 'LinkedIn',  handle: 'DMF India',      icon: 'work',         color: 'bg-[#0A66C2]', followers: '5K+'  },
 ];
 
 const TABS = ['All', 'Events', 'Community', 'Programmes'];
 
+/* ─── Component ──────────────────────────────────────────────────────── */
+
 export default function Media() {
     const [activeTab, setActiveTab] = useState('All');
+    const [email, setEmail] = useState('');
+    const [submitted, setSubmitted] = useState(false);
 
     const filtered = activeTab === 'All'
         ? MEDIA_ITEMS
         : MEDIA_ITEMS.filter(m => m.category === activeTab);
 
+    const handleSubscribe = (e) => {
+        e.preventDefault();
+        if (email) setSubmitted(true);
+    };
+
     return (
         <div>
             <main>
-                {/* ── Hero ──────────────────────────────────────────── */}
+                {/* ── Hero ─────────────────────────────────────────────── */}
                 <section className="relative px-8 pt-32 pb-20 overflow-hidden bg-surface">
                     <div className="max-w-7xl mx-auto grid md:grid-cols-12 gap-12 items-center">
                         <div className="md:col-span-7 z-10">
@@ -42,22 +132,21 @@ export default function Media() {
                             <h1 className="font-headline text-5xl md:text-7xl font-extrabold tracking-tight text-primary leading-[1.1] mb-6">
                                 Media &amp; <span className="text-secondary-container">Gallery</span>
                             </h1>
-                            <p className="font-body text-lg text-on-surface-variant max-w-xl leading-relaxed mb-8">
-                                Explore photos, press coverage, and stories from Dr. Dnyaneshwar Mule Foundation's programs, events, and community initiatives across India.
+                            <p className="font-body text-lg text-on-surface-variant max-w-xl leading-relaxed mb-6">
+                                Explore photos, press coverage, video highlights, and stories from Dr. Dnyaneshwar Mule Foundation's programs, events, and community initiatives across India.
+                            </p>
+                            <p className="font-body text-base text-on-surface-variant max-w-xl leading-relaxed mb-8">
+                                From the ICOE inauguration to flood relief operations, from She Leads workshops to international job placement ceremonies — our media archive tells the story of real change through real people.
                             </p>
                             <div className="flex flex-wrap gap-3">
-                                {['10,000+ Beneficiaries', 'Est. 2019', '80G & 12A Certified'].map((t, i) => (
+                                {['10,000+ Beneficiaries', 'Est. 2019', '80G & 12A Certified', 'Pune, Maharashtra'].map((t, i) => (
                                     <span key={i} className="bg-surface-container-low text-primary text-xs font-bold px-4 py-2 rounded-full border border-outline-variant/30 uppercase tracking-widest">{t}</span>
                                 ))}
                             </div>
                         </div>
                         <div className="md:col-span-5 relative">
                             <div className="aspect-[4/5] rounded-xl overflow-hidden shadow-2xl">
-                                <img
-                                    alt="DMF Media"
-                                    className="w-full h-full object-cover"
-                                    src="/Images/about_page_3.png"
-                                />
+                                <img alt="DMF Media" className="w-full h-full object-cover" src="/Images/about_page_3.png" />
                             </div>
                             <div className="absolute -bottom-6 -left-6 bg-surface-container-lowest p-6 rounded-lg shadow-xl max-w-xs hidden md:block">
                                 <p className="text-secondary font-bold text-3xl font-headline">50+</p>
@@ -67,32 +156,53 @@ export default function Media() {
                     </div>
                 </section>
 
-                {/* ── Filter Tabs ────────────────────────────────────── */}
-                <section className="bg-surface-container sticky top-[72px] z-40">
-                    <div className="max-w-7xl mx-auto px-8 py-5 flex flex-wrap items-center gap-3">
-                        {TABS.map(tab => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`px-6 py-2 rounded-full font-label text-sm font-semibold transition-all ${
-                                    activeTab === tab
-                                        ? 'bg-primary text-white'
-                                        : 'bg-surface-container-lowest text-on-surface-variant hover:bg-primary/10 hover:text-primary'
-                                }`}
-                            >
-                                {tab}
-                            </button>
-                        ))}
+                {/* ── Milestone Strip ──────────────────────────────────── */}
+                <section className="bg-primary py-10 px-8">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="grid grid-cols-3 md:grid-cols-6 gap-6 text-center">
+                            {MILESTONES.map((m, i) => (
+                                <div key={i}>
+                                    <span className="material-symbols-outlined text-secondary-container text-3xl mb-2 block">{m.icon}</span>
+                                    <div className="font-headline text-3xl font-black text-white mb-0.5">{m.num}</div>
+                                    <div className="text-white/60 text-[10px] uppercase tracking-widest font-bold">{m.label}</div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </section>
 
-                {/* ── Photo Gallery Grid ─────────────────────────────── */}
+                {/* ── Filter Tabs ─────────────────────────────────────── */}
+                <section className="bg-surface-container sticky top-[72px] z-40">
+                    <div className="max-w-7xl mx-auto px-8 py-5 flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex flex-wrap gap-3">
+                            {TABS.map(tab => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`px-6 py-2 rounded-full font-label text-sm font-semibold transition-all ${
+                                        activeTab === tab
+                                            ? 'bg-primary text-white'
+                                            : 'bg-surface-container-lowest text-on-surface-variant hover:bg-primary/10 hover:text-primary'
+                                    }`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </div>
+                        <span className="text-on-surface-variant text-xs font-bold uppercase tracking-widest">
+                            {filtered.length} item{filtered.length !== 1 ? 's' : ''}
+                        </span>
+                    </div>
+                </section>
+
+                {/* ── Photo Gallery ────────────────────────────────────── */}
                 <section className="px-8 py-20 bg-surface">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-14">
-                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">Gallery</span>
+                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">Visual Stories</span>
                             <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Photo Gallery</h2>
-                            <div className="w-16 h-1 bg-secondary-container mx-auto"></div>
+                            <div className="w-16 h-1 bg-secondary-container mx-auto mb-4"></div>
+                            <p className="text-on-surface-variant max-w-2xl mx-auto">Every photograph is a window into the lives we've touched, the programs we've built, and the communities we serve across India.</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {filtered.map((item, i) => (
@@ -103,7 +213,7 @@ export default function Media() {
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                             src={item.src}
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                         <div className="absolute top-4 left-4">
                                             <span className="bg-primary text-white font-label text-[10px] font-bold tracking-widest px-3 py-1 rounded-sm uppercase">
                                                 {item.category}
@@ -123,53 +233,182 @@ export default function Media() {
                     </div>
                 </section>
 
-                {/* ── Press Coverage ─────────────────────────────────── */}
+                {/* ── Video Highlights ─────────────────────────────────── */}
                 <section className="py-20 bg-surface-container-low px-8">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-14">
-                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">In The News</span>
-                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Press Coverage</h2>
-                            <div className="w-16 h-1 bg-secondary-container mx-auto"></div>
+                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">Watch & Learn</span>
+                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Video Highlights</h2>
+                            <div className="w-16 h-1 bg-secondary-container mx-auto mb-4"></div>
+                            <p className="text-on-surface-variant max-w-2xl mx-auto">Watch stories of transformation, programme launches, and community voices from our work on the ground.</p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {PRESS.map((p, i) => (
-                                <div key={i} className={`bg-surface-container-lowest rounded-2xl p-8 border-l-4 ${p.color} shadow-sm hover:-translate-y-1 transition-all duration-300`}>
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <span className="material-symbols-outlined text-primary text-2xl">newspaper</span>
-                                        <div>
-                                            <div className="font-headline font-black text-primary text-sm">{p.outlet}</div>
-                                            <div className="text-on-surface-variant text-xs">{p.date}</div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {VIDEOS.map((v, i) => (
+                                <div key={i} className="group bg-surface-container-lowest rounded-2xl overflow-hidden shadow-md hover:-translate-y-2 transition-all duration-300">
+                                    <div className="relative aspect-video overflow-hidden">
+                                        <img alt={v.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src={v.thumb} />
+                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                            <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white flex items-center justify-center group-hover:bg-white/40 transition-all duration-300 cursor-pointer">
+                                                <span className="material-symbols-outlined text-white text-3xl">play_arrow</span>
+                                            </div>
                                         </div>
-                                        <span className="ml-auto text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary px-3 py-1 rounded-full">{p.tag}</span>
+                                        <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs font-bold px-2 py-0.5 rounded">
+                                            {v.duration}
+                                        </div>
+                                        <div className="absolute top-3 left-3">
+                                            <span className="bg-primary text-white font-label text-[10px] font-bold tracking-widest px-3 py-1 rounded-sm uppercase">{v.tag}</span>
+                                        </div>
                                     </div>
-                                    <p className="text-on-surface-variant leading-relaxed text-sm font-medium">{p.headline}</p>
+                                    <div className="p-6">
+                                        <h4 className="font-headline font-bold text-primary text-base mb-2 leading-snug">{v.title}</h4>
+                                        <p className="text-on-surface-variant text-sm leading-relaxed">{v.desc}</p>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </section>
 
-                {/* ── CTA ────────────────────────────────────────────── */}
+                {/* ── Press Coverage ───────────────────────────────────── */}
+                <section className="py-20 bg-surface px-8">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-14">
+                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">In The News</span>
+                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Press Coverage</h2>
+                            <div className="w-16 h-1 bg-secondary-container mx-auto mb-4"></div>
+                            <p className="text-on-surface-variant max-w-2xl mx-auto">DMF's work has been recognized and covered by leading national print and digital media publications across India.</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {PRESS.map((p, i) => (
+                                <div key={i} className={`bg-surface-container-low rounded-2xl p-8 border-l-4 ${p.color} shadow-sm hover:-translate-y-1 transition-all duration-300`}>
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                            <span className="material-symbols-outlined text-primary text-xl">newspaper</span>
+                                        </div>
+                                        <div>
+                                            <div className="font-headline font-black text-primary text-sm">{p.outlet}</div>
+                                            <div className="text-on-surface-variant text-xs">{p.date}</div>
+                                        </div>
+                                        <span className="ml-auto text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary px-3 py-1 rounded-full flex-shrink-0">{p.tag}</span>
+                                    </div>
+                                    <p className="text-on-surface-variant leading-relaxed text-sm font-medium italic">"{p.headline}"</p>
+                                    <div className="mt-4 flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest cursor-pointer hover:text-secondary-container transition-colors">
+                                        <span>Read Article</span>
+                                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* ── Testimonials ─────────────────────────────────────── */}
+                <section className="py-20 bg-primary px-8 relative overflow-hidden">
+                    <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}></div>
+                    <div className="max-w-7xl mx-auto relative z-10">
+                        <div className="text-center mb-14">
+                            <span className="font-label text-secondary-container text-xs font-bold tracking-widest uppercase mb-3 block">Voices of Change</span>
+                            <h2 className="font-headline text-4xl font-extrabold text-white mb-4">What People Say</h2>
+                            <div className="w-16 h-1 bg-secondary-container mx-auto mb-4"></div>
+                            <p className="text-white/70 max-w-2xl mx-auto">The most powerful stories come directly from those whose lives have been changed by our programmes.</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {TESTIMONIALS.map((t, i) => (
+                                <div key={i} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 hover:bg-white/15 transition-all duration-300">
+                                    <span className="material-symbols-outlined text-secondary-container text-4xl mb-4 block">format_quote</span>
+                                    <p className="text-white/80 leading-relaxed text-base italic mb-6">"{t.quote}"</p>
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-12 h-12 rounded-full ${t.color} flex items-center justify-center flex-shrink-0`}>
+                                            <span className="material-symbols-outlined text-white text-xl">{t.icon}</span>
+                                        </div>
+                                        <div>
+                                            <div className="font-headline font-bold text-white text-sm">{t.name}</div>
+                                            <div className="text-white/60 text-xs">{t.role}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* ── Social Media Connect ─────────────────────────────── */}
+                <section className="py-20 bg-surface-container-low px-8">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-14">
+                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">Connect With Us</span>
+                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Follow Our Journey</h2>
+                            <div className="w-16 h-1 bg-secondary-container mx-auto mb-4"></div>
+                            <p className="text-on-surface-variant max-w-2xl mx-auto">Stay updated with our latest events, programmes, and community stories. Follow us on your favourite platforms.</p>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
+                            {SOCIAL.map((s, i) => (
+                                <div key={i} className="bg-surface-container-lowest rounded-2xl p-6 flex flex-col items-center text-center hover:-translate-y-2 transition-all duration-300 shadow-sm cursor-pointer group">
+                                    <div className={`w-14 h-14 rounded-full ${s.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                                        <span className="material-symbols-outlined text-white text-2xl">{s.icon}</span>
+                                    </div>
+                                    <div className="font-headline font-bold text-primary text-sm mb-1">{s.platform}</div>
+                                    <div className="text-on-surface-variant text-xs mb-2">{s.handle}</div>
+                                    <div className="text-secondary-container font-black text-sm">{s.followers}</div>
+                                    <div className="text-on-surface-variant text-[10px] uppercase tracking-widest">Followers</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* ── Newsletter Signup ────────────────────────────────── */}
+                <section className="py-16 bg-surface-container-low px-8">
+                    <div className="max-w-3xl mx-auto bg-surface-container-lowest rounded-2xl p-12 shadow-lg border border-outline-variant/10 text-center">
+                        <span className="material-symbols-outlined text-secondary-container text-5xl mb-4 block">mail</span>
+                        <h3 className="font-headline text-3xl font-extrabold text-primary mb-3">Stay In The Loop</h3>
+                        <p className="text-on-surface-variant mb-8 leading-relaxed">
+                            Subscribe to our newsletter and receive updates on programme launches, impact reports, press mentions, and community stories directly in your inbox.
+                        </p>
+                        {submitted ? (
+                            <div className="bg-[#2e7d32]/10 border border-[#2e7d32]/30 rounded-xl p-6">
+                                <span className="material-symbols-outlined text-[#2e7d32] text-4xl mb-2 block">check_circle</span>
+                                <p className="text-[#2e7d32] font-bold font-headline">Thank you for subscribing!</p>
+                                <p className="text-on-surface-variant text-sm mt-1">We'll keep you updated with our latest stories and programmes.</p>
+                            </div>
+                        ) : (
+                            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4">
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    placeholder="Enter your email address"
+                                    className="flex-1 px-5 py-3 rounded-lg border border-outline-variant/30 bg-surface-container-low text-primary placeholder-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-secondary-container text-sm"
+                                    required
+                                />
+                                <button
+                                    type="submit"
+                                    className="px-8 py-3 bg-primary text-white font-headline font-bold rounded-lg hover:bg-primary/90 transition-all uppercase tracking-widest text-sm flex-shrink-0"
+                                >
+                                    Subscribe
+                                </button>
+                            </form>
+                        )}
+                        <p className="text-on-surface-variant text-xs mt-4">No spam, ever. Unsubscribe at any time.</p>
+                    </div>
+                </section>
+
+                {/* ── CTA ─────────────────────────────────────────────── */}
                 <section className="py-24 px-8 bg-primary relative overflow-hidden">
                     <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}></div>
                     <div className="relative z-10 max-w-4xl mx-auto text-center">
-                        <h2 className="font-headline text-4xl md:text-5xl font-extrabold text-white mb-6">
-                            Share Our Story
-                        </h2>
+                        <h2 className="font-headline text-4xl md:text-5xl font-extrabold text-white mb-6">Share Our Story</h2>
                         <p className="text-white/70 text-lg leading-relaxed mb-10">
-                            Help amplify the voice of communities we serve. Share our work, connect with us, or invite us to speak at your event.
+                            Help amplify the voice of the communities we serve. Share our work, partner with us, or invite us to speak at your event or institution.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                            <Link
-                                to="/about"
-                                className="px-10 py-4 bg-secondary-container text-on-secondary-container font-headline font-bold rounded-md hover:bg-secondary-fixed-dim transition-all shadow-xl uppercase tracking-widest text-sm"
-                            >
+                            <Link to="/about" className="px-10 py-4 bg-secondary-container text-on-secondary-container font-headline font-bold rounded-md hover:bg-secondary-fixed-dim transition-all shadow-xl uppercase tracking-widest text-sm">
                                 About DMF
                             </Link>
-                            <Link
-                                to="/donate"
-                                className="px-10 py-4 border border-white/30 text-white font-headline font-bold rounded-md hover:bg-white/10 transition-all uppercase tracking-widest text-sm"
-                            >
+                            <Link to="/icoe" className="px-10 py-4 border border-white/30 text-white font-headline font-bold rounded-md hover:bg-white/10 transition-all uppercase tracking-widest text-sm">
+                                Explore ICOE
+                            </Link>
+                            <Link to="/donate" className="px-10 py-4 border border-white/30 text-white font-headline font-bold rounded-md hover:bg-white/10 transition-all uppercase tracking-widest text-sm">
                                 Support Us
                             </Link>
                         </div>
