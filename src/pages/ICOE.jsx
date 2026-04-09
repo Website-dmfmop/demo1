@@ -61,13 +61,16 @@ export default function ICOE() {
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
                             <div className="md:col-span-5">
                                 <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">PROGRAM 01 </span>
-                                <h2 className="font-headline text-4xl font-bold text-primary mb-6 leading-tight">About ICOE</h2>
+                                <h2 className="font-headline text-4xl font-bold text-primary mb-6 leading-tight">About DMF</h2>
                                 <div className="w-16 h-1 bg-secondary-container mb-8"></div>
                                 {/* Key Focus Areas — clickable nav */}
                                 <div className="space-y-3">
                                     {[
                                         { icon: 'sentiment_very_satisfied', label: 'Movement of Positivity', href: '#movement-of-positivity' },
-                                        { icon: 'local_hospital', label: 'Nursing Colleges', href: '#nursing-colleges' },
+                                        { icon: 'school', label: 'International Center of Excellence', href: '#icoe' },
+                                        { icon: 'menu_book', label: 'Words Beyond Borders', href: '#words-beyond-borders' },
+                                        { icon: 'local_hospital', label: 'Nursing College', href: '#nursing-colleges' },
+                                        { icon: 'lightbulb', label: 'Social Innovation Path', href: '#social-innovation-path' },
                                         { icon: 'diversity_3', label: 'She Leads', href: '#she-leads' },
                                         { icon: 'build', label: 'Skill Reach', href: '#skill-reach' },
                                         { icon: 'child_care', label: 'Orphanage', href: '#orphanage' },
@@ -89,22 +92,22 @@ export default function ICOE() {
                                     ))}
                                 </div>
                             </div>
-                            <div className="md:col-span-7 space-y-6 text-on-surface-variant leading-relaxed text-base">
+                            <div className="md:col-span-7 md:mt-[5.5rem] space-y-6 text-on-surface-variant leading-relaxed text-base">
                                 <p>
-                                    The <strong className="text-primary">International Centre of Excellence</strong> was established in September 2025 through a collaborative initiative between the Khadki Cantonment Board and the Dr. Dnyaneshwar Mulay Foundation.
+                                    The <strong className="text-primary">Dr. Dnyaneshwar Mule Foundation (DMF)</strong> is a globally recognized non-profit organization with deep roots in India, committed to providing innovative and beneficial solutions since 2019.
                                 </p>
                                 <p>
-                                    The Khadki Cantonment Board functions under the provisions of the Cantonment Board Act and operates under the administrative framework of the Ministry of Defense, Government of India. The board has long been engaged in the development of defense and civilian communities by implementing programs in education, community development, women's livelihood transformation, and social welfare.
+                                    Founded by <strong className="text-primary">Dr. Dnyaneshwar Mulay</strong>, a distinguished career diplomat of the Indian Foreign Service, DMF has been at the forefront of driving social transformation through education, skill development, women's empowerment, and community engagement.
                                 </p>
                                 <p>
-                                    Recognizing the need to expand opportunities for youth and families in the cantonment area, KCB envisioned a dedicated platform to focus on social innovation, employability, and entrepreneurship development. To strengthen this vision, KCB invited the guidance and collaboration of <strong className="text-primary">Dr. Dnyaneshwar Mulay</strong>, a distinguished diplomat and former officer of the Indian Foreign Service.
+                                    During flood emergencies in Kolhapur-Sangli district in Maharashtra and subsequently during COVID-19, DMF strengthened its work and today conducts significant activities contributing to social change across India and beyond.
                                 </p>
                                 <p>
-                                    Dr. Mulay has previously served as <strong className="text-primary">Secretary in the Ministry of External Affairs, Government of India</strong>, and as an <strong className="text-primary">Advisor to the National Skill Development Corporation</strong>.
+                                    The foundation specializes in <strong className="text-primary">Social Innovation, Urban & Rural Mobilization, Capacity & Skill Building</strong>, and <strong className="text-primary">Transforming Rural & Urban Education</strong> through Digital Classrooms and Innovation Labs.
                                 </p>
                                 <div className="bg-primary/5 border-l-4 border-secondary-container p-6 rounded-r-xl">
                                     <p className="italic text-primary font-medium leading-relaxed">
-                                        "Under his leadership through the Dr. Dnyaneshwar Mulay Foundation, the concept of a collaborative centre dedicated to innovation and skill development took shape — the COE was established as a forward-looking platform to nurture talent, encourage innovation, and connect individuals with national and global opportunities."
+                                        "Our Vision: Work towards creating a modern, democratic, progressive nation. Promoting equality, justice and freedom as core values of a citizen's life."
                                     </p>
                                 </div>
                             </div>
@@ -160,6 +163,107 @@ export default function ICOE() {
                             <h3 className="font-headline text-xl font-bold text-white mb-3">Join the Movement</h3>
                             <p className="text-white/70 mb-2">We invite individuals, institutions, corporates and public leaders to be part of this transformative journey.</p>
                             <p className="font-headline font-bold text-secondary-container">Together, let us lead with purpose and build a positive future for all.</p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* ── International Center of Excellence ─────────────────── */}
+                <section id="icoe" className="py-24 bg-surface-container-low px-8">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+                            <div>
+                                <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">DMF Initiative</span>
+                                <h2 className="font-headline text-4xl font-extrabold text-primary leading-tight mb-4">
+                                    International Center of Excellence
+                                </h2>
+                                <p className="text-secondary-container font-semibold text-sm mb-6 uppercase tracking-wider">A Collaborative Initiative by KCB & DMF</p>
+                                <div className="w-16 h-1 bg-secondary-container mb-8"></div>
+                                <p className="text-on-surface-variant leading-relaxed mb-6">
+                                    The <strong className="text-primary">International Centre of Excellence (ICOE)</strong> was established in September 2025 through a collaborative initiative between the Khadki Cantonment Board and the Dr. Dnyaneshwar Mulay Foundation.
+                                </p>
+                                <p className="text-on-surface-variant leading-relaxed mb-6">
+                                    The Khadki Cantonment Board functions under the Cantonment Board Act and operates under the Ministry of Defense, Government of India. The board has been engaged in developing defense and civilian communities through education, community development, women's livelihood transformation, and social welfare.
+                                </p>
+                                <p className="text-on-surface-variant leading-relaxed">
+                                    Recognizing the need to expand opportunities for youth and families, KCB invited the guidance and collaboration of <strong className="text-primary">Dr. Dnyaneshwar Mulay</strong>, a distinguished diplomat and former officer of the Indian Foreign Service, who previously served as Secretary in the Ministry of External Affairs and as Advisor to the National Skill Development Corporation.
+                                </p>
+                            </div>
+                            <div className="space-y-6">
+                                <div className="bg-primary rounded-2xl p-10 text-white">
+                                    <span className="material-symbols-outlined text-secondary-container text-5xl mb-4 block">school</span>
+                                    <h3 className="font-headline text-2xl font-bold mb-3">A Platform for Innovation & Skill Development</h3>
+                                    <p className="text-white/80 text-sm leading-relaxed mb-6">
+                                        Under Dr. Mulay's leadership through DMF, the COE was established as a forward-looking platform to nurture talent, encourage innovation, and connect individuals with national and global opportunities.
+                                    </p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {[
+                                            { icon: 'lightbulb', label: 'Social Innovation' },
+                                            { icon: 'work', label: 'Employability' },
+                                            { icon: 'rocket_launch', label: 'Entrepreneurship' },
+                                            { icon: 'diversity_3', label: 'Community Impact' },
+                                        ].map((s, i) => (
+                                            <div key={i} className="bg-white/10 border border-white/20 rounded-xl p-4 text-center">
+                                                <span className="material-symbols-outlined text-secondary-container text-2xl mb-2 block">{s.icon}</span>
+                                                <div className="text-white/70 text-xs uppercase tracking-wide">{s.label}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="bg-primary/5 border-l-4 border-secondary-container p-6 rounded-r-xl">
+                                    <p className="italic text-primary font-medium leading-relaxed">
+                                        "The COE serves as a collaborative centre dedicated to innovation and skill development — a forward-looking platform to nurture talent, encourage innovation, and connect individuals with national and global opportunities."
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* ── Words Beyond Borders ─────────────────────────────── */}
+                <section id="words-beyond-borders" className="py-24 bg-surface px-8">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+                            <div>
+                                <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">DMF Initiative</span>
+                                <h2 className="font-headline text-4xl font-extrabold text-primary leading-tight mb-4">
+                                    Words Beyond Borders
+                                </h2>
+                                <p className="text-secondary-container font-semibold text-sm mb-6 uppercase tracking-wider">An International Literary Gathering of Diplomat–Authors</p>
+                                <div className="w-16 h-1 bg-secondary-container mb-8"></div>
+                                <p className="text-on-surface-variant leading-relaxed mb-6">
+                                    <strong className="text-primary">Words Beyond Borders</strong> is a unique international literary gathering that celebrates diplomats who have enriched the world of literature through their writings—across diplomacy, fiction, poetry, memoirs, essays, and other forms of creative and intellectual expression.
+                                </p>
+                                <p className="text-on-surface-variant leading-relaxed">
+                                    Diplomats occupy a rare and powerful vantage point in the world. Through their work, they engage with diverse societies, cultures, political systems, and global challenges. They witness moments of conflict and cooperation, negotiation and transformation. Many translate these lived experiences into compelling literary works—offering insights that bridge nations, ideas, and human stories.
+                                </p>
+                            </div>
+                            <div className="space-y-6">
+                                <div className="bg-primary rounded-2xl p-10 text-white">
+                                    <span className="material-symbols-outlined text-secondary-container text-5xl mb-4 block">auto_stories</span>
+                                    <h3 className="font-headline text-2xl font-bold mb-3">A Celebration of Diplomacy & Literature</h3>
+                                    <p className="text-white/80 text-sm leading-relaxed mb-6">
+                                        This initiative brings together diplomat-authors from around the world to share their literary works, exchange ideas, and foster cross-cultural dialogue through the power of the written word.
+                                    </p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {[
+                                            { icon: 'public', label: 'International Gathering' },
+                                            { icon: 'menu_book', label: 'Literary Excellence' },
+                                            { icon: 'diversity_3', label: 'Cross-Cultural Dialogue' },
+                                            { icon: 'history_edu', label: 'Diplomatic Insights' },
+                                        ].map((s, i) => (
+                                            <div key={i} className="bg-white/10 border border-white/20 rounded-xl p-4 text-center">
+                                                <span className="material-symbols-outlined text-secondary-container text-2xl mb-2 block">{s.icon}</span>
+                                                <div className="text-white/70 text-xs uppercase tracking-wide">{s.label}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="bg-primary/5 border-l-4 border-secondary-container p-6 rounded-r-xl">
+                                    <p className="italic text-primary font-medium leading-relaxed">
+                                        "Through their unique experiences across borders and cultures, diplomat-authors offer the world a lens into the complexities of global affairs—stories that inspire understanding and connection."
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -272,238 +376,153 @@ export default function ICOE() {
                     </div>
                 </section>
 
-                {/* ── 4. Skill Reach — Programs Section */}
-                <section id="community" className="py-24 bg-surface px-8">
+                {/* ── Skill Reach ─────────────────────────────── */}
+                <section id="skill-reach" className="py-24 bg-surface px-8">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
                             <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">FROM LOCAL TALENT TO GLOBAL IMPACT</span>
-                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Our Programs</h2>
+                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Skill Reach</h2>
                             <div className="w-16 h-1 bg-secondary-container mx-auto mb-4"></div>
                             <p className="text-on-surface-variant max-w-2xl mx-auto">COE's ongoing programs actively focus on skill enhancement, entrepreneurship development, career guidance, and language proficiency, benefiting hundreds of youth and women from defence families and civilian communities.</p>
                         </div>
 
-                        {/* Program 1 — Community Mobilization */}
-                        <div className="mb-16 bg-surface-container-low rounded-2xl overflow-hidden shadow-lg">
-                            <div className="grid grid-cols-1 md:grid-cols-12">
-                                <div className="md:col-span-4 bg-primary p-10 flex flex-col justify-center">
-                                    <span className="text-secondary-container font-bold text-xs tracking-widest uppercase mb-4">Program 01</span>
-                                    <h3 className="font-headline text-3xl font-extrabold text-white mb-3">Community Mobilization</h3>
-                                    <p className="text-white/70 text-sm font-semibold italic">Reach – Engage – Empower</p>
-                                    <div className="mt-6 w-12 h-1 bg-secondary-container"></div>
+                        {/* 2×2 Grid of Programs */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                            {/* Program 1 — Community Mobilization */}
+                            <div className="bg-surface-container-low rounded-2xl overflow-hidden shadow-lg hover:-translate-y-1 transition-all duration-300">
+                                <div className="bg-primary p-6">
+                                    <span className="text-secondary-container font-bold text-[10px] tracking-widest uppercase mb-2 block">Program 01</span>
+                                    <h3 className="font-headline text-2xl font-extrabold text-white mb-1">Community Mobilization</h3>
+                                    <p className="text-white/70 text-xs font-semibold italic">Reach – Engage – Empower</p>
                                 </div>
-                                <div className="md:col-span-8 p-10 space-y-6">
+                                <div className="p-6 space-y-4">
                                     <div>
-                                        <h4 className="font-headline font-bold text-primary mb-2 flex items-center gap-2"><span className="material-symbols-outlined text-secondary-container">flag</span> Objective</h4>
-                                        <p className="text-on-surface-variant leading-relaxed text-sm">To engage and mobilize defense families and civilian communities, especially underprivileged groups, by creating awareness about opportunities in skill development, entrepreneurship, and social innovation.</p>
+                                        <h4 className="font-headline font-bold text-primary text-sm mb-1 flex items-center gap-2"><span className="material-symbols-outlined text-secondary-container text-lg">flag</span> Objective</h4>
+                                        <p className="text-on-surface-variant text-xs leading-relaxed">To engage and mobilize defense families and civilian communities, especially underprivileged groups, by creating awareness about opportunities in skill development, entrepreneurship, and social innovation.</p>
                                     </div>
                                     <div>
-                                        <h4 className="font-headline font-bold text-primary mb-2 flex items-center gap-2"><span className="material-symbols-outlined text-secondary-container">route</span> Approach</h4>
-                                        <p className="text-on-surface-variant text-sm">Outreach is conducted through household visits, community halls (Samaj Mandirs), religious institutions, youth clubs, SHG federations, schools and colleges, International Business Expo Pune.</p>
+                                        <h4 className="font-headline font-bold text-primary text-sm mb-1 flex items-center gap-2"><span className="material-symbols-outlined text-secondary-container text-lg">route</span> Approach</h4>
+                                        <p className="text-on-surface-variant text-xs leading-relaxed">Outreach through household visits, community halls, religious institutions, youth clubs, SHG federations, schools and colleges.</p>
                                     </div>
-                                    <div className="bg-secondary-container/10 border border-secondary-container/30 rounded-xl p-6">
-                                        <h4 className="font-headline font-bold text-primary mb-2 flex items-center gap-2"><span className="material-symbols-outlined text-secondary-container">trending_up</span> Impact</h4>
-                                        <p className="text-on-surface-variant text-sm">The initiative has successfully reached <strong className="text-primary">over 10,000+ beneficiaries</strong> from defense and civilian communities through the efforts of KCB and DMF under the COE.</p>
+                                    <div className="bg-secondary-container/10 border border-secondary-container/30 rounded-xl p-4">
+                                        <h4 className="font-headline font-bold text-primary text-sm mb-1 flex items-center gap-2"><span className="material-symbols-outlined text-secondary-container text-lg">trending_up</span> Impact</h4>
+                                        <p className="text-on-surface-variant text-xs">Reached <strong className="text-primary">over 10,000+ beneficiaries</strong> from defense and civilian communities.</p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Program 2 — Counselling */}
-                        <div className="mb-16 bg-surface-container-low rounded-2xl overflow-hidden shadow-lg">
-                            <div className="grid grid-cols-1 md:grid-cols-12">
-                                <div className="md:col-span-4 bg-[#2e7d32] p-10 flex flex-col justify-center">
-                                    <span className="text-white/70 font-bold text-xs tracking-widest uppercase mb-4">Program 02</span>
-                                    <h3 className="font-headline text-3xl font-extrabold text-white mb-3">Counselling Sessions</h3>
-                                    <p className="text-white/70 text-sm font-semibold italic">Guiding Talent, Shaping Careers</p>
-                                    <div className="mt-6 w-12 h-1 bg-white/30"></div>
+                            {/* Program 2 — Counselling Sessions */}
+                            <div className="bg-surface-container-low rounded-2xl overflow-hidden shadow-lg hover:-translate-y-1 transition-all duration-300">
+                                <div className="bg-[#2e7d32] p-6">
+                                    <span className="text-white/70 font-bold text-[10px] tracking-widest uppercase mb-2 block">Program 02</span>
+                                    <h3 className="font-headline text-2xl font-extrabold text-white mb-1">Counselling Sessions</h3>
+                                    <p className="text-white/70 text-xs font-semibold italic">Guiding Talent, Shaping Careers</p>
                                 </div>
-                                <div className="md:col-span-8 p-10 space-y-6">
+                                <div className="p-6 space-y-4">
                                     <div>
-                                        <h4 className="font-headline font-bold text-primary mb-2 flex items-center gap-2"><span className="material-symbols-outlined text-[#2e7d32]">flag</span> Objective</h4>
-                                        <p className="text-on-surface-variant leading-relaxed text-sm">To provide personalized career guidance, skill mapping, and mentorship to youth, women, and defense families, enabling them to make informed career choices and access employment opportunities.</p>
+                                        <h4 className="font-headline font-bold text-primary text-sm mb-1 flex items-center gap-2"><span className="material-symbols-outlined text-[#2e7d32] text-lg">flag</span> Objective</h4>
+                                        <p className="text-on-surface-variant text-xs leading-relaxed">To provide personalized career guidance, skill mapping, and mentorship to youth, women, and defense families, enabling informed career choices.</p>
                                     </div>
                                     <div>
-                                        <h4 className="font-headline font-bold text-primary mb-2 flex items-center gap-2"><span className="material-symbols-outlined text-[#2e7d32]">route</span> Approach</h4>
-                                        <ul className="text-on-surface-variant text-sm space-y-1 ml-4 list-disc">
+                                        <h4 className="font-headline font-bold text-primary text-sm mb-1 flex items-center gap-2"><span className="material-symbols-outlined text-[#2e7d32] text-lg">route</span> Approach</h4>
+                                        <ul className="text-on-surface-variant text-xs space-y-1 ml-4 list-disc">
                                             <li>Individual career counseling and guidance</li>
                                             <li>Community Counselling</li>
                                             <li>Skills and talent assessment</li>
-                                            <li>Mentorship sessions with industry experts and innovators</li>
+                                            <li>Mentorship with industry experts</li>
                                         </ul>
                                     </div>
-                                    <div className="bg-[#2e7d32]/10 border border-[#2e7d32]/30 rounded-xl p-6">
-                                        <h4 className="font-headline font-bold text-primary mb-3 flex items-center gap-2"><span className="material-symbols-outlined text-[#2e7d32]">trending_up</span> Impact</h4>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="text-center bg-white rounded-lg p-4">
-                                                <div className="font-headline text-3xl font-black text-[#2e7d32]">230+</div>
-                                                <div className="text-xs text-on-surface-variant uppercase tracking-wide mt-1">Youths & Women Enrolled in SkillReach, She Leads & COE</div>
+                                    <div className="bg-[#2e7d32]/10 border border-[#2e7d32]/30 rounded-xl p-4">
+                                        <h4 className="font-headline font-bold text-primary text-sm mb-2 flex items-center gap-2"><span className="material-symbols-outlined text-[#2e7d32] text-lg">trending_up</span> Impact</h4>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="text-center bg-white rounded-lg p-3">
+                                                <div className="font-headline text-2xl font-black text-[#2e7d32]">230+</div>
+                                                <div className="text-[10px] text-on-surface-variant uppercase tracking-wide mt-1">Youths & Women Enrolled</div>
                                             </div>
-                                            <div className="text-center bg-white rounded-lg p-4">
-                                                <div className="font-headline text-3xl font-black text-[#2e7d32]">200+</div>
-                                                <div className="text-xs text-on-surface-variant uppercase tracking-wide mt-1">School Students in Career Guidance Program</div>
+                                            <div className="text-center bg-white rounded-lg p-3">
+                                                <div className="font-headline text-2xl font-black text-[#2e7d32]">200+</div>
+                                                <div className="text-[10px] text-on-surface-variant uppercase tracking-wide mt-1">In Career Guidance</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Program 3 — SkillReach */}
-                        <div id="skill-reach" className="bg-surface-container-low rounded-2xl overflow-hidden shadow-lg">
-                            <div className="bg-primary text-white p-10">
-                                <span className="text-secondary-container font-bold text-xs tracking-widest uppercase mb-3 block">Program 03 </span>
-                                <h3 className="font-headline text-3xl font-extrabold mb-2">SkillReach — Job Readiness Program</h3>
-                                <p className="text-white/70 max-w-3xl">COE's ongoing programs actively focus on skill enhancement, entrepreneurship development, career guidance, and language proficiency, benefiting hundreds of youth and women from defence families and civilian communities.</p>
-                            </div>
-                            <div className="p-10">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {/* 1. Foreign Languages */}
-                                    <div className="bg-white border border-outline-variant/20 rounded-xl p-6 shadow-sm">
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className="w-10 h-10 bg-primary text-white rounded-lg flex items-center justify-center font-headline font-black text-lg">1</div>
-                                            <h4 className="font-headline font-bold text-primary text-lg">Foreign Languages Training</h4>
-                                        </div>
-                                        <div className="space-y-2 text-sm text-on-surface-variant">
-                                            <div className="flex items-center justify-between px-3 py-2 bg-surface-container-low rounded-lg">
-                                                <span className="font-medium text-primary">🇩🇪 German (A1, A2, B1)</span>
-                                                <span className="text-xs bg-primary text-white px-2 py-0.5 rounded-full">20 students/batch</span>
-                                            </div>
-                                            <div className="flex items-center justify-between px-3 py-2 bg-surface-container-low rounded-lg">
-                                                <span className="font-medium text-primary">🇯🇵 Japanese Language</span>
-                                                <span className="text-xs bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full">20 enrolled</span>
-                                            </div>
-                                        </div>
+                            {/* Program 3 — Digital & Technical Skills */}
+                            <div className="bg-surface-container-low rounded-2xl overflow-hidden shadow-lg hover:-translate-y-1 transition-all duration-300">
+                                <div className="bg-secondary-container p-6">
+                                    <span className="text-on-secondary-container/70 font-bold text-[10px] tracking-widest uppercase mb-2 block">Program 03</span>
+                                    <h3 className="font-headline text-2xl font-extrabold text-on-secondary-container mb-1">Digital & Technical Skills</h3>
+                                    <p className="text-on-secondary-container/70 text-xs font-semibold italic">Building Digital Competencies</p>
+                                </div>
+                                <div className="p-6 space-y-4">
+                                    <div>
+                                        <h4 className="font-headline font-bold text-primary text-sm mb-1 flex items-center gap-2"><span className="material-symbols-outlined text-secondary-container text-lg">flag</span> Objective</h4>
+                                        <p className="text-on-surface-variant text-xs leading-relaxed">To equip youth and community members with essential digital and technical skills, enhancing their employability in the modern workforce.</p>
                                     </div>
-                                    {/* 2. Digital & Technical */}
-                                    <div className="bg-white border border-outline-variant/20 rounded-xl p-6 shadow-sm">
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className="w-10 h-10 bg-[#2e7d32] text-white rounded-lg flex items-center justify-center font-headline font-black text-lg">2</div>
-                                            <h4 className="font-headline font-bold text-primary text-lg">Digital & Technical Skills</h4>
-                                        </div>
-                                        <div className="space-y-2 text-sm text-on-surface-variant">
-                                            <div className="flex items-center justify-between px-3 py-2 bg-surface-container-low rounded-lg">
-                                                <span className="font-medium text-primary">Advanced Excel</span>
-                                                <span className="text-xs bg-[#2e7d32] text-white px-2 py-0.5 rounded-full">120 benefited</span>
-                                            </div>
-                                            <div className="flex items-center justify-between px-3 py-2 bg-surface-container-low rounded-lg">
-                                                <span className="font-medium text-primary">Digital Marketing</span>
-                                                <span className="text-xs bg-[#2e7d32] text-white px-2 py-0.5 rounded-full">25 completed</span>
-                                            </div>
-                                            <div className="flex items-center justify-between px-3 py-2 bg-surface-container-low rounded-lg">
-                                                <span className="font-medium text-primary">Tally Prime with GST</span>
-                                                <span className="text-xs bg-surface-container text-on-surface-variant px-2 py-0.5 rounded-full">10 enrolled</span>
-                                            </div>
-                                        </div>
+                                    <div>
+                                        <h4 className="font-headline font-bold text-primary text-sm mb-1 flex items-center gap-2"><span className="material-symbols-outlined text-secondary-container text-lg">route</span> Approach</h4>
+                                        <ul className="text-on-surface-variant text-xs space-y-1 ml-4 list-disc">
+                                            <li>Advanced Excel training</li>
+                                            <li>Digital Marketing certification</li>
+                                            <li>Tally Prime with GST</li>
+                                        </ul>
                                     </div>
-                                    {/* 3. Women's Entrepreneurship */}
-                                    <div className="bg-white border border-outline-variant/20 rounded-xl p-6 shadow-sm">
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className="w-10 h-10 bg-secondary-container text-on-secondary-container rounded-lg flex items-center justify-center font-headline font-black text-lg">3</div>
-                                            <h4 className="font-headline font-bold text-primary text-lg">Women's Entrepreneurship</h4>
-                                        </div>
-                                        <div className="space-y-2 text-sm text-on-surface-variant">
-                                            <div className="px-3 py-2 bg-surface-container-low rounded-lg">
-                                                <div className="font-medium text-primary">🍬 Sweet Enterprise Development</div>
-                                                <div className="text-xs mt-1">15 women formed a Common Producer Group for startup</div>
+                                    <div className="bg-secondary-container/10 border border-secondary-container/30 rounded-xl p-4">
+                                        <h4 className="font-headline font-bold text-primary text-sm mb-2 flex items-center gap-2"><span className="material-symbols-outlined text-secondary-container text-lg">trending_up</span> Impact</h4>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            <div className="text-center bg-white rounded-lg p-3">
+                                                <div className="font-headline text-2xl font-black text-primary">120</div>
+                                                <div className="text-[10px] text-on-surface-variant uppercase tracking-wide mt-1">Excel</div>
                                             </div>
-                                            <div className="px-3 py-2 bg-surface-container-low rounded-lg">
-                                                <div className="font-medium text-primary">👜 Leather Enterprise Development</div>
-                                                <div className="text-xs mt-1">10 women developed skills for enterprise initiatives</div>
+                                            <div className="text-center bg-white rounded-lg p-3">
+                                                <div className="font-headline text-2xl font-black text-primary">25</div>
+                                                <div className="text-[10px] text-on-surface-variant uppercase tracking-wide mt-1">Marketing</div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    {/* 4. Career & Defence */}
-                                    <div className="bg-white border border-outline-variant/20 rounded-xl p-6 shadow-sm">
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className="w-10 h-10 bg-primary text-white rounded-lg flex items-center justify-center font-headline font-black text-lg">4</div>
-                                            <h4 className="font-headline font-bold text-primary text-lg">Career Guidance & Defence</h4>
-                                        </div>
-                                        <div className="px-3 py-3 bg-primary/5 border-l-4 border-primary rounded-r-lg">
-                                            <div className="font-headline text-3xl font-black text-primary">200+</div>
-                                            <p className="text-sm text-on-surface-variant mt-1">Students currently receiving guidance on career opportunities in the defence sector after 10th grade, preparing them for informed career choices.</p>
+                                            <div className="text-center bg-white rounded-lg p-3">
+                                                <div className="font-headline text-2xl font-black text-primary">10</div>
+                                                <div className="text-[10px] text-on-surface-variant uppercase tracking-wide mt-1">Tally</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </section>
 
-
-                {/* Impact Timeline */}
-                <section className="py-24 bg-surface px-8">
-                    <div className="max-w-5xl mx-auto">
-                        <div className="text-center mb-16">
-                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">Journey So Far</span>
-                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">ICOE Impact Timeline</h2>
-                            <div className="w-16 h-1 bg-secondary-container mx-auto"></div>
-                        </div>
-                        <div className="relative">
-                            {/* Vertical line */}
-                            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-outline-variant/40 hidden md:block"></div>
-                            <div className="space-y-10">
-                                {[
-                                    {
-                                        date: 'September 2025',
-                                        title: 'ICOE Established',
-                                        desc: 'MOU signed between Khadki Cantonment Board and Dr. Dnyaneshwar Mulay Foundation. COE inaugurated at Nehru Garden, Khadki, Pune.',
-                                        color: 'bg-primary',
-                                        tag: 'Milestone',
-                                    },
-                                    {
-                                        date: 'Sept – Oct 2025',
-                                        title: 'Community Mobilization Drive',
-                                        desc: 'Outreach conducted across household visits, Samaj Mandirs, schools, and colleges. Over 10,000+ beneficiaries reached across defence and civilian communities.',
-                                        color: 'bg-secondary-container',
-                                        tag: 'Outreach',
-                                    },
-                                    {
-                                        date: 'Oct 2025',
-                                        title: 'SkillReach Programmes Launched',
-                                        desc: 'German (A1–B1), Japanese Language, Advanced Excel, Digital Marketing, and Tally Prime training batches commenced with 230+ youth enrolled.',
-                                        color: 'bg-[#2e7d32]',
-                                        tag: 'Training',
-                                    },
-                                    {
-                                        date: 'Nov 2025',
-                                        title: 'She Leads — Women Enterprise Drive',
-                                        desc: '25 women trained in Sweet Enterprise and Leather Enterprise development. Two Common Producer Groups formed for self-sustaining startup ventures.',
-                                        color: 'bg-primary',
-                                        tag: 'Empowerment',
-                                    },
-                                    {
-                                        date: 'Dec 2025',
-                                        title: 'International Job Placement Pipeline',
-                                        desc: 'Partnership established with global job recruitment agencies. 200+ candidates shortlisted for BSc Nursing and ITI Electrician placements in Germany.',
-                                        color: 'bg-secondary-container',
-                                        tag: 'Global',
-                                    },
-                                    {
-                                        date: 'Ongoing 2026',
-                                        title: 'Career Guidance & School Outreach',
-                                        desc: '200+ school students enrolled in the Defence Career Guidance programme, helping them explore career paths in the armed forces post 10th grade.',
-                                        color: 'bg-[#2e7d32]',
-                                        tag: 'Education',
-                                    },
-                                ].map((item, i) => (
-                                    <div key={i} className="flex gap-8 items-start">
-                                        <div className="hidden md:flex flex-col items-center flex-shrink-0 w-16">
-                                            <div className={`w-4 h-4 rounded-full ${item.color} shadow-lg mt-1`}></div>
-                                        </div>
-                                        <div className="flex-1 bg-surface-container-low rounded-2xl p-8 shadow-sm border border-outline-variant/10 hover:-translate-y-1 transition-all duration-300">
-                                            <div className="flex flex-wrap items-center gap-3 mb-3">
-                                                <span className={`text-[10px] font-black tracking-widest uppercase px-3 py-1 rounded-full text-white ${item.color}`}>{item.tag}</span>
-                                                <span className="text-xs font-bold text-secondary uppercase tracking-widest">{item.date}</span>
-                                            </div>
-                                            <h4 className="font-headline text-xl font-bold text-primary mb-2">{item.title}</h4>
-                                            <p className="text-on-surface-variant text-sm leading-relaxed">{item.desc}</p>
-                                        </div>
+                            {/* Program 4 — Career Guidance & Defence */}
+                            <div className="bg-surface-container-low rounded-2xl overflow-hidden shadow-lg hover:-translate-y-1 transition-all duration-300">
+                                <div className="bg-primary p-6">
+                                    <span className="text-secondary-container font-bold text-[10px] tracking-widest uppercase mb-2 block">Program 04</span>
+                                    <h3 className="font-headline text-2xl font-extrabold text-white mb-1">Career Guidance & Defence</h3>
+                                    <p className="text-white/70 text-xs font-semibold italic">Shaping Futures, Serving the Nation</p>
+                                </div>
+                                <div className="p-6 space-y-4">
+                                    <div>
+                                        <h4 className="font-headline font-bold text-primary text-sm mb-1 flex items-center gap-2"><span className="material-symbols-outlined text-secondary-container text-lg">flag</span> Objective</h4>
+                                        <p className="text-on-surface-variant text-xs leading-relaxed">To guide students and youth toward career opportunities in the defence sector, helping them explore pathways in the armed forces after 10th grade.</p>
                                     </div>
-                                ))}
+                                    <div>
+                                        <h4 className="font-headline font-bold text-primary text-sm mb-1 flex items-center gap-2"><span className="material-symbols-outlined text-secondary-container text-lg">route</span> Approach</h4>
+                                        <ul className="text-on-surface-variant text-xs space-y-1 ml-4 list-disc">
+                                            <li>School outreach and career awareness</li>
+                                            <li>Defence career orientation workshops</li>
+                                            <li>Physical fitness and aptitude guidance</li>
+                                            <li>Mentorship from defence professionals</li>
+                                        </ul>
+                                    </div>
+                                    <div className="bg-secondary-container/10 border border-secondary-container/30 rounded-xl p-4">
+                                        <h4 className="font-headline font-bold text-primary text-sm mb-1 flex items-center gap-2"><span className="material-symbols-outlined text-secondary-container text-lg">trending_up</span> Impact</h4>
+                                        <p className="text-on-surface-variant text-xs"><strong className="text-primary">200+ school students</strong> currently receiving guidance on defence career opportunities.</p>
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </section>
+
+
+
 
                 {/* Upcoming Programs */}
                 <section className="py-24 bg-surface-container-low px-8">
@@ -621,7 +640,7 @@ export default function ICOE() {
                 </section>
 
                 {/* ── Social Innovation Path ─────────────────────────────── */}
-                <section className="py-24 bg-surface px-8">
+                <section id="social-innovation-path" className="py-24 bg-surface px-8">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
                             <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">DMF Initiative</span>
