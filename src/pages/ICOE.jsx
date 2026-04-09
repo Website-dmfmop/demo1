@@ -8,14 +8,14 @@ export default function ICOE() {
         <div>
             <main>
                 {/* Hero Section */}
-                <section className="relative min-h-[700px] flex items-center overflow-hidden bg-primary">
+                <section className="relative w-full aspect-video flex items-center overflow-hidden bg-primary">
                     <div className="absolute inset-0 z-0">
                         <img
                             alt="ICOE Khadki Cantonment Board"
-                            className="w-full h-full object-cover opacity-30 mix-blend-luminosity"
-                            src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1600&auto=format"
+                            className="w-full h-full object-cover"
+                            src="/Images/1.png"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-tr from-primary via-primary/80 to-transparent"></div>
+
                     </div>
                     <div className="relative z-10 max-w-7xl mx-auto px-8 w-full pt-24">
                         <div className="max-w-3xl">
@@ -27,11 +27,9 @@ export default function ICOE() {
                                 <span className="text-secondary-container">of Excellence</span>
                             </h1>
                             <p className="text-xl text-white/80 mb-4 leading-relaxed font-medium max-w-2xl">
-                                A collaborative initiative between <strong className="text-white">Khadki Cantonment Board (KCB)</strong> and <strong className="text-white">Dr. Dnyaneshwar Mulay Foundation (DMF)</strong>, established September 2025.
+                                A collaborative initiative between <strong className="text-white">Khadki Cantonment Board</strong> and <strong className="text-white">Dr. Dnyaneshwar Mulay Foundation</strong>, established September 2025.
                             </p>
-                            <p className="text-white/60 text-sm max-w-xl leading-relaxed mb-10">
-                                Promoting social innovation, skill development, entrepreneurship, and global employment opportunities for defense families and civilians.
-                            </p>
+
                             <div className="flex flex-wrap gap-4">
                                 <a href="#about" className="px-8 py-4 bg-gradient-to-r from-[#fe9832] to-secondary-container text-white font-headline font-bold rounded-md tracking-widest shadow-2xl hover:scale-105 transition-transform uppercase text-sm">
                                     Explore ICOE
