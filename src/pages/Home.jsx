@@ -86,7 +86,7 @@ export default function Home() {
         <div>
             <main>
                 {/* Hero Section */}
-                <section className="relative h-[921px] flex items-end md:items-center overflow-hidden">
+                <section className="relative w-full aspect-[16/8] flex items-end md:items-center overflow-hidden">
                     <div className="absolute inset-0 z-0">
                         <picture>
                             <source media="(max-width: 768px)" srcSet="/Images/mobile_interface%20_image.png" />
