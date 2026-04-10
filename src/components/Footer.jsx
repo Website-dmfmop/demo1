@@ -34,12 +34,11 @@ const Footer = () => (
         <div className="flex flex-col md:flex-row justify-between items-start w-full px-12 py-12 gap-12 max-w-7xl mx-auto relative z-10">
             {/* Brand */}
             <div className="flex-1 max-w-sm">
-                <div className="text-xl font-bold text-white font-headline mb-2 tracking-tighter">
-                    DR. DNYANESHWAR MULE FOUNDATION
-                </div>
-                <div className="text-[#fe9832] font-bold text-xs uppercase tracking-widest mb-4">
-                    Movement of Positivity
-                </div>
+                <img
+                    src="/logo/dmfmop_logo.png"
+                    alt="DMF - Movement of Positivity"
+                    className="h-16 w-auto object-contain mb-4"
+                />
                 <p className="text-gray-300 font-body leading-relaxed mb-6 text-sm">
                     Creating a society based on positivity, compassion and creativity.
                     Globally recognized since 2019 with major presence in Western Maharashtra.

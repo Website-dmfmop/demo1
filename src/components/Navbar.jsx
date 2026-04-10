@@ -17,12 +17,11 @@ const Navbar = () => {
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 bg-white/10 backdrop-blur-2xl border-b border-white/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
             <div className="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
-                <div className="flex flex-col leading-tight">
-                    <div className="text-base font-extrabold tracking-tighter text-white font-headline uppercase drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
-                        Dr. Dnyaneshwar Mule Foundation
-                    </div>
-                    <div className="text-[10px] text-[#fe9832] font-bold tracking-[0.2em] uppercase">DMF • Movement of Positivity</div>
-                </div>
+                <img
+                    src="/logo/dmfmop_logo.png"
+                    alt="DMF - Movement of Positivity"
+                    className="h-12 w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
+                />
                 <div className="flex items-center gap-6">
                     <div className="hidden md:flex items-center gap-6">
                         <Link className={getLinkClass('/')} to="/">Home</Link>

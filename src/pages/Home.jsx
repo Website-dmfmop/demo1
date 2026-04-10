@@ -74,7 +74,10 @@ export default function Home() {
                 {/* Hero Section */}
                 <section className="relative h-[921px] flex items-center overflow-hidden">
                     <div className="absolute inset-0 z-0">
-                        <img alt="Empowering Communities" className="w-full h-full object-cover" src="/Images/1.png" />
+                        <picture>
+                            <source media="(max-width: 768px)" srcSet="/Images/mobile_interface%20_image.png" />
+                            <img alt="Empowering Communities" className="w-full h-full object-cover object-center" src="/Images/1.png" />
+                        </picture>
                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/60 via-primary/20 to-transparent"></div>
                     </div>
                     <div className="relative z-10 max-w-7xl mx-auto px-8 w-full">
