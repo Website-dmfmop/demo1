@@ -9,6 +9,16 @@ const SLIDES = [
         caption: 'Dr. Dnyaneshwar Mule — Founder & President',
     },
     {
+        src: '/Images/social_work_3.png',
+        alt: 'DMF Community Initiatives',
+        caption: 'Empowering Communities Through Education',
+    },
+    {
+        src: '/Images/about_page_5.png',
+        alt: 'DMF Community Initiatives',
+        caption: 'Empowering Communities Through Education',
+    },
+    {
         src: '/Images/social_work_1.png',
         alt: 'Dr. Dnyaneshwar Mule',
         caption: 'Dr. Dnyaneshwar Mule — Founder & President',
@@ -18,11 +28,7 @@ const SLIDES = [
         alt: 'Riyaj',
         caption: 'Empowering Communities Through Education',
     },
-    {
-        src: '/Images/social_work_3.png',
-        alt: 'DMF Community Initiatives',
-        caption: 'Empowering Communities Through Education',
-    },
+
     {
         src: '/Images/about_page_2.png',
         alt: 'DMF Community Initiatives',
@@ -30,12 +36,6 @@ const SLIDES = [
     },
     {
         src: '/Images/2.png',
-        alt: 'DMF Community Initiatives',
-        caption: 'Empowering Communities Through Education',
-    },
-
-    {
-        src: '/Images/about_page_5.png',
         alt: 'DMF Community Initiatives',
         caption: 'Empowering Communities Through Education',
     },

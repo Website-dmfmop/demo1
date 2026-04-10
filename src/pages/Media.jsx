@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 /* ─── Data ────────────────────────────────────────────────────────────── */
 
 const MEDIA_ITEMS = [
-    { category: 'Events', src: '/Images/about_page_1.png', title: 'ICOE Inauguration — Khadki, Pune', date: 'September 2025' },
+    { category: 'Events', src: '/Images/home_page_slide_image_3.jpeg', title: 'ICOE Inauguration — Khadki, Pune', date: 'September 2025' },
     { category: 'Community', src: '/Images/about_page_2.png', title: 'Community Mobilization Drive', date: 'October 2025' },
     { category: 'Events', src: '/Images/about_page_3.png', title: 'Dr. Mule Addresses Youth Leaders', date: 'November 2025' },
     { category: 'Programmes', src: '/Images/about_page_4.png', title: 'She Leads — Women Enterprise Workshop', date: 'November 2025' },
@@ -21,12 +21,6 @@ const MEDIA_ITEMS = [
 const PRESS = [
     { outlet: 'The Hindu', headline: 'DMF & KCB launch International Centre of Excellence to empower youth in Pune', date: 'Sep 2025', tag: 'ICOE', color: 'border-primary', url: 'https://www.skillreporter.com/regional/maharashtra/dnyaneshwar-mulay-foundation-khadki-cantonment-board-centre-of-excellence-skill-development-pune/' },
     { outlet: 'Pune Mirror', headline: 'She Leads programme sees 25 women form producer groups for sustainable enterprise', date: 'Nov 2025', tag: 'Women', color: 'border-secondary-container', url: '#' },
-    { outlet: 'Maharashtra Times', headline: 'ICOE reaches 10,000 beneficiaries in six months — Dr. Dnyaneshwar Mule Foundation', date: 'Mar 2026', tag: 'Impact', color: 'border-[#2e7d32]', url: 'https://www.skillreporter.com/regional/maharashtra/dnyaneshwar-mulay-foundation-khadki-cantonment-board-centre-of-excellence-skill-development-pune/' },
-    { outlet: 'Sakal', headline: 'International job placement pipeline for 200+ youth in Germany launched by DMF', date: 'Dec 2025', tag: 'Global', color: 'border-primary', url: '#' },
-    { outlet: 'Lokmat', headline: 'ICOE-KCB-DMF collaboration brings world-class skill training to Khadki defence families', date: 'Oct 2025', tag: 'Skills', color: 'border-secondary-container', url: '#' },
-    { outlet: 'Times of India', headline: 'Former IFS diplomat Dr. Dnyaneshwar Mule builds grassroots innovation movement in Pune', date: 'Sep 2025', tag: 'Profile', color: 'border-[#2e7d32]', url: '#' },
-    { outlet: 'Indian Express', headline: 'Social innovation labs launched in colleges under DMF — academia-industry bridge', date: 'Feb 2026', tag: 'Innovation', color: 'border-primary', url: '#' },
-    { outlet: 'Economic Times', headline: 'DMF Nursing Institute GNM programme preparing globally competent healthcare workforce', date: 'Mar 2026', tag: 'Healthcare', color: 'border-secondary-container', url: '#' },
 ];
 
 const PUBLICATIONS = [
@@ -85,29 +79,29 @@ const VIDEOS = [
         link: 'https://www.youtube.com/watch?v=Tn4QTjjBbO4',
     },
     {
-        title: 'She Leads — Women Enterprise Stories',
-        desc: 'Hear firsthand stories from women entrepreneurs who transformed their lives through the She Leads programme at ICOE-KCB-DMF.',
+        title: 'The Man Who Transformed Indias Passport System',
+        desc: 'Dr. Dnyaneshwar Mulay, a former IFS diplomat, revolutionized India’s passport system by introducing the Passport Seva Kendra (PSK) model, making passport services faster, more transparent, and accessible to citizens across the country.',
         thumb: '/Images/about_page_4.png',
         duration: '6:15',
         tag: 'Programmes',
-        link: '#',
+        link: 'https://www.youtube.com/watch?v=kmmfxdBbZLA',
     },
     {
-        title: 'SkillReach — German Language Success Stories',
+        title: 'Empowering Indias Youth',
         desc: 'Meet the batch of youth who completed the German A1–B1 course and are now on the international job placement pipeline to Germany.',
         thumb: '/Images/about_page_5.png',
         duration: '5:48',
         tag: 'Community',
-        link: '#',
+        link: 'https://www.youtube.com/watch?v=XRbwqNQFZWw',
     },
 ];
 
 const SOCIAL = [
-    { platform: 'Facebook', handle: '@dmfmop', icon: 'thumb_up', color: 'bg-[#1877F2]', followers: '12K+' },
-    { platform: 'Instagram', handle: '@dmfmop', icon: 'photo_camera', color: 'bg-[#E1306C]', followers: '8.5K+' },
-    { platform: 'Twitter/X', handle: '@dmfmop', icon: 'rss_feed', color: 'bg-[#1DA1F2]', followers: '4K+' },
-    { platform: 'YouTube', handle: 'DMF Foundation', icon: 'play_circle', color: 'bg-[#FF0000]', followers: '2.1K+' },
-    { platform: 'LinkedIn', handle: 'DMF India', icon: 'work', color: 'bg-[#0A66C2]', followers: '5K+' },
+    { platform: 'Facebook', handle: '@dmfmop', icon: 'thumb_up', color: 'bg-[#1877F2]' },
+    { platform: 'Instagram', handle: '@dmfmop', icon: 'photo_camera', color: 'bg-[#E1306C]' },
+    { platform: 'Twitter/X', handle: '@dmfmop', icon: 'rss_feed', color: 'bg-[#1DA1F2]' },
+    { platform: 'YouTube', handle: 'DMF Foundation', icon: 'play_circle', color: 'bg-[#FF0000]' },
+    { platform: 'LinkedIn', handle: 'DMF India', icon: 'work', color: 'bg-[#0A66C2]' },
 ];
 
 const TABS = ['All', 'Events', 'Community', 'Programmes'];
@@ -155,7 +149,7 @@ export default function Media() {
                         </div>
                         <div className="md:col-span-5 relative">
                             <div className="aspect-[4/5] rounded-xl overflow-hidden shadow-2xl">
-                                <img alt="DMF Media" className="w-full h-full object-cover" src="/Images/about_page_3.png" />
+                                <img alt="DMF Media" className="w-full h-full object-cover" src="/Images/home_page_slide_image_3.jpeg" />
                             </div>
                             <div className="absolute -bottom-6 -left-6 bg-surface-container-lowest p-6 rounded-lg shadow-xl max-w-xs hidden md:block">
                                 <p className="text-secondary font-bold text-3xl font-headline">50+</p>
@@ -400,7 +394,7 @@ export default function Media() {
                                     <div className="font-headline font-bold text-primary text-sm mb-1">{s.platform}</div>
                                     <div className="text-on-surface-variant text-xs mb-2">{s.handle}</div>
                                     <div className="text-secondary-container font-black text-sm">{s.followers}</div>
-                                    <div className="text-on-surface-variant text-[10px] uppercase tracking-widest">Followers</div>
+
                                 </div>
                             ))}
                         </div>

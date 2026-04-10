@@ -8,7 +8,7 @@ export default function ICOE() {
         <div>
             <main>
                 {/* Hero Section */}
-                <section className="relative w-full aspect-video flex items-center overflow-hidden bg-primary">
+                <section className="relative w-full flex items-center overflow-hidden bg-primary" style={{ aspectRatio: '16/5' }}>
                     <div className="absolute inset-0 z-0">
                         <img
                             alt="ICOE Khadki Cantonment Board"
@@ -188,48 +188,41 @@ export default function ICOE() {
                 {/* ── Words Beyond Borders ─────────────────────────────── */}
                 <section id="words-beyond-borders" className="py-24 bg-surface px-8">
                     <div className="max-w-7xl mx-auto">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
-                            <div>
-                                <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">DMF Initiative</span>
-                                <h2 className="font-headline text-4xl font-extrabold text-primary leading-tight mb-4">
-                                    Words Beyond Borders
-                                </h2>
-                                <p className="text-secondary-container font-semibold text-sm mb-6 uppercase tracking-wider">An International Literary Gathering of Diplomat–Authors</p>
-                                <div className="w-16 h-1 bg-secondary-container mb-8"></div>
-                                <p className="text-on-surface-variant leading-relaxed mb-6">
-                                    <strong className="text-primary">Words Beyond Borders</strong> is a unique international literary gathering that celebrates diplomats who have enriched the world of literature through their writings—across diplomacy, fiction, poetry, memoirs, essays, and other forms of creative and intellectual expression.
-                                </p>
-                                <p className="text-on-surface-variant leading-relaxed">
-                                    Diplomats occupy a rare and powerful vantage point in the world. Through their work, they engage with diverse societies, cultures, political systems, and global challenges. They witness moments of conflict and cooperation, negotiation and transformation. Many translate these lived experiences into compelling literary works—offering insights that bridge nations, ideas, and human stories.
-                                </p>
-                            </div>
-                            <div className="space-y-6">
-                                <div className="bg-primary rounded-2xl p-10 text-white">
-                                    <span className="material-symbols-outlined text-secondary-container text-5xl mb-4 block">auto_stories</span>
-                                    <h3 className="font-headline text-2xl font-bold mb-3">A Celebration of Diplomacy & Literature</h3>
-                                    <p className="text-white/80 text-sm leading-relaxed mb-6">
-                                        This initiative brings together diplomat-authors from around the world to share their literary works, exchange ideas, and foster cross-cultural dialogue through the power of the written word.
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-stretch">
+
+                            {/* LEFT — Text + Slogan */}
+                            <div className="flex flex-col justify-between">
+                                <div>
+                                    <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">DMF Initiative</span>
+                                    <h2 className="font-headline text-4xl font-extrabold text-primary leading-tight mb-4">
+                                        Words Beyond Borders
+                                    </h2>
+                                    <p className="text-secondary-container font-semibold text-sm mb-6 uppercase tracking-wider">An International Literary Gathering of Diplomat–Authors</p>
+                                    <div className="w-16 h-1 bg-secondary-container mb-8"></div>
+                                    <p className="text-on-surface-variant leading-relaxed mb-6">
+                                        <strong className="text-primary">Words Beyond Borders</strong> is a unique international literary gathering that celebrates diplomats who have enriched the world of literature through their writings—across diplomacy, fiction, poetry, memoirs, essays, and other forms of creative and intellectual expression.
                                     </p>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {[
-                                            { icon: 'public', label: 'International Gathering' },
-                                            { icon: 'menu_book', label: 'Literary Excellence' },
-                                            { icon: 'diversity_3', label: 'Cross-Cultural Dialogue' },
-                                            { icon: 'history_edu', label: 'Diplomatic Insights' },
-                                        ].map((s, i) => (
-                                            <div key={i} className="bg-white/10 border border-white/20 rounded-xl p-4 text-center">
-                                                <span className="material-symbols-outlined text-secondary-container text-2xl mb-2 block">{s.icon}</span>
-                                                <div className="text-white/70 text-xs uppercase tracking-wide">{s.label}</div>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    <p className="text-on-surface-variant leading-relaxed mb-8">
+                                        Diplomats occupy a rare and powerful vantage point in the world. Through their work, they engage with diverse societies, cultures, political systems, and global challenges. They witness moments of conflict and cooperation, negotiation and transformation. Many translate these lived experiences into compelling literary works—offering insights that bridge nations, ideas, and human stories.
+                                    </p>
                                 </div>
+                                {/* Slogan at bottom of left column */}
                                 <div className="bg-primary/5 border-l-4 border-secondary-container p-6 rounded-r-xl">
                                     <p className="italic text-primary font-medium leading-relaxed">
                                         "Through their unique experiences across borders and cultures, diplomat-authors offer the world a lens into the complexities of global affairs—stories that inspire understanding and connection."
                                     </p>
                                 </div>
                             </div>
+
+                            {/* RIGHT — Logo image only, matching left column height */}
+                            <div className="rounded-2xl overflow-hidden shadow-xl">
+                                <img
+                                    src="/Images/words_beyound_borders.jpeg"
+                                    alt="Words Beyond Borders Logo"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+
                         </div>
                     </div>
                 </section>
@@ -544,21 +537,34 @@ export default function ICOE() {
                 {/* ── Social Innovation Path ─────────────────────────────── */}
                 <section id="social-innovation-path" className="py-24 bg-surface px-8">
                     <div className="max-w-7xl mx-auto">
-                        <div className="text-center mb-16">
-                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">DMF Initiative</span>
-                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Social Innovation Path</h2>
-                            <div className="w-16 h-1 bg-secondary-container mx-auto mb-6"></div>
-                            <p className="text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
-                                At Dr. Dnyaneshwar Mule Foundation, we believe that real and lasting change emerges when innovation meets purpose. Our Social Innovation Labs are dynamic platforms where ideas, people, and resources come together to solve pressing social challenges — bringing together students, academicians, government stakeholders, industry experts, and community members to co-create practical, scalable, and impactful solutions.
-                            </p>
-                        </div>
-
-                        {/* Vision */}
-                        <div className="bg-primary/5 border-l-4 border-secondary-container rounded-r-2xl p-8 mb-16 max-w-3xl mx-auto">
-                            <h3 className="font-headline text-xl font-bold text-primary mb-3 flex items-center gap-2">
-                                <span className="material-symbols-outlined text-secondary-container">visibility</span> Our Vision
-                            </h3>
-                            <p className="text-on-surface-variant leading-relaxed">To build a vibrant ecosystem of innovation that empowers communities, strengthens institutions, and drives sustainable and inclusive development.</p>
+                        {/* Two-column intro: content left, image right */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-16">
+                            {/* Left — text content */}
+                            <div>
+                                <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">DMF Initiative</span>
+                                <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Social Innovation Path</h2>
+                                <div className="w-16 h-1 bg-secondary-container mb-6"></div>
+                                <p className="text-on-surface-variant leading-relaxed mb-8">
+                                    At Dr. Dnyaneshwar Mule Foundation, we believe that real and lasting change emerges when innovation meets purpose. Our Social Innovation Labs are dynamic platforms where ideas, people, and resources come together to solve pressing social challenges — bringing together students, academicians, government stakeholders, industry experts, and community members to co-create practical, scalable, and impactful solutions.
+                                </p>
+                                {/* Vision */}
+                                <div className="bg-primary/5 border-l-4 border-secondary-container rounded-r-2xl p-6">
+                                    <h3 className="font-headline text-xl font-bold text-primary mb-3 flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-secondary-container">visibility</span> Our Vision
+                                    </h3>
+                                    <p className="text-on-surface-variant leading-relaxed">To build a vibrant ecosystem of innovation that empowers communities, strengthens institutions, and drives sustainable and inclusive development.</p>
+                                </div>
+                            </div>
+                            {/* Right — image */}
+                            <div className="relative">
+                                <img
+                                    src="/Images/Social_innovation_image.jpeg"
+                                    alt="Social Innovation Path"
+                                    className="w-full h-full object-cover rounded-2xl shadow-xl"
+                                    style={{ maxHeight: '480px' }}
+                                />
+                                <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-black/10 pointer-events-none"></div>
+                            </div>
                         </div>
 
                         {/* What Our Social Innovation Labs Do */}

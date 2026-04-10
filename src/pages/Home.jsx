@@ -86,7 +86,7 @@ export default function Home() {
         <div>
             <main>
                 {/* Hero Section */}
-                <section className="relative h-[921px] flex items-center overflow-hidden">
+                <section className="relative h-[921px] flex items-end md:items-center overflow-hidden">
                     <div className="absolute inset-0 z-0">
                         <picture>
                             <source media="(max-width: 768px)" srcSet="/Images/mobile_interface%20_image.png" />
@@ -94,7 +94,7 @@ export default function Home() {
                         </picture>
                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/60 via-primary/20 to-transparent"></div>
                     </div>
-                    <div className="relative z-10 max-w-7xl mx-auto px-8 w-full">
+                    <div className="relative z-10 max-w-7xl mx-auto px-8 w-full pb-12 md:pb-0">
                         <div className="max-w-3xl">
                             <span className="inline-block px-4 py-1 mb-4 bg-secondary-container text-on-secondary-container text-xs font-bold tracking-widest uppercase rounded-full">
                                 DMF • Movement of Positivity
@@ -102,9 +102,6 @@ export default function Home() {
                             <h1 className="font-headline text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-8 tracking-tighter">
                                 ENABLING COMMUNITIES <span className="text-secondary-container"><div>PROMOTING </div> <div>JUSTICE.</div></span>
                             </h1>
-                            <p className="text-xl text-white/80 mb-3 leading-relaxed font-bold max-w-xl">
-                                A diplomatic legacy dedicated to grassroots transformation, social liberty, and sustainable equality accross the nation.
-                            </p>
                         </div>
                     </div>
                 </section>
@@ -271,7 +268,7 @@ export default function Home() {
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#2e7d32]/90 via-transparent to-transparent"></div>
                                     <div className="absolute bottom-0 left-0 p-8">
                                         <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 text-[10px] font-black tracking-widest uppercase mb-4 inline-block">Community</span>
-                                        <h4 className="text-2xl font-headline font-bold text-white mb-2">Community Mobilization — ICOE</h4>
+                                        <h4 className="text-2xl font-headline font-bold text-white mb-2">Community Mobilization</h4>
                                     </div>
                                 </div>
                             </div>
