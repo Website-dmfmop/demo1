@@ -39,7 +39,7 @@ export default function ICOE() {
                                         { icon: 'lightbulb', label: 'Social Innovation Path', href: '#social-innovation-path' },
                                         { icon: 'diversity_3', label: 'She Leads', href: '#she-leads' },
                                         { icon: 'build', label: 'Skill Reach', href: '#skill-reach' },
-                                        { icon: 'child_care', label: 'Orphanage', href: '#orphanage' },
+                                        { icon: 'elderly', label: 'Old Age Home', href: '#old-age-home' },
                                         { icon: 'work', label: 'Job Fair', href: '#job-fair' },
                                     ].map((item, i) => (
                                         <a
@@ -71,10 +71,12 @@ export default function ICOE() {
                                 <p>
                                     The foundation specializes in <strong className="text-primary">Social Innovation, Urban & Rural Mobilization, Capacity & Skill Building</strong>, and <strong className="text-primary">Transforming Rural & Urban Education</strong> through Digital Classrooms and Innovation Labs.
                                 </p>
-                                <div className="bg-primary/5 border-l-4 border-secondary-container p-6 rounded-r-xl">
-                                    <p className="italic text-primary font-medium leading-relaxed">
-                                        "Our Vision: Work towards creating a modern, democratic, progressive nation. Promoting equality, justice and freedom as core values of a citizen's life."
-                                    </p>
+                                <div className="rounded-2xl overflow-hidden shadow-xl mt-4">
+                                    <img 
+                                        src="/Images/home_page_slide_image_1.jpeg" 
+                                        alt="Dr. Dnyaneshwar Mulay Foundation Team" 
+                                        className="w-full h-auto object-cover max-h-[350px]"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -682,27 +684,27 @@ export default function ICOE() {
 
 
 
-                {/* ── Orphanage Support Programme ─────────────────────────── */}
-                <section id="orphanage" className="py-24 bg-surface-container-low px-8">
+                {/* ── Old Age Home ─────────────────────────── */}
+                <section id="old-age-home" className="py-24 bg-surface-container-low px-8">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
                             <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">DMF Initiative</span>
-                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Orphanage Home</h2>
+                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Old Age Home – A Home of Dignity, Care & Compassion</h2>
                             <div className="w-16 h-1 bg-secondary-container mx-auto mb-6"></div>
                             <p className="text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
-                                The Dr. Dnyaneshwar Mule Foundation actively supports orphaned and underprivileged children through holistic care, education, and skill development initiatives — giving every child dignity, opportunity, and hope for a better future.
+                                At the Dr. Dnyaneshwar Mulay Foundation, we believe that every individual deserves to age with dignity, respect, and emotional security. Our Old Age Home initiative is a heartfelt effort to provide a safe, nurturing, and inclusive environment for senior citizens who seek care, companionship, and a sense of belonging.
                             </p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start mb-16">
-                            {/* Left — What We Do */}
+                            {/* Left — Features */}
                             <div className="space-y-6">
                                 {[
-                                    { icon: 'child_care', title: 'Child Welfare & Nutrition', desc: 'Ensuring access to nutritious meals, clean clothing, and safe shelter for children in care.' },
-                                    { icon: 'school', title: 'Education Support', desc: 'Sponsoring school fees, books, and stationery to keep children enrolled and learning.' },
-                                    { icon: 'psychology', title: 'Counselling & Mental Health', desc: 'Providing psychosocial support and trained counsellors for emotional well-being.' },
-                                    { icon: 'volunteer_activism', title: 'Community Volunteering', desc: 'Mobilising corporate and community volunteers for regular engagement with children.' },
-                                    { icon: 'build', title: 'Vocational Skill Training', desc: 'Introducing age-appropriate vocational skills to prepare older children for livelihood.' },
+                                    { icon: 'home', title: 'Safe & Comfortable Living', desc: 'Well-maintained, hygienic, and secure residential facilities designed to provide a peaceful and homely environment.' },
+                                    { icon: 'health_and_safety', title: 'Healthcare & Wellness Support', desc: 'Regular health check-ups, access to medical professionals, nutritious meals, and wellness activities including yoga and meditation.' },
+                                    { icon: 'psychology', title: 'Emotional & Social Care', desc: 'A caring and empathetic staff. Opportunities for social interaction, and celebration of festivals, birthdays, and cultural events.' },
+                                    { icon: 'sports_esports', title: 'Recreational & Engagement Activities', desc: 'Reading, music, indoor games, skill-based activities, storytelling sessions, and community interaction programs from volunteers.' },
+                                    { icon: 'self_improvement', title: 'Dignity & Respect First', desc: 'We ensure that every resident is treated with utmost respect, maintaining their independence and personal choices.' },
                                 ].map((item, i) => (
                                     <div key={i} className="flex items-start gap-4 p-5 bg-surface-container-lowest rounded-xl border-l-4 border-secondary-container/50 hover:border-secondary-container transition-all">
                                         <span className="material-symbols-outlined text-secondary-container text-2xl mt-0.5">{item.icon}</span>
@@ -714,44 +716,31 @@ export default function ICOE() {
                                 ))}
                             </div>
 
-                            {/* Right — Pillars */}
+                            {/* Right — Vision, Mission, Get Involved */}
                             <div className="space-y-6">
                                 <div className="bg-primary rounded-2xl p-10 text-white">
-                                    <span className="material-symbols-outlined text-secondary-container text-5xl mb-4 block">child_friendly</span>
-                                    <h3 className="font-headline text-2xl font-bold mb-3">Our Commitment</h3>
-                                    <p className="text-white/80 text-sm leading-relaxed mb-6">
-                                        DMF believes no child should grow up without love, care, and the tools to build a meaningful life. Through partnerships with registered orphanages and child care institutions, we bring consistent, quality support.
+                                    <span className="material-symbols-outlined text-secondary-container text-5xl mb-4 block">elderly</span>
+                                    <h3 className="font-headline text-2xl font-bold mb-3">Our Vision & Mission</h3>
+                                    <p className="text-white/90 text-sm leading-relaxed mb-6 font-medium italic">
+                                        "To create a compassionate community where elderly individuals live with dignity, independence, and happiness, supported by holistic care and meaningful engagement."
                                     </p>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {[
-                                            { num: '3+', label: 'Orphanages Supported' },
-                                            { num: '150+', label: 'Children Reached' },
-                                            { num: '100%', label: 'Volunteer-Driven' },
-                                            { num: '2019', label: 'Initiative Since' },
-                                        ].map((s, i) => (
-                                            <div key={i} className="bg-white/10 border border-white/20 rounded-xl p-4 text-center">
-                                                <div className="font-headline text-2xl font-black text-secondary-container">{s.num}</div>
-                                                <div className="text-white/70 text-xs uppercase tracking-wide mt-1">{s.label}</div>
-                                            </div>
-                                        ))}
+                                    <div className="bg-white/10 border border-white/20 rounded-xl p-6">
+                                        <ul className="space-y-3 text-white/80 text-xs">
+                                            {[
+                                                "Provide quality residential care for senior citizens",
+                                                "Ensure physical, emotional, and social well-being",
+                                                "Promote active and healthy aging through engagement",
+                                                "Build a culture of respect and gratitude for the elderly"
+                                            ].map((s, i) => (
+                                                <li key={i} className="flex items-start gap-2">
+                                                    <span className="material-symbols-outlined text-secondary-container text-xs mt-0.5">check_circle</span>
+                                                    {s}
+                                                </li>
+                                            ))}
+                                        </ul>
                                     </div>
                                 </div>
-                                <div className="bg-surface-container-lowest rounded-2xl p-8 border-t-4 border-secondary-container">
-                                    <h4 className="font-headline font-bold text-primary text-lg mb-4">How You Can Help</h4>
-                                    <ul className="space-y-3 text-on-surface-variant text-sm">
-                                        {[
-                                            "Sponsor a child's education for a year",
-                                            "Donate essentials \u2014 books, clothes, hygiene kits",
-                                            "Volunteer your time or professional skills",
-                                            "Partner organisations can link through CSR funding",
-                                        ].map((h, i) => (
-                                            <li key={i} className="flex items-start gap-2">
-                                                <span className="material-symbols-outlined text-secondary-container text-sm mt-0.5">check_circle</span>
-                                                {h}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+
                             </div>
                         </div>
                     </div>

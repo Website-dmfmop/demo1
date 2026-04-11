@@ -66,6 +66,11 @@ const MOBILE_EXTRA_SLIDES = [
         src: '/Images/WhatsApp Image 2026-04-06 at 12.31.40.jpeg',
         alt: 'DMF Community Initiatives',
         caption: 'Empowering Communities Through Education',
+    },
+    {
+        src: '/Images/WhatsApp Image 2026-04-11 at 13.37.44.jpeg',
+        alt: 'DMF Community Initiatives',
+        caption: 'Empowering Communities Through Education',
     }
 ];
 
