@@ -227,10 +227,10 @@ export default function Home() {
                     </div>
                     <div className="max-w-7xl mx-auto px-8 relative z-10">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:text-left">
-                            <StatCounter num={500000} suffix="+" label="Beneficiaries" colorClass="text-secondary-container" started={counterStarted} duration={5000} />
-                            <StatCounter num={10000} suffix="+" label="ICOE Outreach" colorClass="text-white" started={counterStarted} duration={5000} />
-                            <StatCounter num={230} suffix="+" label="Youth Enrolled" colorClass="text-secondary-container" started={counterStarted} duration={5000} />
-                            <StatCounter num={200} suffix="+" label="Int'l Placements" colorClass="text-white" started={counterStarted} duration={5000} />
+                            <StatCounter num={500} suffix="K+" label="Beneficiaries" colorClass="text-secondary-container" started={counterStarted} duration={1} />
+                            <StatCounter num={200} suffix="+" label="Int'l Placements" colorClass="text-white" started={counterStarted} duration={10} />
+                            <StatCounter num={230} suffix="+" label="Youth Enrolled" colorClass="text-secondary-container" started={counterStarted} duration={1} />
+                            <StatCounter num={10} suffix="K+" label="ICOE Outreach" colorClass="text-white" started={counterStarted} duration={0.01} />
                         </div>
                     </div>
                 </section>

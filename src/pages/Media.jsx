@@ -4,23 +4,24 @@ import { Link } from 'react-router-dom';
 /* ─── Data ────────────────────────────────────────────────────────────── */
 
 const MEDIA_ITEMS = [
-    { category: 'Events', src: '/Images/home_page_slide_image_3.jpeg', title: 'ICOE Inauguration — Khadki, Pune', date: 'September 2025' },
+    { category: 'Events', src: '/Images/WhatsApp Image 2026-04-09 at 15.25.51.jpeg', title: 'ICOE Inauguration — Khadki, Pune', date: 'September 2025' },
     { category: 'Community', src: '/Images/about_page_2.png', title: 'Community Mobilization Drive', date: 'October 2025' },
-    { category: 'Events', src: '/Images/about_page_3.png', title: 'Dr. Mule Addresses Youth Leaders', date: 'November 2025' },
-    { category: 'Programmes', src: '/Images/about_page_4.png', title: 'She Leads — Women Enterprise Workshop', date: 'November 2025' },
+    { category: 'Events', src: '/Images/social_work_1.png', title: 'Dr. Mule Addresses Youth Leaders', date: 'November 2025' },
+    { category: 'Programmes', src: '/Images/WhatsApp Image 2026-04-06 at 12.20.21.jpeg', title: 'She Leads — Women Enterprise Workshop', date: 'November 2025' },
     { category: 'Community', src: '/Images/about_page_5.png', title: 'SkillReach Language Training Batch', date: 'December 2025' },
-    { category: 'Programmes', src: '/Images/2.png', title: 'Digital Classrooms & Innovation Labs', date: 'January 2026' },
-    { category: 'Events', src: '/Images/3.png', title: 'International Business Expo — Pune', date: 'February 2026' },
+    { category: 'Programmes', src: '/Images/WhatsApp Image 2026-04-10 at 10.32.18.jpeg', title: 'Digital Classrooms & Innovation Labs', date: 'January 2026' },
+    { category: 'Events', src: '/Images/WhatsApp Image 2026-04-10 at 10.32.25.jpeg', title: 'International Business Expo — Pune', date: 'February 2026' },
     { category: 'Programmes', src: '/Images/4.png', title: 'Smart Education Initiative Launch', date: 'March 2026' },
     { category: 'Community', src: '/Images/5.png', title: 'Healthcare Outreach — Khadki Cantonment', date: 'March 2026' },
     { category: 'Events', src: '/Images/about_page_1.png', title: 'Annual Review & Strategy Summit — DMF', date: 'January 2026' },
-    { category: 'Programmes', src: '/Images/about_page_4.png', title: 'German Language Batch A2 Completion Ceremony', date: 'February 2026' },
+    { category: 'Programmes', src: '/Images/WhatsApp Image 2026-04-06 at 12.20.18.jpeg', title: 'German Language Batch A2 Completion Ceremony', date: 'February 2026' },
     { category: 'Community', src: '/Images/about_page_2.png', title: 'Flood Relief Distribution — Sangli District', date: 'August 2020' },
 ];
 
 const PRESS = [
     { outlet: 'The Hindu', headline: 'DMF & KCB launch International Centre of Excellence to empower youth in Pune', date: 'Sep 2025', tag: 'ICOE', color: 'border-primary', url: 'https://www.skillreporter.com/regional/maharashtra/dnyaneshwar-mulay-foundation-khadki-cantonment-board-centre-of-excellence-skill-development-pune/' },
-    { outlet: 'Pune Mirror', headline: 'She Leads programme sees 25 women form producer groups for sustainable enterprise', date: 'Nov 2025', tag: 'Women', color: 'border-secondary-container', url: '#' },
+    { outlet: 'Pune Mirror', headline: 'She Leads programme sees 25 women form producer groups for sustainable enterprise', date: 'Nov 2025', tag: 'Women', color: 'border-secondary-container', url: 'https://www.skillreporter.com/regional/maharashtra/dnyaneshwar-mulay-foundation-khadki-cantonment-board-centre-of-excellence-skill-development-pune/' },
+
 ];
 
 const PUBLICATIONS = [
@@ -79,20 +80,20 @@ const VIDEOS = [
         link: 'https://www.youtube.com/watch?v=Tn4QTjjBbO4',
     },
     {
-        title: 'The Man Who Transformed Indias Passport System',
-        desc: 'Dr. Dnyaneshwar Mulay, a former IFS diplomat, revolutionized India’s passport system by introducing the Passport Seva Kendra (PSK) model, making passport services faster, more transparent, and accessible to citizens across the country.',
+        title: 'She Leads — Women Enterprise Stories',
+        desc: 'Hear firsthand stories from women entrepreneurs who transformed their lives through the She Leads programme at ICOE-KCB-DMF.',
         thumb: '/Images/about_page_4.png',
         duration: '6:15',
         tag: 'Programmes',
-        link: 'https://www.youtube.com/watch?v=kmmfxdBbZLA',
+        link: '#',
     },
     {
-        title: 'Empowering Indias Youth',
+        title: 'SkillReach — German Language Success Stories',
         desc: 'Meet the batch of youth who completed the German A1–B1 course and are now on the international job placement pipeline to Germany.',
         thumb: '/Images/about_page_5.png',
         duration: '5:48',
         tag: 'Community',
-        link: 'https://www.youtube.com/watch?v=XRbwqNQFZWw',
+        link: '#',
     },
 ];
 
@@ -149,7 +150,7 @@ export default function Media() {
                         </div>
                         <div className="md:col-span-5 relative">
                             <div className="aspect-[4/5] rounded-xl overflow-hidden shadow-2xl">
-                                <img alt="DMF Media" className="w-full h-full object-cover" src="/Images/home_page_slide_image_3.jpeg" />
+                                <img alt="DMF Media" className="w-full h-full object-cover" src="/Images/about_page_3.png" />
                             </div>
                             <div className="absolute -bottom-6 -left-6 bg-surface-container-lowest p-6 rounded-lg shadow-xl max-w-xs hidden md:block">
                                 <p className="text-secondary font-bold text-3xl font-headline">50+</p>
