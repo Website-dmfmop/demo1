@@ -8,7 +8,7 @@ const Navbar = () => {
 
     const getLinkClass = (targetPath) => {
         const isActive = path === targetPath;
-        return `font-headline tracking-tight leading-relaxed uppercase font-semibold text-sm transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] ${isActive
+        return `font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] ${isActive
             ? 'text-white border-b-2 border-[#fe9832] pb-1'
             : 'text-white/80 hover:text-white'
             }`;
@@ -23,9 +23,14 @@ const Navbar = () => {
                         alt="DMF - Movement of Positivity"
                         className="h-14 md:h-16 w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
                     />
-                    <span className="text-white font-headline font-bold text-lg leading-tight tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] hidden sm:block max-w-[200px] md:max-w-none">
-                        Dr. Dnyaneshwar<br className="md:hidden" /> Mule Foundation
-                    </span>
+                    <div className="hidden sm:flex flex-col max-w-[200px] md:max-w-none">
+                        <span className="text-white font-headline font-bold text-xl leading-tight tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                            Dr. Dnyaneshwar<br className="md:hidden" /> Mule Foundation
+                        </span>
+                        <span className="text-[#fe9832] font-headline font-bold text-xs uppercase tracking-[0.2em] mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                            Movement of Positivity
+                        </span>
+                    </div>
                 </Link>
                 <div className="flex items-center gap-6">
                     <div className="hidden md:flex items-center gap-6">
