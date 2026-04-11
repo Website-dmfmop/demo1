@@ -25,7 +25,7 @@ const Navbar = () => {
                     />
                     <div className="hidden sm:flex flex-col max-w-[200px] md:max-w-none">
                         <span className="text-white font-headline font-bold text-xl leading-tight tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                            Dr. Dnyaneshwar<br className="md:hidden" /> Mule Foundation
+                            Dr. Dnyaneshwar<br className="md:hidden" /> Mulay Foundation
                         </span>
                         <span className="text-[#fe9832] font-headline font-bold text-xs uppercase tracking-[0.2em] mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                             Movement of Positivity
