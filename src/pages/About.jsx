@@ -222,7 +222,7 @@ export default function About() {
                     <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
                         <div className="md:col-span-4 relative">
                             <div className="relative z-10 aspect-[4/5] overflow-hidden rounded-lg shadow-2xl bg-surface-container">
-                                <img alt="Dr. Dnyaneshwar Mulay" className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700" src="/Images/dr_Mulay.png" />
+                                <img alt="Dr. Dnyaneshwar Mulay" className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700" src="/Images/dr_mulay.png" />
                             </div>
                             <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-secondary-container/10 -z-10 rounded-full blur-3xl"></div>
                         </div>
@@ -447,7 +447,7 @@ export default function About() {
                                 <div className="flip-card-inner rounded-xl">
                                     <div className="flip-card-front bg-surface-container-lowest flex flex-col rounded-xl overflow-hidden shadow-sm">
                                         <div className="flex-1 bg-gradient-to-br from-primary to-primary-container relative overflow-hidden">
-                                            <img alt="Dr. Dnyaneshwar Mulay" className="w-full h-full object-cover object-top" src="/Images/dr_Mulay.png" />
+                                            <img alt="Dr. Dnyaneshwar Mulay" className="w-full h-full object-cover object-top" src="/Images/dr_mulay.png" />
                                         </div>
                                         <div className="p-6 shrink-0 bg-surface-container-lowest text-center">
                                             <h4 className="font-headline text-xl font-bold text-primary mb-1">Dr. Dnyaneshwar Mulay</h4>

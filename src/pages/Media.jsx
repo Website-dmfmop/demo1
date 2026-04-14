@@ -13,9 +13,9 @@ const MEDIA_ITEMS = [
     { category: 'Events', src: '/Images/WhatsApp Image 2026-04-10 at 10.32.25.jpeg', title: 'International Business Expo — Pune', date: 'February 2026' },
     { category: 'Programmes', src: '/Images/4.png', title: 'Smart Education Initiative Launch', date: 'March 2026' },
     { category: 'Community', src: '/Images/5.png', title: 'Healthcare Outreach — Khadki Cantonment', date: 'March 2026' },
-    { category: 'Events', src: '/Images/about_page_1.png', title: 'Annual Review & Strategy Summit — DMF', date: 'January 2026' },
+    { category: 'Events', src: '/Images/WhatsApp Image 2026-04-13 at 18.56.02.jpeg', title: 'Shelter Home', date: 'January 2026' },
     { category: 'Programmes', src: '/Images/WhatsApp Image 2026-04-06 at 12.20.18.jpeg', title: 'German Language Batch A2 Completion Ceremony', date: 'February 2026' },
-    { category: 'Community', src: '/Images/about_page_2.png', title: 'Flood Relief Distribution — Sangli District', date: 'August 2020' },
+    { category: 'Community', src: '/Images/WhatsApp Image 2026-04-13 at 18.58.25.jpeg', title: 'Hon. Lov Varma IAS and Mrs Sangeeta Varma IES visit DMF', date: 'April 2026' },
 ];
 
 const PRESS = [
@@ -25,8 +25,8 @@ const PRESS = [
 ];
 
 const PUBLICATIONS = [
-    { title: '', pdf: '#', img: '/Publications/publication_1.png', soon: false },
-    { title: '', pdf: '#', img: '/Publications/publication_2.png', soon: false },
+    { title: '', pdf: '/Publications/publication_1.pdf', img: '/Publications/publication_1.png', soon: false },
+    { title: '', pdf: '/Publications/publication_2.pdf', img: '/Publications/publication_2.png', soon: false },
     { title: '', pdf: '#', img: '/Publications/publication_3.png', soon: true },
 ];
 
@@ -73,26 +73,26 @@ const MILESTONES = [
 const VIDEOS = [
     {
         title: 'Shreemati Sushma Swaraj Praises Dr. Dnyaneshwar Mulay',
-        desc: 'Watch the full ceremony of the International Centre of Excellence launch at Khadki Cantonment Board, Pune, with Dr. Dnyaneshwar Mulay as Advisor.',
-        thumb: '/Images/about_page_1.png',
+        desc: "Sushma Swaraj at Pravasi Bharatiya Divas: It's the migration of educated that has brought laurels to India.",
+        thumb: '/Images/Screenshot 2026-04-14 120204.png',
         duration: '4:32',
-        tag: 'Events',
+
         link: 'https://www.youtube.com/watch?v=Tn4QTjjBbO4',
     },
     {
-        title: 'She Leads — Women Enterprise Stories',
-        desc: 'Hear firsthand stories from women entrepreneurs who transformed their lives through the She Leads programme at ICOE-KCB-DMF.',
-        thumb: '/Images/about_page_4.png',
-        duration: '6:15',
-        tag: 'Programmes',
-        link: '#',
+        title: 'Ticket to Millennials’ Dreams and freedom.',
+        desc: 'Dr. Mulay telling us if showing a little empathy and compassion in any bureaucratic process is a ticket to a peaceful change.',
+        thumb: '/Images/Screenshot 2026-04-14 121236.png',
+        duration: '17:49',
+
+        link: 'https://www.youtube.com/watch?v=xwQfPksVOx4',
     },
     {
-        title: 'SkillReach — German Language Success Stories',
-        desc: 'Meet the batch of youth who completed the German A1–B1 course and are now on the international job placement pipeline to Germany.',
-        thumb: '/Images/about_page_5.png',
+        title: 'Society For Positive Initiatives - Dr. Dnyaneshwar Mulay (Ex. I.F.S)',
+        desc: 'Dr. Dnyaneshwar Mulay (Ex. I.F.S), Former Secretary of the Ministry of External Affairs, Government of India, remains the predominant source of inspiration for meaningful and impactful community development at DMF.',
+        thumb: '/Images/Screenshot 2026-04-14 121508.png',
         duration: '5:48',
-        tag: 'Community',
+
         link: '#',
     },
 ];
@@ -150,7 +150,7 @@ export default function Media() {
                         </div>
                         <div className="md:col-span-5 relative">
                             <div className="aspect-[4/5] rounded-xl overflow-hidden shadow-2xl">
-                                <img alt="DMF Media" className="w-full h-full object-cover" src="/Images/about_page_1.png" />
+                                <img alt="DMF Media" className="w-full h-full object-cover" src="/Images/WhatsApp Image 2026-04-11 at 13.44.46.jpeg" />
                             </div>
                             <div className="absolute -bottom-6 -left-6 bg-surface-container-lowest p-6 rounded-lg shadow-xl max-w-xs hidden md:block">
                                 <p className="text-secondary font-bold text-3xl font-headline">50+</p>
@@ -319,8 +319,8 @@ export default function Media() {
                                 <div key={i} className="group relative rounded-lg overflow-hidden shadow-md cursor-not-allowed border border-[#fe9832] bg-white">
                                     <div className="aspect-[3/4] relative">
                                         <img alt={pub.title} className="w-full h-full object-cover" src={pub.img} />
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6 text-center">
-
+                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6 text-center">
+                                            <span className="text-white font-headline font-bold text-xl tracking-wide uppercase">Coming Soon</span>
                                         </div>
                                     </div>
                                     <div className="p-4 text-center bg-white border-t border-gray-100">
