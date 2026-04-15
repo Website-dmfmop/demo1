@@ -24,7 +24,7 @@ const BASE_SLIDES = [
         caption: 'Empowering Communities Through Education',
     },
     {
-        src: '/Images/2.png',
+        src: '/Images/5.png',
         alt: 'DMF Community Initiatives',
         caption: 'Empowering Communities Through Education',
     },
@@ -440,42 +440,63 @@ export default function About() {
                             <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-4 block">ICOE LEADERSHIP</span>
                             <h2 className="font-headline text-4xl font-extrabold text-primary">Meet Our Team</h2>
                         </div>
-                        {/* Leadership Row */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-8">
-                            {/* Dr. Mulay */}
+                        {/* Team Row — 3 members in one line */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                            {/* Dr. Bharati Patil */}
                             <div className="flip-card aspect-[3/4] w-full max-w-[360px] mx-auto rounded-xl editorial-shadow cursor-pointer">
                                 <div className="flip-card-inner rounded-xl">
                                     <div className="flip-card-front bg-surface-container-lowest flex flex-col rounded-xl overflow-hidden shadow-sm">
                                         <div className="flex-1 bg-gradient-to-br from-primary to-primary-container relative overflow-hidden">
-                                            <img alt="Dr. Dnyaneshwar Mulay" className="w-full h-full object-cover object-top" src="/Images/dr_mulay.png" />
+                                            <img alt="Dr. Bharati Patil" className="w-full h-full object-cover object-top" src="/Images/dr_bharti.png" />
                                         </div>
-                                        <div className="p-6 shrink-0 bg-surface-container-lowest text-center">
-                                            <h4 className="font-headline text-xl font-bold text-primary mb-1">Dr. Dnyaneshwar Mulay</h4>
-                                            <p className="text-secondary font-medium text-xs sm:text-sm text-balance uppercase tracking-wide">President, DMF | Advisor, ICOE Khadki</p>
+                                        <div className="p-6 shrink-0 bg-surface-container-lowest text-center min-h-[96px] flex flex-col justify-center">
+                                            <h4 className="font-headline text-xl font-bold text-primary mb-1">Dr. Bharati Patil</h4>
+                                            <p className="text-[#fe9832] font-medium text-xs sm:text-sm uppercase tracking-wide">Vice President<br />Dr. Dnyaneshwar Mulay Foundation</p>
                                         </div>
                                     </div>
                                     <div className="flip-card-back bg-white rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center shadow-xl border-t-[6px] border-primary">
-                                        <h4 className="font-headline text-2xl sm:text-3xl font-bold text-primary mb-4">Dr. Dnyaneshwar Mulay</h4>
+                                        <h4 className="font-headline text-2xl sm:text-3xl font-bold text-primary mb-4">Dr. Bharati Patil</h4>
                                         <div className="w-12 h-1 bg-secondary-container mb-6"></div>
                                         <p className="font-body text-sm sm:text-base leading-relaxed text-on-surface-variant">
-                                            Former Secretary, Ministry of External Affairs, GoI. Former Advisor, NSDC. Indian Foreign Service, IFS Batch 1983.
+                                            A visionary Edupreneur serving as Vice President of DMF, holding a PhD in Education. Dedicated to transforming learning through innovation, leadership, and a commitment to excellence — a dynamic force shaping the future of global learning.
                                         </p>
                                     </div>
                                 </div>
                             </div>
-                            {/* Mr. Riyaj */}
+                            {/* Mr. Ujjwal Sathe */}
                             <div className="flip-card aspect-[3/4] w-full max-w-[360px] mx-auto rounded-xl editorial-shadow cursor-pointer">
                                 <div className="flip-card-inner rounded-xl">
                                     <div className="flip-card-front bg-surface-container-lowest flex flex-col rounded-xl overflow-hidden shadow-sm">
-                                        <div className="flex-1 bg-gradient-to-br from-[#2e7d32] to-[#1b5e20] relative overflow-hidden">
-                                            <img alt="Mr. Riyaj Pirjade" className="w-full h-full object-cover object-top" src="/Images/mr_riyaj.png" />
+                                        <div className="flex-1 bg-gradient-to-br from-primary to-primary-container relative overflow-hidden">
+                                            <img alt="Mr. Ujjwal Sathe" className="w-full h-full object-cover object-top" src="/Images/mr_ujjwal.png" />
                                         </div>
-                                        <div className="p-6 shrink-0 bg-surface-container-lowest text-center">
-                                            <h4 className="font-headline text-xl font-bold text-primary mb-1">Mr. Riyaj Pirjade</h4>
-                                            <p className="text-[#2e7d32] font-medium text-xs sm:text-sm uppercase tracking-wide">Director — ICOE</p>
+                                        <div className="p-6 shrink-0 bg-surface-container-lowest text-center min-h-[96px] flex flex-col justify-center">
+                                            <h4 className="font-headline text-xl font-bold text-primary mb-1">Mr. Ujjwal Sathe</h4>
+                                            <p className="text-[#fe9832] font-medium text-xs sm:text-sm uppercase tracking-wide">CEO<br />Dr. Dnyaneshwar Mulay Foundation</p>
                                         </div>
                                     </div>
-                                    <div className="flip-card-back bg-white rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center shadow-xl border-t-[6px] border-[#2e7d32]">
+                                    <div className="flip-card-back bg-white rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center shadow-xl border-t-[6px] border-primary">
+                                        <h4 className="font-headline text-2xl sm:text-3xl font-bold text-primary mb-4">Mr. Ujjwal Sathe</h4>
+                                        <div className="w-12 h-1 bg-secondary-container mb-6"></div>
+                                        <p className="font-body text-sm sm:text-base leading-relaxed text-on-surface-variant">
+                                            A visionary entrepreneur and automobile expert, accomplished Automobile Engineer from VJTI, Mumbai. Driven by strong values of humanity and equality, he provides strategic direction and leadership as CEO of DMF.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Mr. Riyaj Pirjade */}
+                            <div className="flip-card aspect-[3/4] w-full max-w-[360px] mx-auto rounded-xl editorial-shadow cursor-pointer">
+                                <div className="flip-card-inner rounded-xl">
+                                    <div className="flip-card-front bg-surface-container-lowest flex flex-col rounded-xl overflow-hidden shadow-sm">
+                                        <div className="flex-1 bg-gradient-to-br from-primary to-primary-container relative overflow-hidden">
+                                            <img alt="Mr. Riyaj Pirjade" className="w-full h-full object-cover object-top" src="/Images/mr_riyaj.png" />
+                                        </div>
+                                        <div className="p-6 shrink-0 bg-surface-container-lowest text-center min-h-[96px] flex flex-col justify-center">
+                                            <h4 className="font-headline text-xl font-bold text-primary mb-1">Mr. Riyaj Pirjade</h4>
+                                            <p className="text-[#fe9832] font-medium text-xs sm:text-sm uppercase tracking-wide">Director — ICOE<br />Dr. Dnyaneshwar Mulay Foundation</p>
+                                        </div>
+                                    </div>
+                                    <div className="flip-card-back bg-white rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center shadow-xl border-t-[6px] border-primary">
                                         <h4 className="font-headline text-2xl sm:text-3xl font-bold text-primary mb-4">Mr. Riyaj Pirjade</h4>
                                         <div className="w-12 h-1 bg-secondary-container mb-6"></div>
                                         <p className="font-body text-sm sm:text-base leading-relaxed text-on-surface-variant">

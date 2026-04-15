@@ -27,7 +27,8 @@ const PRESS = [
 const PUBLICATIONS = [
     { title: '', pdf: '/Publications/publication_1.pdf', img: '/Publications/publication_1.png', soon: false },
     { title: '', pdf: '/Publications/publication_2.pdf', img: '/Publications/publication_2.png', soon: false },
-    { title: '', pdf: '#', img: '/Publications/publication_3.png', soon: true },
+    { title: '', pdf: '/Publications/publication_3.pdf', img: '/Publications/publication_3.png', soon: false },
+    { title: '', pdf: '#', img: '/Publications/publication_4.png', soon: true },
 ];
 
 const TESTIMONIALS = [
@@ -314,7 +315,7 @@ export default function Media() {
                             <div className="w-16 h-1 bg-secondary-container mx-auto mb-4"></div>
                             <p className="text-on-surface-variant max-w-2xl mx-auto">Explore our extensive research, frameworks, and reports detailing our impact and methodologies.</p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
                             {PUBLICATIONS.map((pub, i) => pub.soon ? (
                                 <div key={i} className="group relative rounded-lg overflow-hidden shadow-md cursor-not-allowed border border-[#fe9832] bg-white">
                                     <div className="aspect-[3/4] relative">
