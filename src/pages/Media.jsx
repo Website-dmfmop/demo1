@@ -5,17 +5,23 @@ import { Link } from 'react-router-dom';
 
 const MEDIA_ITEMS = [
     { category: 'Events', src: '/Images/WhatsApp Image 2026-04-09 at 15.25.51.jpeg', title: 'ICOE Inauguration — Khadki, Pune', date: 'September 2025' },
-    { category: 'Community', src: '/Images/about_page_2.png', title: 'Community Mobilization Drive', date: 'October 2025' },
+    { category: 'Programmes', src: '/Images/about_page_2.png', title: 'Medical Students Placed in Germany', date: 'October 2025' },
     { category: 'Events', src: '/Images/social_work_1.png', title: 'Dr. Mulay Addresses Youth Leaders', date: 'November 2025' },
     { category: 'Programmes', src: '/Images/WhatsApp Image 2026-04-06 at 12.20.21.jpeg', title: 'She Leads — Women Enterprise Workshop', date: 'November 2025' },
-    { category: 'Community', src: '/Images/about_page_5.png', title: 'SkillReach Language Training Batch', date: 'December 2025' },
+    { category: 'Programmes', src: '/Images/about_page_5.png', title: 'Study Two For CSR Program', date: 'December 2025' },
     { category: 'Programmes', src: '/Images/WhatsApp Image 2026-04-10 at 10.32.18.jpeg', title: 'Digital Classrooms & Innovation Labs', date: 'January 2026' },
-    { category: 'Events', src: '/Images/WhatsApp Image 2026-04-10 at 10.32.25.jpeg', title: 'International Business Expo — Pune', date: 'February 2026' },
+    { category: 'Programmes', src: '/Images/WhatsApp Image 2026-04-10 at 10.32.25.jpeg', title: 'Industry Academic Program', date: 'February 2026' },
     { category: 'Programmes', src: '/Images/4.png', title: 'Smart Education Initiative Launch', date: 'March 2026' },
     { category: 'Community', src: '/Images/5.png', title: 'Healthcare Outreach — Khadki Cantonment', date: 'March 2026' },
-    { category: 'Events', src: '/Images/WhatsApp Image 2026-04-13 at 18.56.02.jpeg', title: 'Shelter Home', date: 'January 2026' },
+    { category: 'Events', src: '/Images/Seltter_home.jpeg', title: 'Shelter Home', date: 'January 2026' },
     { category: 'Programmes', src: '/Images/WhatsApp Image 2026-04-06 at 12.20.18.jpeg', title: 'German Language Batch A2 Completion Ceremony', date: 'February 2026' },
-    { category: 'Community', src: '/Images/WhatsApp Image 2026-04-13 at 18.58.25.jpeg', title: 'Hon. Lov Varma IAS and Mrs Sangeeta Varma IES visit DMF', date: 'April 2026' },
+    { category: 'Visitors', src: '/Images/WhatsApp Image 2026-04-13 at 18.58.25.jpeg', title: 'Hon. Lov Varma IAS and Mrs Sangeeta Varma IES visit DMF', date: 'April 2026' },
+    { category: 'Community', src: '/Images/Job_fair.jpeg', title: 'Job Fair', date: 'April 2026' },
+    { category: 'MoU', src: '/Images/MoU_DY_Patil_Kolhapur.jpeg', title: 'MOU with DY Patil University, Kolhapur', date: 'April 2026' },
+    { category: 'MoU', src: '/Images/MoU_COEP.jpeg', title: 'MOU with COEP University, Pune', date: 'April 2026' },
+    { category: 'Visitors', src: '/Images/HDFC_Bank_CSR_Team.jpeg', title: 'HDFC Bank CSR Team Visit', date: 'March 2026' },
+    { category: 'Community', src: '/Images/International_Skill.jpeg', title: 'International Skill', date: 'Jan 2026' },
+    { category: 'Community', src: '/Images/community_mobilization.jpeg', title: 'Community Mobilization', date: 'Feb 2026' },
 ];
 
 const PRESS = [
@@ -106,7 +112,7 @@ const SOCIAL = [
     { platform: 'LinkedIn', handle: 'DMF India', icon: 'work', color: 'bg-[#0A66C2]' },
 ];
 
-const TABS = ['All', 'Events', 'Community', 'Programmes'];
+const TABS = ['All', 'Events', 'Community', 'Programmes', 'Visitors', 'MoU'];
 
 /* ─── Component ──────────────────────────────────────────────────────── */
 
@@ -151,7 +157,7 @@ export default function Media() {
                         </div>
                         <div className="md:col-span-5 relative">
                             <div className="aspect-[4/5] rounded-xl overflow-hidden shadow-2xl">
-                                <img alt="DMF Media" className="w-full h-full object-cover" src="/Images/WhatsApp Image 2026-04-11 at 13.44.46.jpeg" />
+                                <img alt="DMF Media" className="w-full h-full object-cover" src="/Images/Media_page_top_cover_image.jpeg" />
                             </div>
                             <div className="absolute -bottom-6 -left-6 bg-surface-container-lowest p-6 rounded-lg shadow-xl max-w-xs hidden md:block">
                                 <p className="text-secondary font-bold text-3xl font-headline">50+</p>

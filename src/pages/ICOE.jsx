@@ -95,37 +95,26 @@ export default function ICOE() {
                                 The Movement of Positivity is the beating heart of the Dr. Dnyaneshwar Mulay Foundation — a values-driven initiative that fosters optimism, ethical leadership, and constructive community action across India.
                             </p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
-                            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8">
-                                <span className="material-symbols-outlined text-secondary-container text-4xl mb-4 block">visibility</span>
-                                <h3 className="font-headline text-xl font-bold text-white mb-4">Our Vision</h3>
-                                <p className="text-white/70 leading-relaxed">To create a nationwide movement of positive, responsible, and transformative leaders committed to ethical governance and social progress.</p>
+                        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-12">
+                            <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {[
+                                    { icon: 'sentiment_very_satisfied', title: 'Positivity Campaigns', desc: 'Community drives, awareness events and social media campaigns promoting mental wellness, hope and collective optimism.' },
+                                    { icon: 'person_celebrate', title: 'Leadership Development', desc: 'Structured training for emerging leaders focusing on ethical leadership, decision-making and public service excellence.' },
+                                    { icon: 'account_balance', title: 'Governance & Policy', desc: 'Working with government institutions to strengthen governance systems, improve service delivery and promote transparency.' },
+                                    { icon: 'workspace_premium', title: 'Capacity Building', desc: 'Workshops, fellowships and certification programs for administrators, youth leaders and professionals.' },
+                                    { icon: 'campaign', title: 'MOP Awareness Drives', desc: 'Awareness initiatives promoting constructive thinking, social responsibility and active citizenship across communities.' },
+                                    { icon: 'library_books', title: 'Research & Knowledge', desc: 'Generating insights, case studies and best practices in leadership and governance to inform policy and practice.' },
+                                ].map((item, i) => (
+                                    <div key={i} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300">
+                                        <span className="material-symbols-outlined text-secondary-container text-3xl mb-4 block">{item.icon}</span>
+                                        <h4 className="font-headline font-bold text-white mb-2">{item.title}</h4>
+                                        <p className="text-white/70 text-sm leading-relaxed">{item.desc}</p>
+                                    </div>
+                                ))}
                             </div>
-                            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8">
-                                <span className="material-symbols-outlined text-secondary-container text-4xl mb-4 block">flag</span>
-                                <h3 className="font-headline text-xl font-bold text-white mb-4">Our Mission</h3>
-                                <ul className="space-y-2 text-white/70 text-sm">
-                                    {['Foster optimism, hope and constructive action in every community we serve', 'Develop leadership capacities across government, academia, civil society and youth', 'Promote values-based governance and citizen-centric approaches', 'Build a network of change-makers committed to nation-building'].map((m, i) => (
-                                        <li key={i} className="flex items-start gap-2"><span className="material-symbols-outlined text-secondary-container text-sm mt-0.5">check_circle</span>{m}</li>
-                                    ))}
-                                </ul>
+                            <div className="md:col-span-2 rounded-2xl overflow-hidden shadow-xl h-full">
+                                <img src="/Images/MOV.jpeg" alt="Movement of Positivity" className="w-full h-full object-cover" />
                             </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                            {[
-                                { icon: 'sentiment_very_satisfied', title: 'Positivity Campaigns', desc: 'Community drives, awareness events and social media campaigns promoting mental wellness, hope and collective optimism.' },
-                                { icon: 'person_celebrate', title: 'Leadership Development', desc: 'Structured training for emerging leaders focusing on ethical leadership, decision-making and public service excellence.' },
-                                { icon: 'account_balance', title: 'Governance & Policy', desc: 'Working with government institutions to strengthen governance systems, improve service delivery and promote transparency.' },
-                                { icon: 'workspace_premium', title: 'Capacity Building', desc: 'Workshops, fellowships and certification programs for administrators, youth leaders and professionals.' },
-                                { icon: 'campaign', title: 'MOP Awareness Drives', desc: 'Awareness initiatives promoting constructive thinking, social responsibility and active citizenship across communities.' },
-                                { icon: 'library_books', title: 'Research & Knowledge', desc: 'Generating insights, case studies and best practices in leadership and governance to inform policy and practice.' },
-                            ].map((item, i) => (
-                                <div key={i} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300">
-                                    <span className="material-symbols-outlined text-secondary-container text-3xl mb-4 block">{item.icon}</span>
-                                    <h4 className="font-headline font-bold text-white mb-2">{item.title}</h4>
-                                    <p className="text-white/70 text-sm leading-relaxed">{item.desc}</p>
-                                </div>
-                            ))}
                         </div>
                         <div className="bg-white/10 border border-white/20 rounded-2xl p-8 text-center">
                             <h3 className="font-headline text-xl font-bold text-white mb-3">Join the Movement</h3>
@@ -320,18 +309,28 @@ export default function ICOE() {
                                     ))}
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-6">
-                                {[
-                                    { num: '25+', label: 'Women Entrepreneurs Trained', color: 'bg-[#2e7d32] text-white' },
-                                    { num: '2', label: 'Producer Groups Formed', color: 'bg-secondary-container text-on-secondary-container' },
-                                    { num: '3', label: 'Enterprise Verticals', color: 'bg-primary text-white' },
-                                    { num: '100%', label: 'From Defence & Civilian Families', color: 'bg-surface-container-lowest text-primary border border-outline-variant' },
-                                ].map((s, i) => (
-                                    <div key={i} className={`${s.color} rounded-2xl p-6 text-center shadow-md`}>
-                                        <div className="font-headline text-4xl font-black mb-2">{s.num}</div>
-                                        <div className="text-xs uppercase tracking-widest opacity-80 leading-tight">{s.label}</div>
-                                    </div>
-                                ))}
+                            <div className="flex flex-col gap-6">
+                                <div className="grid grid-cols-2 gap-6">
+                                    {[
+                                        { num: '25+', label: 'Women Entrepreneurs Trained', color: 'bg-[#2e7d32] text-white' },
+                                        { num: '2', label: 'Producer Groups Formed', color: 'bg-secondary-container text-on-secondary-container' },
+                                        { num: '3', label: 'Enterprise Verticals', color: 'bg-primary text-white' },
+                                        { num: '100%', label: 'From Defence & Civilian Families', color: 'bg-surface-container-lowest text-primary border border-outline-variant' },
+                                    ].map((s, i) => (
+                                        <div key={i} className={`${s.color} rounded-2xl p-6 text-center shadow-md`}>
+                                            <div className="font-headline text-4xl font-black mb-2">{s.num}</div>
+                                            <div className="text-xs uppercase tracking-widest opacity-80 leading-tight">{s.label}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                                {/* She Leads Workshop Image */}
+                                <div className="rounded-2xl overflow-hidden shadow-xl" style={{ height: '360px' }}>
+                                    <img
+                                        src="/Images/WhatsApp Image 2026-04-06 at 12.20.21.jpeg"
+                                        alt="She Leads — Women Enterprise Workshop"
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -344,7 +343,7 @@ export default function ICOE() {
                             <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">FROM LOCAL TALENT TO GLOBAL IMPACT</span>
                             <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Skill Reach</h2>
                             <div className="w-16 h-1 bg-secondary-container mx-auto mb-4"></div>
-                            <p className="text-on-surface-variant max-w-2xl mx-auto">ICOE's ongoing programs actively focus on skill enhancement, entrepreneurship development, career guidance, and language proficiency, benefiting hundreds of youth and women from defence families and civilian communities.</p>
+                            <p className="text-on-surface-variant max-w-2xl mx-auto">DMF's ongoing programs actively focus on skill enhancement, entrepreneurship development, career guidance, and language proficiency, benefiting hundreds of youth and women from defence families and civilian communities.</p>
                         </div>
 
                         {/* 2×2 Grid of Programs */}
@@ -398,11 +397,11 @@ export default function ICOE() {
                                         <h4 className="font-headline font-bold text-primary text-sm mb-2 flex items-center gap-2"><span className="material-symbols-outlined text-[#2e7d32] text-lg">trending_up</span> Impact</h4>
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="text-center bg-white rounded-lg p-3">
-                                                <div className="font-headline text-2xl font-black text-[#2e7d32]">230+</div>
+                                                <div className="font-headline text-2xl font-black text-[#2e7d32]">500+</div>
                                                 <div className="text-[10px] text-on-surface-variant uppercase tracking-wide mt-1">Youths & Women Enrolled</div>
                                             </div>
                                             <div className="text-center bg-white rounded-lg p-3">
-                                                <div className="font-headline text-2xl font-black text-[#2e7d32]">200+</div>
+                                                <div className="font-headline text-2xl font-black text-[#2e7d32]">400+</div>
                                                 <div className="text-[10px] text-on-surface-variant uppercase tracking-wide mt-1">In Career Guidance</div>
                                             </div>
                                         </div>
@@ -572,10 +571,20 @@ export default function ICOE() {
                         {/* What Our Social Innovation Labs Do */}
                         <h3 className="font-headline text-2xl font-bold text-primary text-center mb-10">What Our Social Innovation Labs Do</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                            {/* Row 1: Co-create | Foster Innovation | Prototype & Test */}
                             {[
                                 { icon: 'handshake', title: 'Co-create Solutions', desc: 'We facilitate collaboration among diverse stakeholders to design solutions rooted in real-world needs.' },
                                 { icon: 'lightbulb', title: 'Foster Innovation & Creativity', desc: 'We encourage out-of-the-box thinking and interdisciplinary approaches to address complex social issues.' },
                                 { icon: 'science', title: 'Prototype & Test Ideas', desc: 'We provide a safe space to experiment, pilot, and refine innovative solutions before scaling them.' },
+                            ].map((item, i) => (
+                                <div key={i} className="bg-surface-container-low rounded-2xl p-6 border-t-4 border-secondary-container hover:-translate-y-1 transition-all duration-300 shadow-sm">
+                                    <span className="material-symbols-outlined text-secondary-container text-3xl mb-4 block">{item.icon}</span>
+                                    <h4 className="font-headline font-bold text-primary mb-2">{item.title}</h4>
+                                    <p className="text-on-surface-variant text-sm leading-relaxed">{item.desc}</p>
+                                </div>
+                            ))}
+                            {/* Row 2: Build Capacities | Scale Impact | Image (right of Scale Impact, below Prototype & Test) */}
+                            {[
                                 { icon: 'build', title: 'Build Capacities', desc: 'We train students, youth, and professionals in problem-solving, design thinking, and social innovation.' },
                                 { icon: 'trending_up', title: 'Scale Impact', desc: 'We identify high-potential solutions and support their expansion across regions and sectors.' },
                             ].map((item, i) => (
@@ -585,6 +594,14 @@ export default function ICOE() {
                                     <p className="text-on-surface-variant text-sm leading-relaxed">{item.desc}</p>
                                 </div>
                             ))}
+                            {/* Image — right of Scale Impact, below Prototype & Test Ideas */}
+                            <div className="rounded-2xl overflow-hidden shadow-xl border border-outline-variant/20 h-full">
+                                <img
+                                    src="/Images/Social_innovation_path.jpeg"
+                                    alt="Social Innovation Path"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
                         </div>
 
                         {/* Our Approach */}
@@ -724,20 +741,8 @@ export default function ICOE() {
                                     <p className="text-white/90 text-sm leading-relaxed mb-6 font-medium italic">
                                         "To create a compassionate community where elderly individuals live with dignity, independence, and happiness, supported by holistic care and meaningful engagement."
                                     </p>
-                                    <div className="bg-white/10 border border-white/20 rounded-xl p-6">
-                                        <ul className="space-y-3 text-white/80 text-xs">
-                                            {[
-                                                "Provide quality residential care for senior citizens",
-                                                "Ensure physical, emotional, and social well-being",
-                                                "Promote active and healthy aging through engagement",
-                                                "Build a culture of respect and gratitude for the elderly"
-                                            ].map((s, i) => (
-                                                <li key={i} className="flex items-start gap-2">
-                                                    <span className="material-symbols-outlined text-secondary-container text-xs mt-0.5">check_circle</span>
-                                                    {s}
-                                                </li>
-                                            ))}
-                                        </ul>
+                                    <div className="rounded-xl overflow-hidden mt-6 border border-white/20">
+                                        <img src="/Images/Seltter_home.jpeg" alt="Shelter Home" className="w-full h-80 object-cover" />
                                     </div>
                                 </div>
 
