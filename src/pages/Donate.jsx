@@ -1,6 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function Donate() {
+    const [amount, setAmount] = useState(100);
+    const [customAmount, setCustomAmount] = useState('');
+    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+    const [status, setStatus] = useState('');
+
+    const handleAmountClick = (val) => {
+        setAmount(val);
+        setCustomAmount('');
+    };
+
+    const handleCustomAmountChange = (e) => {
+        setCustomAmount(e.target.value);
+        setAmount(e.target.value ? parseInt(e.target.value) : 0);
+    };
+
+    const handleInputChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleDonation = async (e) => {
+        e.preventDefault();
+        setStatus('submitting');
+        try {
+            const finalAmount = customAmount ? parseInt(customAmount) : amount;
+            if (!finalAmount || finalAmount <= 0) {
+                setStatus('error');
+                return;
+            }
+
+            const res = await fetch('http://localhost:5000/api/donations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    amount: finalAmount,
+                    message: formData.message,
+                })
+            });
+
+            if (res.ok) {
+                setStatus('success');
+                setFormData({ name: '', email: '', message: '' });
+            } else {
+                setStatus('error');
+            }
+        } catch (error) {
+            setStatus('error');
+        }
+    };
+
     return (
         <div>
 
@@ -29,50 +80,118 @@ export default function Donate() {
                 <section className="max-w-7xl mx-auto px-8 -mt-24 relative z-10 mb-24">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                        <div className="lg:col-span-7 bg-surface-container-lowest p-8 md:p-12 rounded-xl shadow-2xl border-t-4 border-secondary-container">
-                            <div className="flex items-center justify-between mb-10">
-                                <h2 className="font-headline text-3xl font-bold text-primary">Make a Donation</h2>
-                                <div className="flex bg-surface-container rounded-full p-1">
-                                    <button className="px-6 py-2 rounded-full text-sm font-semibold transition-all bg-primary text-white">One-time</button>
-                                    <button className="px-6 py-2 rounded-full text-sm font-semibold transition-all text-on-surface-variant hover:bg-surface-variant">Monthly</button>
+                        <div className="lg:col-span-7 bg-surface-container-lowest p-8 md:p-12 rounded-xl shadow-2xl border-t-4 border-secondary-container relative overflow-hidden">
+                            {status === 'success' ? (
+                                <div className="text-center py-12">
+                                    <div className="w-20 h-20 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
+                                        <span className="material-symbols-outlined text-4xl">check_circle</span>
+                                    </div>
+                                    <h3 className="text-3xl font-display font-bold text-primary mb-3">Thank You!</h3>
+                                    <p className="text-on-surface-variant mb-8 text-lg">Your generosity fuels the change. We have received your donation info.</p>
+                                    <button
+                                        onClick={() => setStatus('')}
+                                        className="px-8 py-3 bg-secondary-container hover:bg-secondary text-white rounded-lg transition-colors font-medium"
+                                    >
+                                        Donate Again
+                                    </button>
                                 </div>
-                            </div>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                                <button className="py-4 border-2 border-outline-variant rounded-xl font-headline font-bold text-xl hover:border-secondary-container hover:text-secondary transition-all focus:ring-2 focus:ring-secondary-container focus:outline-none">$25</button>
-                                <button className="py-4 border-2 border-outline-variant rounded-xl font-headline font-bold text-xl hover:border-secondary-container hover:text-secondary transition-all focus:ring-2 focus:ring-secondary-container focus:outline-none">$50</button>
-                                <button className="py-4 border-2 border-secondary-container bg-secondary-container/10 rounded-xl font-headline font-bold text-xl text-secondary">$100</button>
-                                <button className="py-4 border-2 border-outline-variant rounded-xl font-headline font-bold text-xl hover:border-secondary-container hover:text-secondary transition-all focus:ring-2 focus:ring-secondary-container focus:outline-none">$500</button>
-                            </div>
-                            <div className="relative mb-8">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-outline font-bold text-xl">$</span>
-                                <input className="w-full pl-10 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary font-body text-lg" placeholder="Custom Amount" type="text" />
-                            </div>
-                            <div className="space-y-4 mb-10">
-                                <input className="w-full px-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary" placeholder="Full Name" type="text" />
-                                <input className="w-full px-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary" placeholder="Email Address" type="email" />
-                                <div className="relative">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-xl">phone</span>
-                                    <input className="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary" placeholder="Phone Number" type="tel" />
-                                </div>
-                            </div>
-                            <button className="w-full py-5 bg-primary text-white font-headline font-bold text-lg rounded-xl hover:bg-primary-container transition-all flex items-center justify-center gap-3 active:scale-[0.98]">
-                                <span className="material-symbols-outlined" data-weight="fill">favorite</span>
-                                COMPLETE DONATION
-                            </button>
-                            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-outline font-label text-xs uppercase tracking-widest">
-                                <div className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-on-tertiary-container">verified_user</span>
-                                    100% Transparency
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-on-tertiary-container">lock</span>
-                                    Secure SSL Encryption
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-on-tertiary-container">history_edu</span>
-                                    Tax Deductible
-                                </div>
-                            </div>
+                            ) : (
+                                <form onSubmit={handleDonation}>
+                                    <div className="flex items-center justify-between mb-10">
+                                        <h2 className="font-headline text-3xl font-bold text-primary">Make a Donation</h2>
+                                        <div className="flex bg-surface-container rounded-full p-1">
+                                            <button type="button" className="px-6 py-2 rounded-full text-sm font-semibold transition-all bg-primary text-white">One-time</button>
+                                            <button type="button" className="px-6 py-2 rounded-full text-sm font-semibold transition-all text-on-surface-variant hover:bg-surface-variant">Monthly</button>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                                        {[25, 50, 100, 500].map((val) => (
+                                            <button
+                                                key={val}
+                                                type="button"
+                                                onClick={() => handleAmountClick(val)}
+                                                className={`py-4 border-2 rounded-xl font-headline font-bold text-xl transition-all ${amount === val && !customAmount
+                                                        ? 'border-secondary-container bg-secondary-container/10 text-secondary scale-[1.02]'
+                                                        : 'border-outline-variant hover:border-secondary-container hover:text-secondary focus:ring-2 focus:ring-secondary-container'
+                                                    }`}
+                                            >
+                                                ₹{val}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <div className="relative mb-8">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-outline font-bold text-xl">₹</span>
+                                        <input
+                                            className="w-full pl-10 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary font-body text-lg"
+                                            placeholder="Custom Amount"
+                                            type="number"
+                                            value={customAmount}
+                                            onChange={handleCustomAmountChange}
+                                        />
+                                    </div>
+                                    <div className="space-y-4 mb-10">
+                                        <input
+                                            required
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleInputChange}
+                                            className="w-full px-4 py-4 bg-surface-container-low border border-transparent rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                            placeholder="Full Name *"
+                                            type="text"
+                                        />
+                                        <input
+                                            required
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            className="w-full px-4 py-4 bg-surface-container-low border border-transparent rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                            placeholder="Email Address *"
+                                            type="email"
+                                        />
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-4 material-symbols-outlined text-outline text-xl">chat</span>
+                                            <textarea
+                                                name="message"
+                                                value={formData.message}
+                                                onChange={handleInputChange}
+                                                className="w-full pl-12 pr-4 py-4 bg-surface-container-low border border-transparent rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all min-h-[100px] resize-none"
+                                                placeholder="Message (Optional)"
+                                            ></textarea>
+                                        </div>
+                                    </div>
+
+                                    {status === 'error' && (
+                                        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-sm">
+                                            There was an error processing your donation. Please try again.
+                                        </div>
+                                    )}
+
+                                    <button
+                                        type="submit"
+                                        disabled={status === 'submitting'}
+                                        className="w-full py-5 bg-primary text-white font-headline font-bold text-lg rounded-xl hover:bg-primary-hover hover:shadow-[0_0_20px_rgba(254,152,50,0.3)] transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-70"
+                                    >
+                                        {status === 'submitting' ? (
+                                            <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                        ) : (
+                                            <>
+                                                <span className="material-symbols-outlined" data-weight="fill">favorite</span>
+                                                COMPLETE DONATION
+                                            </>
+                                        )}
+                                    </button>
+                                    <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-outline font-label text-xs uppercase tracking-widest">
+                                        <div className="flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-on-tertiary-container">verified_user</span>
+                                            100% Transparency
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-on-tertiary-container">lock</span>
+                                            Secure SSL Encryption
+                                        </div>
+                                    </div>
+                                </form>
+                            )}
                         </div>
 
                         <div className="lg:col-span-5 space-y-6">

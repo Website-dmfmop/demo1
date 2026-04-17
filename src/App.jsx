@@ -10,6 +10,8 @@ import Donate from './pages/Donate';
 import Missions from './pages/Missions';
 import ICOE from './pages/ICOE';
 import Media from './pages/Media';
+import Admin from './pages/Admin';
+import Admission from './pages/Admission';
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
         <Route path="/missions" element={<Missions />} />
         <Route path="/icoe" element={<ICOE />} />
         <Route path="/media" element={<Media />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/admission" element={<Admission />} />
       </Routes>
       <Footer />
     </BrowserRouter>

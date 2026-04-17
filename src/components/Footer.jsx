@@ -8,7 +8,7 @@ const Footer = () => (
             <div className="absolute -bottom-20 -right-20 w-[600px] h-[600px] bg-primary-container rounded-full blur-[100px]"></div>
         </div>
 
-        {/* ── DONATE CTA (Short & Simple) ──
+        {/* ── DONATE CTA (Short & Simple) ── */}
         <div className="relative z-10 border-t-4 border-t-[#fe9832] border-b border-white/5 py-8 mt-2">
             <div className="max-w-7xl mx-auto px-12 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
@@ -28,7 +28,7 @@ const Footer = () => (
                     DONATE NOW
                 </Link>
             </div>
-        </div> */}
+        </div>
 
         {/* ── MAIN FOOTER CONTENT ── */}
         <div className="flex flex-col md:flex-row justify-between items-start w-full px-12 py-12 gap-12 max-w-7xl mx-auto relative z-10">

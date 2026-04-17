@@ -1,41 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 /* ─── Data ────────────────────────────────────────────────────────────── */
-
-const MEDIA_ITEMS = [
-    { category: 'Events', src: '/Images/WhatsApp Image 2026-04-09 at 15.25.51.jpeg', title: 'ICOE Inauguration — Khadki, Pune', date: 'September 2025' },
-    { category: 'Programmes', src: '/Images/about_page_2.png', title: 'Medical Students Placed in Germany', date: 'October 2025' },
-    { category: 'Events', src: '/Images/social_work_1.png', title: 'Dr. Mulay Addresses Youth Leaders', date: 'November 2025' },
-    { category: 'Programmes', src: '/Images/WhatsApp Image 2026-04-06 at 12.20.21.jpeg', title: 'She Leads — Women Enterprise Workshop', date: 'November 2025' },
-    { category: 'Programmes', src: '/Images/about_page_5.png', title: 'Study Two For CSR Program', date: 'December 2025' },
-    { category: 'Programmes', src: '/Images/WhatsApp Image 2026-04-10 at 10.32.18.jpeg', title: 'Digital Classrooms & Innovation Labs', date: 'January 2026' },
-    { category: 'Programmes', src: '/Images/WhatsApp Image 2026-04-10 at 10.32.25.jpeg', title: 'Industry Academic Program', date: 'February 2026' },
-    { category: 'Programmes', src: '/Images/4.png', title: 'Smart Education Initiative Launch', date: 'March 2026' },
-    { category: 'Community', src: '/Images/5.png', title: 'Healthcare Outreach — Khadki Cantonment', date: 'March 2026' },
-    { category: 'Events', src: '/Images/Seltter_home.jpeg', title: 'Shelter Home', date: 'January 2026' },
-    { category: 'Programmes', src: '/Images/WhatsApp Image 2026-04-06 at 12.20.18.jpeg', title: 'German Language Batch A2 Completion Ceremony', date: 'February 2026' },
-    { category: 'Visitors', src: '/Images/WhatsApp Image 2026-04-13 at 18.58.25.jpeg', title: 'Hon. Lov Varma IAS and Mrs Sangeeta Varma IES visit DMF', date: 'April 2026' },
-    { category: 'Community', src: '/Images/Job_fair.jpeg', title: 'Job Fair', date: 'April 2026' },
-    { category: 'MoU', src: '/Images/MoU_DY_Patil_Kolhapur.jpeg', title: 'MOU with DY Patil University, Kolhapur', date: 'April 2026' },
-    { category: 'MoU', src: '/Images/MoU_COEP.jpeg', title: 'MOU with COEP University, Pune', date: 'April 2026' },
-    { category: 'Visitors', src: '/Images/HDFC_Bank_CSR_Team.jpeg', title: 'HDFC Bank CSR Team Visit', date: 'March 2026' },
-    { category: 'Community', src: '/Images/International_Skill.jpeg', title: 'International Skill', date: 'Jan 2026' },
-    { category: 'Community', src: '/Images/community_mobilization.jpeg', title: 'Community Mobilization', date: 'Feb 2026' },
-];
-
-const PRESS = [
-    { outlet: 'The Hindu', headline: 'DMF & KCB launch International Centre of Excellence to empower youth in Pune', date: 'Sep 2025', tag: 'ICOE', color: 'border-primary', url: 'https://www.skillreporter.com/regional/maharashtra/dnyaneshwar-mulay-foundation-khadki-cantonment-board-centre-of-excellence-skill-development-pune/' },
-    { outlet: 'Pune Mirror', headline: 'She Leads programme sees 25 women form producer groups for sustainable enterprise', date: 'Nov 2025', tag: 'Women', color: 'border-secondary-container', url: 'https://www.skillreporter.com/regional/maharashtra/dnyaneshwar-mulay-foundation-khadki-cantonment-board-centre-of-excellence-skill-development-pune/' },
-
-];
-
-const PUBLICATIONS = [
-    { title: '', pdf: '/Publications/publication_1.pdf', img: '/Publications/publication_1.png', soon: false },
-    { title: '', pdf: '/Publications/publication_2.pdf', img: '/Publications/publication_2.png', soon: false },
-    { title: '', pdf: '/Publications/publication_3.pdf', img: '/Publications/publication_3.png', soon: false },
-    { title: '', pdf: '#', img: '/Publications/publication_4.png', soon: true },
-];
 
 const TESTIMONIALS = [
     {
@@ -77,33 +43,6 @@ const MILESTONES = [
     { icon: 'handshake', num: '8+', label: 'Partner Institutions' },
 ];
 
-const VIDEOS = [
-    {
-        title: 'Shreemati Sushma Swaraj Praises Dr. Dnyaneshwar Mulay',
-        desc: "Sushma Swaraj at Pravasi Bharatiya Divas: It's the migration of educated that has brought laurels to India.",
-        thumb: '/Images/Screenshot 2026-04-14 120204.png',
-        duration: '4:32',
-
-        link: 'https://www.youtube.com/watch?v=Tn4QTjjBbO4',
-    },
-    {
-        title: 'Ticket to Millennials’ Dreams and freedom.',
-        desc: 'Dr. Mulay telling us if showing a little empathy and compassion in any bureaucratic process is a ticket to a peaceful change.',
-        thumb: '/Images/Screenshot 2026-04-14 121236.png',
-        duration: '17:49',
-
-        link: 'https://www.youtube.com/watch?v=xwQfPksVOx4',
-    },
-    {
-        title: 'Society For Positive Initiatives - Dr. Dnyaneshwar Mulay (Ex. I.F.S)',
-        desc: 'Dr. Dnyaneshwar Mulay (Ex. I.F.S), Former Secretary of the Ministry of External Affairs, Government of India, remains the predominant source of inspiration for meaningful and impactful community development at DMF.',
-        thumb: '/Images/Screenshot 2026-04-14 121508.png',
-        duration: '5:48',
-
-        link: '#',
-    },
-];
-
 const SOCIAL = [
     { platform: 'Facebook', handle: '@dmfmop', icon: 'thumb_up', color: 'bg-[#1877F2]' },
     { platform: 'Instagram', handle: '@dmfmop', icon: 'photo_camera', color: 'bg-[#E1306C]' },
@@ -114,16 +53,41 @@ const SOCIAL = [
 
 const TABS = ['All', 'Events', 'Community', 'Programmes', 'Visitors', 'MoU'];
 
-/* ─── Component ──────────────────────────────────────────────────────── */
-
 export default function Media() {
     const [activeTab, setActiveTab] = useState('All');
     const [email, setEmail] = useState('');
     const [submitted, setSubmitted] = useState(false);
+    
+    // Dynamic State
+    const [mediaItems, setMediaItems] = useState([]);
+    const [videos, setVideos] = useState([]);
+    const [publications, setPublications] = useState([]);
+    const [press, setPress] = useState([]);
+
+    useEffect(() => {
+        const fetchAllMedia = async () => {
+            try {
+                const resMedia = await fetch('http://localhost:5000/api/media');
+                setMediaItems(await resMedia.json());
+
+                const resVid = await fetch('http://localhost:5000/api/videos');
+                setVideos(await resVid.json());
+
+                const resPubs = await fetch('http://localhost:5000/api/publications');
+                setPublications(await resPubs.json());
+
+                const resPress = await fetch('http://localhost:5000/api/press');
+                setPress(await resPress.json());
+            } catch (err) {
+                console.error('Failed to fetch media data', err);
+            }
+        };
+        fetchAllMedia();
+    }, []);
 
     const filtered = activeTab === 'All'
-        ? MEDIA_ITEMS
-        : MEDIA_ITEMS.filter(m => m.category === activeTab);
+        ? mediaItems
+        : mediaItems.filter(m => m.category === activeTab);
 
     const handleSubscribe = (e) => {
         e.preventDefault();
@@ -253,7 +217,7 @@ export default function Media() {
                             <p className="text-on-surface-variant max-w-2xl mx-auto">Watch stories of transformation, programme launches, and community voices from our work on the ground.</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {VIDEOS.map((v, i) => (
+                            {videos.map((v, i) => (
                                 <a key={i} href={v.link || '#'} target={v.link && v.link !== '#' ? "_blank" : undefined} rel={v.link && v.link !== '#' ? "noopener noreferrer" : undefined} className="group bg-surface-container-lowest rounded-2xl overflow-hidden shadow-md hover:-translate-y-2 transition-all duration-300 block">
                                     <div className="relative aspect-video overflow-hidden">
                                         <img alt={v.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src={v.thumb} />
@@ -289,7 +253,7 @@ export default function Media() {
                             <p className="text-on-surface-variant max-w-2xl mx-auto">DMF's work has been recognized and covered by leading national print and digital media publications across India.</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {PRESS.map((p, i) => (
+                            {press.map((p, i) => (
                                 <a key={i} href={p.url} target="_blank" rel="noopener noreferrer" className={`block bg-surface-container-low rounded-2xl p-8 border-l-4 ${p.color} shadow-sm hover:-translate-y-1 transition-all duration-300 no-underline`}>
                                     <div className="flex items-center gap-3 mb-4">
                                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -322,7 +286,7 @@ export default function Media() {
                             <p className="text-on-surface-variant max-w-2xl mx-auto">Explore our extensive research, frameworks, and reports detailing our impact and methodologies.</p>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
-                            {PUBLICATIONS.map((pub, i) => pub.soon ? (
+                            {publications.map((pub, i) => pub.soon ? (
                                 <div key={i} className="group relative rounded-lg overflow-hidden shadow-md cursor-not-allowed border border-[#fe9832] bg-white">
                                     <div className="aspect-[3/4] relative">
                                         <img alt={pub.title} className="w-full h-full object-cover" src={pub.img} />

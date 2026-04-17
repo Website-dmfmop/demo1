@@ -15,7 +15,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-white/10 backdrop-blur-2xl border-b border-white/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
+        <nav className="fixed top-0 left-0 right-0 z-50 bg-white/10 backdrop-blur-2xl border-b border-white/20">
             <div className="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
                 <Link to="/" className="flex items-center gap-3">
                     <img
@@ -38,6 +38,7 @@ const Navbar = () => {
                         <Link className={getLinkClass('/about')} to="/about">What we are</Link>
                         <Link className={getLinkClass('/icoe')} to="/icoe">What we do</Link>
                         <Link className={getLinkClass('/media')} to="/media">Media</Link>
+                        <Link className={getLinkClass('/admission')} to="/admission">Admission</Link>
                     </div>
                     <button
                         className="md:hidden text-white p-2"
@@ -55,6 +56,7 @@ const Navbar = () => {
                     <Link className={getLinkClass('/about')} to="/about" onClick={() => setMenuOpen(false)}>What we are</Link>
                     <Link className={getLinkClass('/icoe')} to="/icoe" onClick={() => setMenuOpen(false)}>What we do</Link>
                     <Link className={getLinkClass('/media')} to="/media" onClick={() => setMenuOpen(false)}>Media</Link>
+                    <Link className={getLinkClass('/admission')} to="/admission" onClick={() => setMenuOpen(false)}>Admission</Link>
                 </div>
             )}
         </nav>
