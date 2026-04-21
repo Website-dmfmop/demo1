@@ -146,12 +146,7 @@ const Admission = () => {
                                     <div className="flex-1">
                                       <h5 className="font-bold text-lg text-gray-800 mb-1">{course.courseName}</h5>
                                       <p className="text-sm text-gray-500 line-clamp-2 md:line-clamp-3">{course.description}</p>
-                                      <div className="flex items-center gap-3 mt-3">
-                                          <span className="text-primary font-bold text-xl">â‚¹{course.price - (course.price * ((course.discountOffer || 0) / 100))}</span>
-                                          {course.discountOffer > 0 && <span className="text-xs font-bold text-gray-400 line-through">â‚¹{course.price}</span>}
-                                          {course.discountOffer > 0 && <span className="bg-green-100 text-green-700 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase">{course.discountOffer}% Off</span>}
                                       </div>
-                                    </div>
                                     <div className="shrink-0 w-full md:w-auto flex flex-col gap-2">
                                       <button 
                                         onClick={() => {

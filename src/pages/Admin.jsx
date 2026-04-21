@@ -30,7 +30,7 @@ const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(sessionStorage.getItem('adminAuth') === 'true');
 
   // Forms State
-  const [courseForm, setCourseForm] = useState({ courseName: '', description: '', price: '', discountOffer: 0, category: 'General', brochure: null });
+  const [courseForm, setCourseForm] = useState({ courseName: '', description: '', category: 'General', brochure: null });
   const [showCourseForm, setShowCourseForm] = useState(false);
   
   const [showMediaForm, setShowMediaForm] = useState(false);
@@ -128,8 +128,6 @@ const Admin = () => {
       const formData = new FormData();
       formData.append('courseName', courseForm.courseName);
       formData.append('description', courseForm.description);
-      formData.append('price', courseForm.price);
-      formData.append('discountOffer', courseForm.discountOffer);
       formData.append('category', courseForm.category);
       if (courseForm.brochure) formData.append('brochure', courseForm.brochure);
 
@@ -141,7 +139,7 @@ const Admin = () => {
               body: formData
           });
           if (res.ok) {
-              setCourseForm({ courseName: '', description: '', price: '', discountOffer: 0, category: 'General', brochure: null });
+              setCourseForm({ courseName: '', description: '', category: 'General', brochure: null });
               setShowCourseForm(false);
               setEditingId(null);
               fetchData();
@@ -281,7 +279,7 @@ const Admin = () => {
   const openEditForm = (type, item) => {
       setEditingId(item._id);
       if (type === 'course') {
-          setCourseForm({ courseName: item.courseName, description: item.description, price: item.price, discountOffer: item.discountOffer || 0, category: item.category || 'General', brochure: null });
+          setCourseForm({ courseName: item.courseName, description: item.description, category: item.category || 'General', brochure: null });
           setShowCourseForm(true);
       } else if (type === 'media') {
           setMediaForm({ title: item.title, category: item.category, isCustomCategory: false, customCategory: '', date: item.date || '', file: null });
@@ -564,7 +562,6 @@ const Admin = () => {
                                         <thead className="bg-gray-50 text-gray-500 font-semibold text-xs uppercase tracking-wider">
                                             <tr>
                                                 <th className="px-6 py-4 border-b border-gray-200">Applicant Name</th>
-                                                <th className="px-6 py-4 border-b border-gray-200">Payment</th>
                                                 <th className="px-6 py-4 border-b border-gray-200">Course</th>
                                                 <th className="px-6 py-4 border-b border-gray-200">Contact Info</th>
                                                 <th className="px-6 py-4 border-b border-gray-200">Status</th>
@@ -574,7 +571,7 @@ const Admin = () => {
                                         </thead>
                                         <tbody className="divide-y divide-gray-100 bg-white">
                                             {sortedAdmissions.length === 0 ? (
-                                            <tr><td colSpan="7" className="py-12 text-center text-gray-400 font-medium">No records found.</td></tr>
+                                            <tr><td colSpan="6" className="py-12 text-center text-gray-400 font-medium">No records found.</td></tr>
                                             ) : (
                                             sortedAdmissions.map(adm => {
                                                 const admStatus = adm.status || 'Pending';
@@ -598,14 +595,7 @@ const Admin = () => {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex flex-col">
-                                                            <span className="font-bold text-gray-700 text-sm">₹{adm.amountPaid || 0}</span>
-                                                            <span className={`text-[10px] font-extrabold uppercase tracking-widest ${adm.paymentStatus === 'Paid' ? 'text-green-600' : 'text-orange-500'}`}>
-                                                                {adm.paymentStatus || 'Pending'}
-                                                            </span>
-                                                        </div>
-                                                    </td>
+
                                                     <td className="px-6 py-4">
                                                         <div className="font-bold text-xs text-gray-600 uppercase tracking-tight">{adm.courseCategory || 'N/A'}</div>
                                                         <div className="text-sm text-primary font-bold">{adm.subCourse || 'N/A'}</div>
@@ -749,14 +739,7 @@ const Admin = () => {
                                         <label className="block text-sm font-bold text-gray-700 mb-2">Description</label>
                                         <textarea required value={courseForm.description} onChange={e => setCourseForm({...courseForm, description: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" rows="3"></textarea>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-2">Base Price (₹)</label>
-                                        <input type="number" required min="0" value={courseForm.price} onChange={e => setCourseForm({...courseForm, price: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-2">Discount Percentage (%)</label>
-                                        <input type="number" min="0" max="100" value={courseForm.discountOffer} onChange={e => setCourseForm({...courseForm, discountOffer: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                                    </div>
+
                                     <div className="md:col-span-2">
                                         <label className="block text-sm font-bold text-gray-700 mb-2">Upload Course Brochure (Image/PDF)</label>
                                         <input type="file" accept="image/*,application/pdf" onChange={e => setCourseForm({...courseForm, brochure: e.target.files[0]})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
@@ -786,17 +769,7 @@ const Admin = () => {
                                             <h4 className="font-headline font-bold text-xl text-gray-800 mb-2">{course.courseName}</h4>
                                             <p className="text-sm text-gray-500 mb-6 line-clamp-2">{course.description}</p>
                                             
-                                            <div className="flex items-center gap-3 mt-auto border-t border-gray-100 pt-4">
-                                                <div className="font-headline font-bold text-2xl text-gray-800">
-                                                    ₹{course.price - (course.price * (course.discountOffer/100))}
-                                                </div>
-                                                {course.discountOffer > 0 && (
-                                                    <div className="flex flex-col">
-                                                        <span className="text-xs text-gray-400 line-through">₹{course.price}</span>
-                                                        <span className="text-xs font-bold text-green-600">{course.discountOffer}% OFF</span>
-                                                    </div>
-                                                )}
-                                            </div>
+
                                         </div>
                                     </div>
                                 ))
