@@ -160,7 +160,7 @@ const Admission = () => {
                                       </button>
                                       {course.brochure ? (
                                         <a 
-                                          href={`${API_URL}${course.brochure}`} 
+                                          href={`${API_URL}/api/download/${course.brochure.split('/').pop()}`} 
                                           target="_blank" 
                                           rel="noopener noreferrer"
                                           className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 border-2 border-secondary-container text-on-secondary-container hover:bg-secondary-container/10 font-headline font-bold rounded-xl transition-all"

@@ -17,6 +17,18 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Dedicated download route to enforce file saving (bypasses browser viewing)
+app.get('/api/download/:filename', (req, res) => {
+    const file = path.join(__dirname, 'uploads', req.params.filename);
+    res.download(file, (err) => {
+        if (err) {
+            if (!res.headersSent) {
+                res.status(404).json({ error: 'File not found' });
+            }
+        }
+    });
+});
+
 // Multer Storage Configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'uploads/'),
