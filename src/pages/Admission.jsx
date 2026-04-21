@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Admission = () => {
   const [liveSessions, setLiveSessions] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -19,8 +21,8 @@ const Admission = () => {
 
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:5000/api/live-sessions'),
-      fetch('http://localhost:5000/api/courses')
+      fetch(`${API_URL}/api/live-sessions`),
+      fetch(`${API_URL}/api/courses`)
     ])
       .then(async ([resSessions, resCourses]) => {
         if (resSessions.ok) setLiveSessions(await resSessions.json());
@@ -31,7 +33,7 @@ const Admission = () => {
 
   const joinSession = (session) => {
     if (session.cost > 0) {
-      if (window.confirm(`Payment Gateway Placeholder:\n\nProceed to pay ₹${session.cost} for "${session.title}"?`)) {
+      if (window.confirm(`Payment Gateway Placeholder:\n\nProceed to pay â‚¹${session.cost} for "${session.title}"?`)) {
         window.open(session.meetingLink, '_blank');
       }
     } else {
@@ -57,7 +59,7 @@ const Admission = () => {
           paymentStatus: 'Paid'
         };
 
-        const res = await fetch('http://localhost:5000/api/admissions', {
+        const res = await fetch(`${API_URL}/api/admissions`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -157,8 +159,8 @@ const Admission = () => {
                                       <h5 className="font-bold text-lg text-gray-800 mb-1">{course.courseName}</h5>
                                       <p className="text-sm text-gray-500 line-clamp-2 md:line-clamp-3">{course.description}</p>
                                       <div className="flex items-center gap-3 mt-3">
-                                          <span className="text-primary font-bold text-xl">₹{course.price - (course.price * ((course.discountOffer || 0) / 100))}</span>
-                                          {course.discountOffer > 0 && <span className="text-xs font-bold text-gray-400 line-through">₹{course.price}</span>}
+                                          <span className="text-primary font-bold text-xl">â‚¹{course.price - (course.price * ((course.discountOffer || 0) / 100))}</span>
+                                          {course.discountOffer > 0 && <span className="text-xs font-bold text-gray-400 line-through">â‚¹{course.price}</span>}
                                           {course.discountOffer > 0 && <span className="bg-green-100 text-green-700 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase">{course.discountOffer}% Off</span>}
                                       </div>
                                     </div>
@@ -175,7 +177,7 @@ const Admission = () => {
                                       </button>
                                       {course.brochure ? (
                                         <a 
-                                          href={`http://localhost:5000${course.brochure}`} 
+                                          href={`${API_URL}${course.brochure}`} 
                                           target="_blank" 
                                           rel="noopener noreferrer"
                                           className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 border-2 border-secondary-container text-on-secondary-container hover:bg-secondary-container/10 font-headline font-bold rounded-xl transition-all"
@@ -242,7 +244,7 @@ const Admission = () => {
                             </div>
                             <div className="shrink-0 flex flex-col items-start md:items-end gap-3 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6 min-w-[140px]">
                               <div className="font-headline font-bold text-3xl text-primary mb-1">
-                                {Number(session.cost) === 0 ? 'Free' : `₹${session.cost}`}
+                                {Number(session.cost) === 0 ? 'Free' : `â‚¹${session.cost}`}
                               </div>
                               <button onClick={() => joinSession(session)} className="px-5 py-2.5 bg-secondary-container hover:bg-[#d6e3c5] text-[#2c381e] font-bold rounded-xl transition-all shadow-sm active:scale-95 flex items-center gap-2 w-full md:w-auto justify-center text-sm">
                                 Join Now <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
@@ -328,7 +330,7 @@ const Admission = () => {
                 <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between border border-gray-100">
                   <div>
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Amount</p>
-                    <p className="text-2xl font-headline font-bold text-primary">₹{selectedCourse.price - (selectedCourse.price * ((selectedCourse.discountOffer || 0) / 100))}</p>
+                    <p className="text-2xl font-headline font-bold text-primary">â‚¹{selectedCourse.price - (selectedCourse.price * ((selectedCourse.discountOffer || 0) / 100))}</p>
                   </div>
                   <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1.5 rounded-full">
                     <span className="material-symbols-outlined text-[18px]">verified_user</span>

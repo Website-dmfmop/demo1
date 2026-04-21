@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 import { Link } from 'react-router-dom';
 
-/* ─── Data ────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const TESTIMONIALS = [
     {
@@ -13,8 +15,8 @@ const TESTIMONIALS = [
     },
     {
         name: 'Rekha Jadhav',
-        role: 'She Leads — Women Entrepreneur',
-        quote: 'Through the She Leads programme, I started my own sweet-making enterprise with four other women from my neighbourhood. Today our producer group earns over ₹40,000 a month collectively.',
+        role: 'She Leads â€” Women Entrepreneur',
+        quote: 'Through the She Leads programme, I started my own sweet-making enterprise with four other women from my neighbourhood. Today our producer group earns over â‚¹40,000 a month collectively.',
         icon: 'storefront',
         color: 'bg-[#2e7d32]',
     },
@@ -28,7 +30,7 @@ const TESTIMONIALS = [
     {
         name: 'Lt. Col. (Retd.) R. Nair',
         role: 'Parent of ICOE student',
-        quote: 'As a defence family, we were worried about career prospects for our daughter after relocation. ICOE provided exactly the right environment — professional, disciplined, and genuinely caring about outcomes.',
+        quote: 'As a defence family, we were worried about career prospects for our daughter after relocation. ICOE provided exactly the right environment â€” professional, disciplined, and genuinely caring about outcomes.',
         icon: 'military_tech',
         color: 'bg-primary',
     },
@@ -67,16 +69,16 @@ export default function Media() {
     useEffect(() => {
         const fetchAllMedia = async () => {
             try {
-                const resMedia = await fetch('http://localhost:5000/api/media');
+                const resMedia = await fetch(`${API_URL}/api/media`);
                 setMediaItems(await resMedia.json());
 
-                const resVid = await fetch('http://localhost:5000/api/videos');
+                const resVid = await fetch(`${API_URL}/api/videos`);
                 setVideos(await resVid.json());
 
-                const resPubs = await fetch('http://localhost:5000/api/publications');
+                const resPubs = await fetch(`${API_URL}/api/publications`);
                 setPublications(await resPubs.json());
 
-                const resPress = await fetch('http://localhost:5000/api/press');
+                const resPress = await fetch(`${API_URL}/api/press`);
                 setPress(await resPress.json());
             } catch (err) {
                 console.error('Failed to fetch media data', err);
@@ -97,7 +99,7 @@ export default function Media() {
     return (
         <div>
             <main>
-                {/* ── Hero ─────────────────────────────────────────────── */}
+                {/* â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <section className="relative px-8 pt-32 pb-20 overflow-hidden bg-surface">
                     <div className="max-w-7xl mx-auto grid md:grid-cols-12 gap-12 items-center">
                         <div className="md:col-span-7 z-10">
@@ -111,7 +113,7 @@ export default function Media() {
                                 Explore photos, press coverage, video highlights, and stories from Dr. Dnyaneshwar Mulay Foundation's programs, events, and community initiatives across India.
                             </p>
                             <p className="font-body text-base text-on-surface-variant max-w-xl leading-relaxed mb-8">
-                                From the ICOE inauguration to flood relief operations, from She Leads workshops to international job placement ceremonies — our media archive tells the story of real change through real people.
+                                From the ICOE inauguration to flood relief operations, from She Leads workshops to international job placement ceremonies â€” our media archive tells the story of real change through real people.
                             </p>
                             <div className="flex flex-wrap gap-3">
                                 {['10,000+ Beneficiaries', 'Est. 2019', '80G & 12A Certified', 'Pune, Maharashtra'].map((t, i) => (
@@ -131,7 +133,7 @@ export default function Media() {
                     </div>
                 </section>
 
-                {/* ── Milestone Strip ──────────────────────────────────── */}
+                {/* â”€â”€ Milestone Strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <section className="bg-primary py-10 px-8">
                     <div className="max-w-7xl mx-auto">
                         <div className="grid grid-cols-3 md:grid-cols-6 gap-6 text-center">
@@ -146,7 +148,7 @@ export default function Media() {
                     </div>
                 </section>
 
-                {/* ── Filter Tabs ─────────────────────────────────────── */}
+                {/* â”€â”€ Filter Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <section className="bg-surface-container sticky top-[72px] z-40">
                     <div className="max-w-7xl mx-auto px-8 py-5 flex flex-wrap items-center justify-between gap-3">
                         <div className="flex flex-wrap gap-3">
@@ -169,7 +171,7 @@ export default function Media() {
                     </div>
                 </section>
 
-                {/* ── Photo Gallery ────────────────────────────────────── */}
+                {/* â”€â”€ Photo Gallery â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <section className="px-8 py-20 bg-surface">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-14">
@@ -207,7 +209,7 @@ export default function Media() {
                     </div>
                 </section>
 
-                {/* ── Video Highlights ─────────────────────────────────── */}
+                {/* â”€â”€ Video Highlights â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <section className="py-20 bg-surface-container-low px-8">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-14">
@@ -243,7 +245,7 @@ export default function Media() {
                     </div>
                 </section>
 
-                {/* ── Press Coverage ───────────────────────────────────── */}
+                {/* â”€â”€ Press Coverage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <section className="py-20 bg-surface px-8">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-14">
@@ -276,7 +278,7 @@ export default function Media() {
                     </div>
                 </section>
 
-                {/* ── Foundation Publications ───────────────────────────────────── */}
+                {/* â”€â”€ Foundation Publications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <section className="py-20 bg-surface-container-low px-8">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-14">
@@ -316,7 +318,7 @@ export default function Media() {
                     </div>
                 </section>
 
-                {/* ── Testimonials ─────────────────────────────────────── */}
+                {/* â”€â”€ Testimonials â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <section className="py-20 bg-primary px-8 relative overflow-hidden">
                     <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}></div>
                     <div className="max-w-7xl mx-auto relative z-10">
@@ -346,7 +348,7 @@ export default function Media() {
                     </div>
                 </section>
 
-                {/* ── Social Media Connect ─────────────────────────────── */}
+                {/* â”€â”€ Social Media Connect â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <section className="py-20 bg-surface-container-low px-8">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-14">
@@ -371,7 +373,7 @@ export default function Media() {
                     </div>
                 </section>
 
-                {/* ── Newsletter Signup ────────────────────────────────── */}
+                {/* â”€â”€ Newsletter Signup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <section className="py-16 bg-surface-container-low px-8">
                     <div className="max-w-3xl mx-auto bg-surface-container-lowest rounded-2xl p-12 shadow-lg border border-outline-variant/10 text-center">
                         <span className="material-symbols-outlined text-secondary-container text-5xl mb-4 block">mail</span>
@@ -407,7 +409,7 @@ export default function Media() {
                     </div>
                 </section>
 
-                {/* ── CTA ─────────────────────────────────────────────── */}
+                {/* â”€â”€ CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <section className="py-24 px-8 bg-primary relative overflow-hidden">
                     <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}></div>
                     <div className="relative z-10 max-w-4xl mx-auto text-center">

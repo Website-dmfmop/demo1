@@ -4,6 +4,8 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('admissions');
   const [admissions, setAdmissions] = useState([]);
@@ -54,23 +56,23 @@ const Admin = () => {
     setLoading(true);
     try {
       if (activeTab === 'admissions') {
-        const res = await fetch('http://localhost:5000/api/admissions');
+        const res = await fetch(`${API_URL}/api/admissions`);
         if (!res.ok) throw new Error('Failed to fetch admissions');
         setAdmissions(await res.json());
       } else if (activeTab === 'donations') {
-        const res = await fetch('http://localhost:5000/api/donations');
+        const res = await fetch(`${API_URL}/api/donations`);
         if (!res.ok) throw new Error('Failed to fetch donations');
         setDonations(await res.json());
       } else if (activeTab === 'courses') {
-        const res = await fetch('http://localhost:5000/api/courses');
+        const res = await fetch(`${API_URL}/api/courses`);
         if (!res.ok) throw new Error('Failed to fetch courses');
         setCourses(await res.json());
       } else if (activeTab === 'media') {
         const [resMedia, resVid, resPub, resPress] = await Promise.all([
-          fetch('http://localhost:5000/api/media'),
-          fetch('http://localhost:5000/api/videos'),
-          fetch('http://localhost:5000/api/publications'),
-          fetch('http://localhost:5000/api/press')
+          fetch(`${API_URL}/api/media`),
+          fetch(`${API_URL}/api/videos`),
+          fetch(`${API_URL}/api/publications`),
+          fetch(`${API_URL}/api/press`)
         ]);
         if (!resMedia.ok) throw new Error('Failed to fetch media');
         setMediaItems(await resMedia.json());
@@ -78,7 +80,7 @@ const Admin = () => {
         setPublications(await resPub.json());
         setPress(await resPress.json());
       } else if (activeTab === 'live_sessions') {
-        const res = await fetch('http://localhost:5000/api/live-sessions');
+        const res = await fetch(`${API_URL}/api/live-sessions`);
         if (!res.ok) throw new Error('Failed to fetch live sessions');
         setLiveSessions(await res.json());
       }
@@ -92,7 +94,7 @@ const Admin = () => {
   const updateAdmissionStatus = async (id, newStatus) => {
     setActionMenuOpenId(null);
     try {
-      const res = await fetch(`http://localhost:5000/api/admissions/${id}/status`, {
+      const res = await fetch(`${API_URL}/api/admissions/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -108,10 +110,10 @@ const Admin = () => {
     setActionMenuOpenId(null);
     if (!window.confirm(`Are you sure you want to delete this ${type}? This action cannot be undone.`)) return;
     try {
-      let endpoint = `http://localhost:5000/api/${type}s/${id}`;
+      let endpoint = `${API_URL}/api/${type}s/${id}`;
       // Grammar handling for pluralization edge cases
-      if (type === 'media') endpoint = `http://localhost:5000/api/media/${id}`;
-      if (type === 'press') endpoint = `http://localhost:5000/api/press/${id}`;
+      if (type === 'media') endpoint = `${API_URL}/api/media/${id}`;
+      if (type === 'press') endpoint = `${API_URL}/api/press/${id}`;
 
       const res = await fetch(endpoint, { method: 'DELETE' });
       if (res.ok) fetchData();
@@ -132,7 +134,7 @@ const Admin = () => {
       if (courseForm.brochure) formData.append('brochure', courseForm.brochure);
 
       try {
-          const url = editingId ? `http://localhost:5000/api/courses/${editingId}` : 'http://localhost:5000/api/courses';
+          const url = editingId ? `${API_URL}/api/courses/${editingId}` : `${API_URL}/api/courses`;
           const method = editingId ? 'PUT' : 'POST';
           const res = await fetch(url, {
               method,
@@ -176,7 +178,7 @@ const Admin = () => {
       if (mediaForm.file) formData.append('file', mediaForm.file);
 
       try {
-          const url = editingId ? `http://localhost:5000/api/media/${editingId}` : 'http://localhost:5000/api/media';
+          const url = editingId ? `${API_URL}/api/media/${editingId}` : `${API_URL}/api/media`;
           const res = await fetch(url, {
               method: editingId ? 'PUT' : 'POST',
               body: formData
@@ -204,7 +206,7 @@ const Admin = () => {
       if (videoForm.file) formData.append('thumb', videoForm.file);
 
       try {
-          const url = editingId ? `http://localhost:5000/api/videos/${editingId}` : 'http://localhost:5000/api/videos';
+          const url = editingId ? `${API_URL}/api/videos/${editingId}` : `${API_URL}/api/videos`;
           const res = await fetch(url, { method: editingId ? 'PUT' : 'POST', body: formData });
           if (res.ok) {
               setVideoForm({ title: '', desc: '', duration: '', link: '', file: null });
@@ -224,7 +226,7 @@ const Admin = () => {
       if (pubForm.pdfFile) formData.append('pdf', pubForm.pdfFile);
 
       try {
-          const url = editingId ? `http://localhost:5000/api/publications/${editingId}` : 'http://localhost:5000/api/publications';
+          const url = editingId ? `${API_URL}/api/publications/${editingId}` : `${API_URL}/api/publications`;
           const res = await fetch(url, { method: editingId ? 'PUT' : 'POST', body: formData });
           if (res.ok) {
               setPubForm({ title: '', soon: false, imgFile: null, pdfFile: null });
@@ -241,7 +243,7 @@ const Admin = () => {
       data.tag = pressForm.isCustomTag ? pressForm.customTag : pressForm.tag;
 
       try {
-          const url = editingId ? `http://localhost:5000/api/press/${editingId}` : 'http://localhost:5000/api/press';
+          const url = editingId ? `${API_URL}/api/press/${editingId}` : `${API_URL}/api/press`;
           const res = await fetch(url, {
               method: editingId ? 'PUT' : 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -259,7 +261,7 @@ const Admin = () => {
   const createLiveSession = async (e) => {
       e.preventDefault();
       try {
-          const url = editingId ? `http://localhost:5000/api/live-sessions/${editingId}` : 'http://localhost:5000/api/live-sessions';
+          const url = editingId ? `${API_URL}/api/live-sessions/${editingId}` : `${API_URL}/api/live-sessions`;
           const res = await fetch(url, {
               method: editingId ? 'PUT' : 'POST',
               headers: { 'Content-Type': 'application/json' },

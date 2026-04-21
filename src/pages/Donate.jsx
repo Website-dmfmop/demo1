@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export default function Donate() {
     const [amount, setAmount] = useState(100);
     const [customAmount, setCustomAmount] = useState('');
@@ -30,7 +32,7 @@ export default function Donate() {
                 return;
             }
 
-            const res = await fetch('http://localhost:5000/api/donations', {
+            const res = await fetch(`${API_URL}/api/donations`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -115,12 +117,12 @@ export default function Donate() {
                                                     : 'border-outline-variant hover:border-secondary-container hover:text-secondary focus:ring-2 focus:ring-secondary-container'
                                                     }`}
                                             >
-                                                ₹{val}
+                                                â‚¹{val}
                                             </button>
                                         ))}
                                     </div>
                                     <div className="relative mb-8">
-                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-outline font-bold text-xl">₹</span>
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-outline font-bold text-xl">â‚¹</span>
                                         <input
                                             className="w-full pl-10 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary font-body text-lg"
                                             placeholder="Custom Amount"
