@@ -884,7 +884,7 @@ const Admin = () => {
                                                 </button>
                                             </div>
                                             <div className="aspect-[4/3] bg-gray-100 relative">
-                                                <img src={item.src} alt={item.title} className="w-full h-full object-cover" />
+                                                <img src={item.src && item.src.startsWith('/uploads') ? `${API_URL}${item.src}` : item.src} alt={item.title} className="w-full h-full object-cover" />
                                                 <div className="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded">{item.category}</div>
                                             </div>
                                             <div className="p-4">
@@ -945,7 +945,7 @@ const Admin = () => {
                                                 </button>
                                             </div>
                                             <div className="aspect-video relative overflow-hidden bg-gray-100">
-                                                <img src={vid.thumb} className="w-full h-full object-cover" alt="Video" />
+                                                <img src={vid.thumb && vid.thumb.startsWith('/uploads') ? `${API_URL}${vid.thumb}` : vid.thumb} className="w-full h-full object-cover" alt="Video" />
                                                 <div className="absolute inset-0 bg-black/30 flex items-center justify-center"><span className="material-symbols-outlined text-4xl text-white opacity-80 border-2 border-white rounded-full">play_arrow</span></div>
                                             </div>
                                             <div className="p-4">
@@ -1002,7 +1002,7 @@ const Admin = () => {
                                                 </button>
                                             </div>
                                             <div className="aspect-[3/4] bg-gray-50 flex items-center justify-center">
-                                                {pub.img ? <img src={pub.img} className="w-full h-full object-cover" alt="Cover" /> : <span className="material-symbols-outlined text-4xl text-gray-300">book</span>}
+                                                {pub.img ? <img src={pub.img && pub.img.startsWith('/uploads') ? `${API_URL}${pub.img}` : pub.img} className="w-full h-full object-cover" alt="Cover" /> : <span className="material-symbols-outlined text-4xl text-gray-300">book</span>}
                                                 {pub.soon && <div className="absolute inset-0 bg-black/50 flex items-center justify-center uppercase tracking-widest text-white font-bold text-xs">Soon</div>}
                                             </div>
                                             <div className="p-3 text-center border-t border-gray-100">
