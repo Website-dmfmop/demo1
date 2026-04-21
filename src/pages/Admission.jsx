@@ -32,53 +32,41 @@ const Admission = () => {
   }, []);
 
   const joinSession = (session) => {
-    if (session.cost > 0) {
-      if (window.confirm(`Payment Gateway Placeholder:\n\nProceed to pay â‚¹${session.cost} for "${session.title}"?`)) {
-        window.open(session.meetingLink, '_blank');
-      }
-    } else {
-      window.open(session.meetingLink, '_blank');
-    }
+    window.open(session.meetingLink, '_blank');
   };
 
   const handleEnrollSubmit = async (e) => {
     e.preventDefault();
     setIsEnrolling(true);
+    try {
+      const payload = {
+        firstName: enrollForm.firstName,
+        lastName: enrollForm.lastName,
+        email: enrollForm.email,
+        contactNumber: enrollForm.phone,
+        courseCategory: selectedCourse.category,
+        subCourse: selectedCourse.courseName,
+      };
 
-    // Simulate Payment Loading
-    setTimeout(async () => {
-      try {
-        const payload = {
-          firstName: enrollForm.firstName,
-          lastName: enrollForm.lastName,
-          email: enrollForm.email,
-          contactNumber: enrollForm.phone,
-          courseCategory: selectedCourse.category,
-          subCourse: selectedCourse.courseName,
-          amountPaid: selectedCourse.price - (selectedCourse.price * ((selectedCourse.discountOffer || 0) / 100)),
-          paymentStatus: 'Paid'
-        };
+      const res = await fetch(`${API_URL}/api/admissions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-        const res = await fetch(`${API_URL}/api/admissions`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        if (res.ok) {
-          alert(`Enrollment Successful!\n\nYou have been enrolled in ${selectedCourse.courseName}.`);
-          setShowEnrollModal(false);
-          setEnrollForm({ firstName: '', lastName: '', email: '', phone: '' });
-        } else {
-          alert('Enrollment failed. Please try again.');
-        }
-      } catch (err) {
-        console.error('Enrollment error:', err);
-        alert('An error occurred during enrollment.');
-      } finally {
-        setIsEnrolling(false);
+      if (res.ok) {
+        alert(`Registration Successful!\n\nYour interest in ${selectedCourse.courseName} has been recorded. Our team will contact you shortly.`);
+        setShowEnrollModal(false);
+        setEnrollForm({ firstName: '', lastName: '', email: '', phone: '' });
+      } else {
+        alert('Registration failed. Please try again.');
       }
-    }, 1500);
+    } catch (err) {
+      console.error('Registration error:', err);
+      alert('An error occurred. Please try again.');
+    } finally {
+      setIsEnrolling(false);
+    }
   };
 
   // Standard categories to show even if empty
@@ -173,7 +161,7 @@ const Admission = () => {
                                         className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white font-headline font-bold rounded-xl transition-all shadow-md active:scale-95"
                                       >
                                         <span className="material-symbols-outlined text-[20px]">how_to_reg</span>
-                                        Enroll Now
+                                        Register Interest
                                       </button>
                                       {course.brochure ? (
                                         <a 
@@ -243,9 +231,6 @@ const Admission = () => {
                               </div>
                             </div>
                             <div className="shrink-0 flex flex-col items-start md:items-end gap-3 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6 min-w-[140px]">
-                              <div className="font-headline font-bold text-3xl text-primary mb-1">
-                                {Number(session.cost) === 0 ? 'Free' : `â‚¹${session.cost}`}
-                              </div>
                               <button onClick={() => joinSession(session)} className="px-5 py-2.5 bg-secondary-container hover:bg-[#d6e3c5] text-[#2c381e] font-bold rounded-xl transition-all shadow-sm active:scale-95 flex items-center gap-2 w-full md:w-auto justify-center text-sm">
                                 Join Now <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                               </button>
@@ -262,7 +247,7 @@ const Admission = () => {
         </div>
       </div>
 
-      {/* ENROLLMENT MODAL */}
+      {/* REGISTRATION MODAL */}
       {showEnrollModal && selectedCourse && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isEnrolling && setShowEnrollModal(false)}></div>
@@ -270,7 +255,7 @@ const Admission = () => {
           <div className="relative bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="bg-primary p-6 text-white text-center relative">
-              <h3 className="text-2xl font-display font-bold">Course Enrollment</h3>
+              <h3 className="text-2xl font-display font-bold">Register Your Interest</h3>
               <p className="text-primary-container/80 text-sm mt-1">{selectedCourse.courseName}</p>
               {!isEnrolling && (
                 <button onClick={() => setShowEnrollModal(false)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
@@ -281,6 +266,7 @@ const Admission = () => {
 
             {/* Modal Body */}
             <div className="p-8">
+              <p className="text-sm text-gray-500 mb-6 text-center">Fill in your details and our team will get in touch with you shortly.</p>
               <form onSubmit={handleEnrollSubmit} className="space-y-5">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
@@ -327,17 +313,6 @@ const Admission = () => {
                   />
                 </div>
 
-                <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between border border-gray-100">
-                  <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Amount</p>
-                    <p className="text-2xl font-headline font-bold text-primary">â‚¹{selectedCourse.price - (selectedCourse.price * ((selectedCourse.discountOffer || 0) / 100))}</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1.5 rounded-full">
-                    <span className="material-symbols-outlined text-[18px]">verified_user</span>
-                    <span className="text-xs font-bold uppercase tracking-tight">Secure Payment</span>
-                  </div>
-                </div>
-
                 <button 
                   type="submit" 
                   disabled={isEnrolling}
@@ -346,11 +321,11 @@ const Admission = () => {
                   {isEnrolling ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      Processing Payment...
+                      Submitting...
                     </>
                   ) : (
                     <>
-                      Pay & Enroll
+                      Submit Registration
                       <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
                     </>
                   )}
