@@ -1183,7 +1183,6 @@ const Admin = () => {
                             )}
                         </div>
                     </div>
-                    </div>
                 )}
 
                 {/* ---------- JOINEES TAB ---------- */}
