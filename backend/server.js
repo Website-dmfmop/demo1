@@ -7,6 +7,7 @@ const path = require('path');
 
 const Donation = require('./models/Donation');
 const Admission = require('./models/Admission');
+const Joinee = require('./models/Joinee');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -97,6 +98,59 @@ app.delete('/api/admissions/:id', async (req, res) => {
         const deletedAdmission = await Admission.findByIdAndDelete(req.params.id);
         if (!deletedAdmission) return res.status(404).json({ error: 'Admission not found' });
         res.json({ message: 'Admission deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- JOINEE ROUTES ---
+
+// Get all joinees
+app.get('/api/joinees', async (req, res) => {
+    try {
+        const joinees = await Joinee.find().sort({ createdAt: -1 });
+        res.json(joinees);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Create a new joinee
+app.post('/api/joinees', async (req, res) => {
+    try {
+        const newJoinee = new Joinee(req.body);
+        const savedJoinee = await newJoinee.save();
+        res.status(201).json(savedJoinee);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+// Update joinee status
+app.put('/api/joinees/:id/status', async (req, res) => {
+    try {
+        const { status } = req.body;
+        if (!['Pending', 'Contacted', 'Approved', 'Rejected'].includes(status)) {
+            return res.status(400).json({ error: 'Invalid status' });
+        }
+        const updatedJoinee = await Joinee.findByIdAndUpdate(
+            req.params.id, 
+            { status }, 
+            { new: true }
+        );
+        if (!updatedJoinee) return res.status(404).json({ error: 'Joinee not found' });
+        res.json(updatedJoinee);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Delete joinee
+app.delete('/api/joinees/:id', async (req, res) => {
+    try {
+        const deletedJoinee = await Joinee.findByIdAndDelete(req.params.id);
+        if (!deletedJoinee) return res.status(404).json({ error: 'Joinee not found' });
+        res.json({ message: 'Joinee deleted successfully' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

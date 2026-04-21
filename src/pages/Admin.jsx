@@ -16,6 +16,7 @@ const Admin = () => {
   const [publications, setPublications] = useState([]);
   const [press, setPress] = useState([]);
   const [liveSessions, setLiveSessions] = useState([]);
+  const [joinees, setJoinees] = useState([]);
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -83,6 +84,10 @@ const Admin = () => {
         const res = await fetch(`${API_URL}/api/live-sessions`);
         if (!res.ok) throw new Error('Failed to fetch live sessions');
         setLiveSessions(await res.json());
+      } else if (activeTab === 'joinees') {
+        const res = await fetch(`${API_URL}/api/joinees`);
+        if (!res.ok) throw new Error('Failed to fetch joinees');
+        setJoinees(await res.json());
       }
     } catch (err) {
       setError(err.message);
@@ -95,6 +100,21 @@ const Admin = () => {
     setActionMenuOpenId(null);
     try {
       const res = await fetch(`${API_URL}/api/admissions/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) fetchData();
+      else alert('Failed to update status');
+    } catch (err) {
+      alert('Error updating status');
+    }
+  };
+
+  const updateJoineeStatus = async (id, newStatus) => {
+    setActionMenuOpenId(null);
+    try {
+      const res = await fetch(`${API_URL}/api/joinees/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -387,6 +407,15 @@ const Admin = () => {
                 <span className="material-symbols-outlined text-[20px]">volunteer_activism</span> Donations
             </button>
 
+            <button
+                onClick={() => setActiveTab('joinees')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'joinees' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">group_add</span> Join Requests
+            </button>
+
             <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4 mt-8">Manage System</p>
             <button
                 onClick={() => setActiveTab('courses')}
@@ -445,6 +474,7 @@ const Admin = () => {
                 {activeTab === 'courses' && 'Course Management'}
                 {activeTab === 'media' && 'Media Management'}
                 {activeTab === 'live_sessions' && 'Live Sessions Management'}
+                {activeTab === 'joinees' && 'Join Requests'}
             </h2>
           </div>
           <div className="flex items-center gap-6">
@@ -1151,6 +1181,100 @@ const Admin = () => {
                                     </div>
                                 ))
                             )}
+                        </div>
+                    </div>
+                    </div>
+                )}
+
+                {/* ---------- JOINEES TAB ---------- */}
+                {activeTab === 'joinees' && (
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-visible relative animate-in fade-in duration-300">
+                        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-white rounded-t-2xl">
+                            <h3 className="font-headline font-bold text-lg text-gray-800">Join Requests</h3>
+                            <div className="flex bg-gray-100 p-1 rounded-lg">
+                                <div className="px-3 py-1 text-xs font-bold bg-white text-primary rounded-md shadow-sm">All ({joinees.length})</div>
+                            </div>
+                        </div>
+                        <div className="overflow-x-auto min-h-[300px]">
+                            <table className="w-full text-left text-sm">
+                                <thead className="bg-gray-50 text-gray-500 font-semibold text-xs uppercase tracking-wider">
+                                    <tr>
+                                        <th className="px-6 py-4 border-b border-gray-200">Name & Purpose</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Contact Details</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Message</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Status</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Date</th>
+                                        <th className="px-6 py-4 border-b border-gray-200 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100 bg-white">
+                                    {joinees.length === 0 ? (
+                                        <tr><td colSpan="6" className="py-12 text-center text-gray-400 font-medium">No join requests found.</td></tr>
+                                    ) : (
+                                        joinees.map(joinee => {
+                                            const jStatus = joinee.status || 'Pending';
+                                            let statusColor = 'bg-yellow-100 text-yellow-700'; let dotColor = 'bg-yellow-500';
+                                            if (jStatus === 'Contacted') { statusColor = 'bg-blue-100 text-blue-700'; dotColor = 'bg-blue-500'; }
+                                            if (jStatus === 'Approved') { statusColor = 'bg-green-100 text-green-700'; dotColor = 'bg-green-500'; }
+                                            if (jStatus === 'Rejected') { statusColor = 'bg-red-100 text-red-700'; dotColor = 'bg-red-500'; }
+
+                                            return (
+                                                <tr key={joinee._id} className="hover:bg-blue-50/30 transition-colors">
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg shrink-0">
+                                                                {joinee.name.charAt(0).toUpperCase()}
+                                                            </div>
+                                                            <div>
+                                                                <div className="font-bold text-gray-800">{joinee.name}</div>
+                                                                <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider bg-gray-100 px-2 py-0.5 rounded w-fit mt-1">Goal: {joinee.purpose}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="text-gray-800 font-medium text-xs break-all">{joinee.email}</div>
+                                                        <div className="text-gray-500 text-xs mt-0.5">{joinee.phone}</div>
+                                                        <div className="text-gray-500 text-[10px] mt-0.5 truncate max-w-[150px]" title={joinee.address}>{joinee.address}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="text-xs text-gray-600 italic line-clamp-3 max-w-[200px]" title={joinee.message}>
+                                                            {joinee.message ? `"${joinee.message}"` : '-'}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-widest ${statusColor}`}>
+                                                            <div className={`w-1 h-1 rounded-full ${dotColor}`}></div>
+                                                            {jStatus}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-gray-500 text-xs whitespace-nowrap">{new Date(joinee.createdAt).toLocaleDateString()}</td>
+                                                    <td className="px-6 py-4 text-center relative pointer-events-auto">
+                                                        <button 
+                                                            onClick={(e) => { e.stopPropagation(); setActionMenuOpenId(actionMenuOpenId === joinee._id ? null : joinee._id); }}
+                                                            className={`p-1.5 rounded-lg transition-colors ${actionMenuOpenId === joinee._id ? 'bg-gray-100 text-primary' : 'text-gray-400 hover:text-primary hover:bg-gray-50'}`}
+                                                        >
+                                                            <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                                                        </button>
+                                                        
+                                                        {actionMenuOpenId === joinee._id && (
+                                                            <div className="absolute right-12 top-8 w-48 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 py-2 z-50 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+                                                                <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 border-b border-gray-50 text-left">Update Status</div>
+                                                                <button onClick={() => updateJoineeStatus(joinee._id, 'Pending')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-yellow-500"></div> Pending</button>
+                                                                <button onClick={() => updateJoineeStatus(joinee._id, 'Contacted')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-blue-500"></div> Contacted</button>
+                                                                <button onClick={() => updateJoineeStatus(joinee._id, 'Approved')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-green-500"></div> Approved</button>
+                                                                <button onClick={() => updateJoineeStatus(joinee._id, 'Rejected')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 font-medium"><div className="w-2 h-2 rounded-full bg-red-500"></div> Reject</button>
+                                                                <button onClick={() => deleteRecord('joinee', joinee._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 mt-1 font-bold">
+                                                                    <span className="material-symbols-outlined text-[16px]">delete</span> Delete Record
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 )}

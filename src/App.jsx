@@ -12,6 +12,7 @@ import ICOE from './pages/ICOE';
 import Media from './pages/Media';
 import Admin from './pages/Admin';
 import Admission from './pages/Admission';
+import JoinUs from './pages/JoinUs';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/media" element={<Media />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admission" element={<Admission />} />
+        <Route path="/join-us" element={<JoinUs />} />
       </Routes>
       <Footer />
     </BrowserRouter>
