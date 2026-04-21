@@ -187,7 +187,7 @@ export default function Media() {
                                         <img
                                             alt={item.title}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                            src={item.src}
+                                            src={item.src?.startsWith('/uploads') ? `${API_URL}${item.src}` : item.src}
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                         <div className="absolute top-4 left-4">
@@ -222,7 +222,7 @@ export default function Media() {
                             {videos.map((v, i) => (
                                 <a key={i} href={v.link || '#'} target={v.link && v.link !== '#' ? "_blank" : undefined} rel={v.link && v.link !== '#' ? "noopener noreferrer" : undefined} className="group bg-surface-container-lowest rounded-2xl overflow-hidden shadow-md hover:-translate-y-2 transition-all duration-300 block">
                                     <div className="relative aspect-video overflow-hidden">
-                                        <img alt={v.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src={v.thumb} />
+                                        <img alt={v.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src={v.thumb?.startsWith('/uploads') ? `${API_URL}${v.thumb}` : v.thumb} />
                                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                                             <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white flex items-center justify-center group-hover:bg-white/40 transition-all duration-300 cursor-pointer">
                                                 <span className="material-symbols-outlined text-white text-3xl">play_arrow</span>
@@ -291,7 +291,7 @@ export default function Media() {
                             {publications.map((pub, i) => pub.soon ? (
                                 <div key={i} className="group relative rounded-lg overflow-hidden shadow-md cursor-not-allowed border border-[#fe9832] bg-white">
                                     <div className="aspect-[3/4] relative">
-                                        <img alt={pub.title} className="w-full h-full object-cover" src={pub.img} />
+                                        <img alt={pub.title} className="w-full h-full object-cover" src={pub.img?.startsWith('/uploads') ? `${API_URL}${pub.img}` : pub.img} />
                                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6 text-center">
                                             <span className="text-white font-headline font-bold text-xl tracking-wide uppercase">Coming Soon</span>
                                         </div>
@@ -303,7 +303,7 @@ export default function Media() {
                             ) : (
                                 <a key={i} href={pub.pdf} target="_blank" rel="noopener noreferrer" className="group rounded-lg overflow-hidden shadow-md hover:-translate-y-2 transition-all duration-300 border border-outline-variant/20 bg-white block">
                                     <div className="aspect-[3/4] relative overflow-hidden">
-                                        <img alt={pub.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src={pub.img} />
+                                        <img alt={pub.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src={pub.img?.startsWith('/uploads') ? `${API_URL}${pub.img}` : pub.img} />
                                         <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
                                         <div className="absolute bottom-4 right-4 w-12 h-12 rounded-full bg-primary/90 text-white flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
                                             <span className="material-symbols-outlined">menu_book</span>
