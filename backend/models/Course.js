@@ -6,6 +6,7 @@ const courseSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     discountOffer: { type: Number, default: 0 },
     category: { type: String, default: 'General' },
+    brochure: { type: String, default: null },
     createdAt: { type: Date, default: Date.now }
 });
 

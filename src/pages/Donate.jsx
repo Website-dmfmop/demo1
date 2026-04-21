@@ -111,8 +111,8 @@ export default function Donate() {
                                                 type="button"
                                                 onClick={() => handleAmountClick(val)}
                                                 className={`py-4 border-2 rounded-xl font-headline font-bold text-xl transition-all ${amount === val && !customAmount
-                                                        ? 'border-secondary-container bg-secondary-container/10 text-secondary scale-[1.02]'
-                                                        : 'border-outline-variant hover:border-secondary-container hover:text-secondary focus:ring-2 focus:ring-secondary-container'
+                                                    ? 'border-secondary-container bg-secondary-container/10 text-secondary scale-[1.02]'
+                                                    : 'border-outline-variant hover:border-secondary-container hover:text-secondary focus:ring-2 focus:ring-secondary-container'
                                                     }`}
                                             >
                                                 ₹{val}

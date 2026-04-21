@@ -123,10 +123,13 @@ app.get('/api/courses', async (req, res) => {
     }
 });
 
-app.post('/api/courses', async (req, res) => {
+app.post('/api/courses', upload.single('brochure'), async (req, res) => {
     try {
         const Course = require('./models/Course');
-        const newCourse = new Course(req.body);
+        const data = { ...req.body };
+        if (req.file) data.brochure = '/uploads/' + req.file.filename;
+
+        const newCourse = new Course(data);
         const savedCourse = await newCourse.save();
         res.status(201).json(savedCourse);
     } catch (err) {
@@ -141,6 +144,19 @@ app.delete('/api/courses/:id', async (req, res) => {
         res.json({ message: 'Course deleted successfully' });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/courses/:id', upload.single('brochure'), async (req, res) => {
+    try {
+        const Course = require('./models/Course');
+        const data = { ...req.body };
+        if (req.file) data.brochure = '/uploads/' + req.file.filename;
+
+        const updatedCourse = await Course.findByIdAndUpdate(req.params.id, data, { new: true });
+        res.json(updatedCourse);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
     }
 });
 
@@ -177,6 +193,19 @@ app.delete('/api/media/:id', async (req, res) => {
     }
 });
 
+app.put('/api/media/:id', upload.single('file'), async (req, res) => {
+    try {
+        const MediaItem = require('./models/MediaItem');
+        const data = { ...req.body };
+        if (req.file) data.src = '/uploads/' + req.file.filename;
+
+        const updatedItem = await MediaItem.findByIdAndUpdate(req.params.id, data, { new: true });
+        res.json(updatedItem);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
 // --- VIDEOS API ---
 app.get('/api/videos', async (req, res) => {
     try {
@@ -205,6 +234,17 @@ app.delete('/api/videos/:id', async (req, res) => {
         await require('./models/VideoHighlight').findByIdAndDelete(req.params.id);
         res.json({ message: 'Video deleted' });
     } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/videos/:id', upload.single('thumb'), async (req, res) => {
+    try {
+        const VideoHighlight = require('./models/VideoHighlight');
+        const data = { ...req.body };
+        if (req.file) data.thumb = '/uploads/' + req.file.filename;
+
+        const updatedVid = await VideoHighlight.findByIdAndUpdate(req.params.id, data, { new: true });
+        res.json(updatedVid);
+    } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
 // --- PUBLICATIONS API ---
@@ -239,6 +279,23 @@ app.delete('/api/publications/:id', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+app.put('/api/publications/:id', upload.fields([{ name: 'img', maxCount: 1 }, { name: 'pdf', maxCount: 1 }]), async (req, res) => {
+    try {
+        const Publication = require('./models/Publication');
+        const data = { ...req.body };
+        if (data.soon === 'true') data.soon = true;
+        if (data.soon === 'false') data.soon = false;
+
+        if (req.files) {
+            if (req.files.img && req.files.img[0]) data.img = '/uploads/' + req.files.img[0].filename;
+            if (req.files.pdf && req.files.pdf[0]) data.pdf = '/uploads/' + req.files.pdf[0].filename;
+        }
+
+        const updatedPub = await Publication.findByIdAndUpdate(req.params.id, data, { new: true });
+        res.json(updatedPub);
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
 // --- PRESS COVERAGE API ---
 app.get('/api/press', async (req, res) => {
     try {
@@ -260,6 +317,47 @@ app.delete('/api/press/:id', async (req, res) => {
         await require('./models/PressCoverage').findByIdAndDelete(req.params.id);
         res.json({ message: 'Press deleted' });
     } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/press/:id', async (req, res) => {
+    try {
+        const PressCoverage = require('./models/PressCoverage');
+        const updatedPress = await PressCoverage.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.json(updatedPress);
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+// --- LIVE SESSIONS API ---
+app.get('/api/live-sessions', async (req, res) => {
+    try {
+        const LiveSession = require('./models/LiveSession');
+        const sessions = await LiveSession.find().sort({ createdAt: -1 });
+        res.json(sessions);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/live-sessions', async (req, res) => {
+    try {
+        const LiveSession = require('./models/LiveSession');
+        const newSession = new LiveSession(req.body);
+        res.status(201).json(await newSession.save());
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+app.delete('/api/live-sessions/:id', async (req, res) => {
+    try {
+        const LiveSession = require('./models/LiveSession');
+        await LiveSession.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Live session deleted' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/live-sessions/:id', async (req, res) => {
+    try {
+        const LiveSession = require('./models/LiveSession');
+        const updatedSession = await LiveSession.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.json(updatedSession);
+    } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
 app.listen(PORT, () => {

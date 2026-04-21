@@ -13,6 +13,7 @@ const Admin = () => {
   const [videos, setVideos] = useState([]);
   const [publications, setPublications] = useState([]);
   const [press, setPress] = useState([]);
+  const [liveSessions, setLiveSessions] = useState([]);
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,8 +23,12 @@ const Admin = () => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [mediaSubTab, setMediaSubTab] = useState('photos'); // photos, videos, publications, press
 
+  const [editingId, setEditingId] = useState(null);
+  const [password, setPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(sessionStorage.getItem('adminAuth') === 'true');
+
   // Forms State
-  const [courseForm, setCourseForm] = useState({ courseName: '', description: '', price: '', discountOffer: 0, category: 'General' });
+  const [courseForm, setCourseForm] = useState({ courseName: '', description: '', price: '', discountOffer: 0, category: 'General', brochure: null });
   const [showCourseForm, setShowCourseForm] = useState(false);
   
   const [showMediaForm, setShowMediaForm] = useState(false);
@@ -37,7 +42,8 @@ const Admin = () => {
 
   const [showPressForm, setShowPressForm] = useState(false);
   const [pressForm, setPressForm] = useState({ outlet: '', headline: '', date: '', tag: 'ICOE', color: 'border-primary', url: '', isCustomTag: false, customTag: '' });
-
+  const [showLiveSessionForm, setShowLiveSessionForm] = useState(false);
+  const [liveSessionForm, setLiveSessionForm] = useState({ title: '', meetingLink: '', speaker: '', description: '', collaboration: '', date: '', time: '', cost: 0 });
   useEffect(() => {
     setActionMenuOpenId(null);
     setShowAnalytics(false);
@@ -71,6 +77,10 @@ const Admin = () => {
         setVideos(await resVid.json());
         setPublications(await resPub.json());
         setPress(await resPress.json());
+      } else if (activeTab === 'live_sessions') {
+        const res = await fetch('http://localhost:5000/api/live-sessions');
+        if (!res.ok) throw new Error('Failed to fetch live sessions');
+        setLiveSessions(await res.json());
       }
     } catch (err) {
       setError(err.message);
@@ -113,22 +123,48 @@ const Admin = () => {
 
   const createCourse = async (e) => {
       e.preventDefault();
+      const formData = new FormData();
+      formData.append('courseName', courseForm.courseName);
+      formData.append('description', courseForm.description);
+      formData.append('price', courseForm.price);
+      formData.append('discountOffer', courseForm.discountOffer);
+      formData.append('category', courseForm.category);
+      if (courseForm.brochure) formData.append('brochure', courseForm.brochure);
+
       try {
-          const res = await fetch('http://localhost:5000/api/courses', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(courseForm)
+          const url = editingId ? `http://localhost:5000/api/courses/${editingId}` : 'http://localhost:5000/api/courses';
+          const method = editingId ? 'PUT' : 'POST';
+          const res = await fetch(url, {
+              method,
+              body: formData
           });
           if (res.ok) {
-              setCourseForm({ courseName: '', description: '', price: '', discountOffer: 0, category: 'General' });
+              setCourseForm({ courseName: '', description: '', price: '', discountOffer: 0, category: 'General', brochure: null });
               setShowCourseForm(false);
+              setEditingId(null);
               fetchData();
           } else {
-              alert('Failed to create course');
+              alert('Failed to save course');
           }
       } catch (err) {
-          alert('Error creating course');
+          alert('Error saving course');
       }
+  };
+
+  const handleLogin = (e) => {
+      e.preventDefault();
+      if (password === 'Dmfmop@123') {
+          setIsAuthenticated(true);
+          sessionStorage.setItem('adminAuth', 'true');
+      } else {
+          alert('Incorrect password');
+      }
+  };
+
+  const handleLogout = () => {
+      setIsAuthenticated(false);
+      sessionStorage.removeItem('adminAuth');
+      setPassword('');
   };
 
   const createMedia = async (e) => {
@@ -140,19 +176,21 @@ const Admin = () => {
       if (mediaForm.file) formData.append('file', mediaForm.file);
 
       try {
-          const res = await fetch('http://localhost:5000/api/media', {
-              method: 'POST',
+          const url = editingId ? `http://localhost:5000/api/media/${editingId}` : 'http://localhost:5000/api/media';
+          const res = await fetch(url, {
+              method: editingId ? 'PUT' : 'POST',
               body: formData
           });
           if (res.ok) {
               setMediaForm({ title: '', category: 'Events', isCustomCategory: false, customCategory: '', date: '', file: null });
               setShowMediaForm(false);
+              setEditingId(null);
               fetchData();
           } else {
-              alert('Failed to create media item');
+              alert('Failed to save media item');
           }
       } catch (err) {
-          alert('Error creating media');
+          alert('Error saving media');
       }
   };
 
@@ -166,13 +204,15 @@ const Admin = () => {
       if (videoForm.file) formData.append('thumb', videoForm.file);
 
       try {
-          const res = await fetch('http://localhost:5000/api/videos', { method: 'POST', body: formData });
+          const url = editingId ? `http://localhost:5000/api/videos/${editingId}` : 'http://localhost:5000/api/videos';
+          const res = await fetch(url, { method: editingId ? 'PUT' : 'POST', body: formData });
           if (res.ok) {
               setVideoForm({ title: '', desc: '', duration: '', link: '', file: null });
               setShowVideoForm(false);
+              setEditingId(null);
               fetchData();
           }
-      } catch (err) { alert('Error creating video'); }
+      } catch (err) { alert('Error saving video'); }
   };
 
   const createPub = async (e) => {
@@ -184,13 +224,15 @@ const Admin = () => {
       if (pubForm.pdfFile) formData.append('pdf', pubForm.pdfFile);
 
       try {
-          const res = await fetch('http://localhost:5000/api/publications', { method: 'POST', body: formData });
+          const url = editingId ? `http://localhost:5000/api/publications/${editingId}` : 'http://localhost:5000/api/publications';
+          const res = await fetch(url, { method: editingId ? 'PUT' : 'POST', body: formData });
           if (res.ok) {
               setPubForm({ title: '', soon: false, imgFile: null, pdfFile: null });
               setShowPubForm(false);
+              setEditingId(null);
               fetchData();
           }
-      } catch (err) { alert('Error creating publication'); }
+      } catch (err) { alert('Error saving publication'); }
   };
 
   const createPress = async (e) => {
@@ -199,17 +241,62 @@ const Admin = () => {
       data.tag = pressForm.isCustomTag ? pressForm.customTag : pressForm.tag;
 
       try {
-          const res = await fetch('http://localhost:5000/api/press', {
-              method: 'POST',
+          const url = editingId ? `http://localhost:5000/api/press/${editingId}` : 'http://localhost:5000/api/press';
+          const res = await fetch(url, {
+              method: editingId ? 'PUT' : 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(data)
           });
           if (res.ok) {
               setPressForm({ outlet: '', headline: '', date: '', tag: 'ICOE', color: 'border-primary', url: '', isCustomTag: false, customTag: '' });
               setShowPressForm(false);
+              setEditingId(null);
               fetchData();
           }
-      } catch (err) { alert('Error creating press'); }
+      } catch (err) { alert('Error saving press'); }
+  };
+
+  const createLiveSession = async (e) => {
+      e.preventDefault();
+      try {
+          const url = editingId ? `http://localhost:5000/api/live-sessions/${editingId}` : 'http://localhost:5000/api/live-sessions';
+          const res = await fetch(url, {
+              method: editingId ? 'PUT' : 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(liveSessionForm)
+          });
+          if (res.ok) {
+              setLiveSessionForm({ title: '', meetingLink: '', speaker: '', description: '', collaboration: '', date: '', time: '', cost: 0 });
+              setShowLiveSessionForm(false);
+              setEditingId(null);
+              fetchData();
+          } else {
+              alert('Failed to save live session');
+          }
+      } catch (err) { alert('Error saving live session'); }
+  };
+
+  const openEditForm = (type, item) => {
+      setEditingId(item._id);
+      if (type === 'course') {
+          setCourseForm({ courseName: item.courseName, description: item.description, price: item.price, discountOffer: item.discountOffer || 0, category: item.category || 'General', brochure: null });
+          setShowCourseForm(true);
+      } else if (type === 'media') {
+          setMediaForm({ title: item.title, category: item.category, isCustomCategory: false, customCategory: '', date: item.date || '', file: null });
+          setShowMediaForm(true);
+      } else if (type === 'video') {
+          setVideoForm({ title: item.title, desc: item.desc, duration: item.duration || '', link: item.link, file: null });
+          setShowVideoForm(true);
+      } else if (type === 'pub') {
+          setPubForm({ title: item.title, soon: item.soon || false, imgFile: null, pdfFile: null });
+          setShowPubForm(true);
+      } else if (type === 'press') {
+          setPressForm({ outlet: item.outlet, headline: item.headline, date: item.date || '', tag: item.tag, color: item.color || 'border-primary', url: item.url || '', isCustomTag: false, customTag: '' });
+          setShowPressForm(true);
+      } else if (type === 'live-session') {
+          setLiveSessionForm({ title: item.title, meetingLink: item.meetingLink, speaker: item.speaker || '', description: item.description || '', collaboration: item.collaboration || '', date: item.date || '', time: item.time || '', cost: item.cost || 0 });
+          setShowLiveSessionForm(true);
+      }
   };
 
   // Helper counters & sorted arrays
@@ -237,8 +324,40 @@ const Admin = () => {
   const admissionTrendData = Object.keys(admissionsByDateMap).map(k => ({ date: k, count: admissionsByDateMap[k] })).reverse();
 
 
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-10 space-y-8 animate-in fade-in zoom-in duration-500">
+          <div className="text-center space-y-2">
+            <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="material-symbols-outlined text-4xl">lock</span>
+            </div>
+            <h1 className="text-3xl font-headline font-bold text-gray-800">Admin Login</h1>
+            <p className="text-gray-500 font-medium font-body">Please enter password to continue</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Password</label>
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoFocus
+                className="w-full px-6 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-bold tracking-widest"
+                placeholder="••••••••"
+              />
+            </div>
+            <button type="submit" className="w-full py-4 bg-primary text-white font-headline font-bold rounded-2xl shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all">
+              Unlock Dashboard
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-screen bg-[#f1f4f6] font-body bg-slate-50 text-slate-800" onClick={() => setActionMenuOpenId(null)}>
+    <div className="flex h-screen font-body text-slate-800" style={{ background: 'linear-gradient(135deg, rgba(255, 153, 51, 0.20) 0%, rgba(255, 255, 255, 1) 50%, rgba(18, 136, 7, 0.20) 100%)' }} onClick={() => setActionMenuOpenId(null)}>
       {/* SIDEBAR */}
       <aside className="w-64 bg-primary text-white flex flex-col shadow-2xl z-20 shrink-0" onClick={e => e.stopPropagation()}>
         <div className="h-20 flex items-center justify-center border-b border-white/10 px-6">
@@ -285,8 +404,16 @@ const Admin = () => {
             >
                 <span className="material-symbols-outlined text-[20px]">perm_media</span> Media Gallery
             </button>
+            <button
+                onClick={() => setActiveTab('live_sessions')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'live_sessions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">live_tv</span> Live Sessions
+            </button>
         </nav>
-        <div className="p-6 border-t border-white/10">
+        <div className="p-6 border-t border-white/10 space-y-4">
             <div className="bg-white/10 p-4 rounded-xl">
                 <p className="text-xs text-white/70 mb-2">Logged in as</p>
                 <div className="flex items-center gap-3">
@@ -294,6 +421,13 @@ const Admin = () => {
                     <span className="font-headline font-bold text-sm">Super Admin</span>
                 </div>
             </div>
+            <button 
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all font-bold text-sm border border-red-500/20 shadow-sm"
+            >
+                <span className="material-symbols-outlined text-[20px]">logout</span>
+                Logout Session
+            </button>
         </div>
       </aside>
 
@@ -310,6 +444,7 @@ const Admin = () => {
                 {activeTab === 'donations' && 'Donations Tracker'}
                 {activeTab === 'courses' && 'Course Management'}
                 {activeTab === 'media' && 'Media Management'}
+                {activeTab === 'live_sessions' && 'Live Sessions Management'}
             </h2>
           </div>
           <div className="flex items-center gap-6">
@@ -426,12 +561,12 @@ const Admin = () => {
                                     <table className="w-full text-left text-sm">
                                         <thead className="bg-gray-50 text-gray-500 font-semibold text-xs uppercase tracking-wider">
                                             <tr>
-                                                <th className="px-6 py-4 border-b border-gray-200">Student Name</th>
-                                                <th className="px-6 py-4 border-b border-gray-200">Status</th>
-                                                <th className="px-6 py-4 border-b border-gray-200">Course Chosen</th>
-                                                <th className="px-6 py-4 border-b border-gray-200">Parent/Guardian</th>
+                                                <th className="px-6 py-4 border-b border-gray-200">Applicant Name</th>
+                                                <th className="px-6 py-4 border-b border-gray-200">Payment</th>
+                                                <th className="px-6 py-4 border-b border-gray-200">Course</th>
                                                 <th className="px-6 py-4 border-b border-gray-200">Contact Info</th>
-                                                <th className="px-6 py-4 border-b border-gray-200">Date Applied</th>
+                                                <th className="px-6 py-4 border-b border-gray-200">Status</th>
+                                                <th className="px-6 py-4 border-b border-gray-200">Date</th>
                                                 <th className="px-6 py-4 border-b border-gray-200 text-center">Actions</th>
                                             </tr>
                                         </thead>
@@ -446,32 +581,44 @@ const Admin = () => {
                                                 if (admStatus === 'Rejected') { statusColor = 'bg-red-100 text-red-700'; dotColor = 'bg-red-500'; }
                                                 if (admStatus === 'Under Review') { statusColor = 'bg-blue-100 text-blue-700'; dotColor = 'bg-blue-500'; }
 
+                                                const fullName = adm.firstName ? `${adm.firstName} ${adm.lastName}` : (adm.studentName || 'Unknown');
+
                                                 return (
                                                 <tr key={adm._id} className="hover:bg-blue-50/30 transition-colors">
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-3">
                                                             <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg">
-                                                                {adm.studentName.charAt(0).toUpperCase()}
+                                                                {fullName.charAt(0).toUpperCase()}
                                                             </div>
                                                             <div>
-                                                                <div className="font-bold text-gray-800">{adm.studentName}</div>
-                                                                <div className="text-xs text-gray-500">{adm.age} yrs • {adm.grade}</div>
+                                                                <div className="font-bold text-gray-800">{fullName}</div>
+                                                                <div className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">{adm.age ? `${adm.age} yrs • ${adm.grade}` : 'Web Enrollment'}</div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold ${statusColor}`}>
-                                                            <div className={`w-1.5 h-1.5 rounded-full ${dotColor}`}></div>
+                                                        <div className="flex flex-col">
+                                                            <span className="font-bold text-gray-700 text-sm">₹{adm.amountPaid || 0}</span>
+                                                            <span className={`text-[10px] font-extrabold uppercase tracking-widest ${adm.paymentStatus === 'Paid' ? 'text-green-600' : 'text-orange-500'}`}>
+                                                                {adm.paymentStatus || 'Pending'}
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="font-bold text-xs text-gray-600 uppercase tracking-tight">{adm.courseCategory || 'N/A'}</div>
+                                                        <div className="text-sm text-primary font-bold">{adm.subCourse || 'N/A'}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="text-gray-800 font-medium text-xs">{adm.email || 'No Email'}</div>
+                                                        <div className="text-gray-500 text-xs">{adm.contactNumber}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-widest ${statusColor}`}>
+                                                            <div className={`w-1 h-1 rounded-full ${dotColor}`}></div>
                                                             {admStatus}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="font-bold text-gray-700">{adm.courseCategory || 'N/A'}</div>
-                                                        <div className="text-xs text-primary font-medium">{adm.subCourse || 'N/A'}</div>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-gray-600 font-medium">{adm.parentName}</td>
-                                                    <td className="px-6 py-4 text-gray-500">{adm.contactNumber}</td>
-                                                    <td className="px-6 py-4 text-gray-500">{new Date(adm.createdAt).toLocaleDateString()}</td>
+                                                    <td className="px-6 py-4 text-gray-500 text-xs whitespace-nowrap">{new Date(adm.createdAt).toLocaleDateString()}</td>
                                                     <td className="px-6 py-4 text-center relative pointer-events-auto">
                                                         <button 
                                                             onClick={(e) => { e.stopPropagation(); setActionMenuOpenId(actionMenuOpenId === adm._id ? null : adm._id); }}
@@ -483,11 +630,11 @@ const Admin = () => {
                                                         {actionMenuOpenId === adm._id && (
                                                             <div className="absolute right-12 top-8 w-48 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 py-2 z-50 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
                                                                 <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 border-b border-gray-50 text-left">Set Status</div>
-                                                                <button onClick={() => updateAdmissionStatus(adm._id, 'Pending')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-yellow-500"></div> Pending</button>
-                                                                <button onClick={() => updateAdmissionStatus(adm._id, 'Under Review')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500"></div> Under Review</button>
-                                                                <button onClick={() => updateAdmissionStatus(adm._id, 'Approved')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500"></div> Approve</button>
-                                                                <button onClick={() => updateAdmissionStatus(adm._id, 'Rejected')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50"><div className="w-2 h-2 rounded-full bg-red-500"></div> Reject</button>
-                                                                <button onClick={() => deleteRecord('admission', adm._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 mt-1">
+                                                                <button onClick={() => updateAdmissionStatus(adm._id, 'Pending')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-yellow-500"></div> Pending</button>
+                                                                <button onClick={() => updateAdmissionStatus(adm._id, 'Under Review')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-blue-500"></div> Under Review</button>
+                                                                <button onClick={() => updateAdmissionStatus(adm._id, 'Approved')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-green-500"></div> Approve</button>
+                                                                <button onClick={() => updateAdmissionStatus(adm._id, 'Rejected')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 font-medium"><div className="w-2 h-2 rounded-full bg-red-500"></div> Reject</button>
+                                                                <button onClick={() => deleteRecord('admission', adm._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 mt-1 font-bold">
                                                                     <span className="material-symbols-outlined text-[16px]">delete</span> Delete Record
                                                                 </button>
                                                             </div>
@@ -574,7 +721,7 @@ const Admin = () => {
                     <div className="space-y-6 animate-in fade-in duration-300">
                         <div className="flex justify-between items-center">
                             <h3 className="font-headline font-bold text-2xl text-gray-800">Course Offerings</h3>
-                            <button onClick={() => setShowCourseForm(!showCourseForm)} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all">
+                            <button onClick={() => { if (!showCourseForm) setEditingId(null); setShowCourseForm(!showCourseForm); }} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all">
                                 <span className="material-symbols-outlined text-[18px]">add</span> {showCourseForm ? 'Cancel' : 'Add New Course'}
                             </button>
                         </div>
@@ -608,9 +755,14 @@ const Admin = () => {
                                         <label className="block text-sm font-bold text-gray-700 mb-2">Discount Percentage (%)</label>
                                         <input type="number" min="0" max="100" value={courseForm.discountOffer} onChange={e => setCourseForm({...courseForm, discountOffer: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
                                     </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Upload Course Brochure (Image/PDF)</label>
+                                        <input type="file" accept="image/*,application/pdf" onChange={e => setCourseForm({...courseForm, brochure: e.target.files[0]})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                        {editingId && <p className="text-[10px] text-gray-400 mt-1 italic">Leave empty to keep existing brochure</p>}
+                                    </div>
                                 </div>
                                 <div className="mt-8 flex justify-end">
-                                    <button type="submit" className="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors shadow-sm">Save Course</button>
+                                    <button type="submit" className="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors shadow-sm">{editingId ? 'Save Changes' : 'Save Course'}</button>
                                 </div>
                             </form>
                         )}
@@ -624,7 +776,10 @@ const Admin = () => {
                                         <div className="p-6">
                                             <div className="flex justify-between items-start mb-4">
                                                 <span className="bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">{course.category}</span>
-                                                <button onClick={() => deleteRecord('course', course._id)} className="text-gray-300 hover:text-red-500 transition-colors p-1"><span className="material-symbols-outlined text-[20px]">delete</span></button>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => openEditForm('course', course)} className="text-gray-300 hover:text-blue-500 transition-colors p-1"><span className="material-symbols-outlined text-[20px]">edit</span></button>
+                                                    <button onClick={() => deleteRecord('course', course._id)} className="text-gray-300 hover:text-red-500 transition-colors p-1"><span className="material-symbols-outlined text-[20px]">delete</span></button>
+                                                </div>
                                             </div>
                                             <h4 className="font-headline font-bold text-xl text-gray-800 mb-2">{course.courseName}</h4>
                                             <p className="text-sm text-gray-500 mb-6 line-clamp-2">{course.description}</p>
@@ -664,7 +819,7 @@ const Admin = () => {
                         {/* SUBTAB: PHOTOS */}
                         {mediaSubTab === 'photos' && (
                             <div className="space-y-6 animate-in fade-in">
-                                <button onClick={() => setShowMediaForm(!showMediaForm)} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all w-fit">
+                                <button onClick={() => { if (!showMediaForm) setEditingId(null); setShowMediaForm(!showMediaForm); }} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all w-fit">
                                     <span className="material-symbols-outlined text-[18px]">add_photo_alternate</span> {showMediaForm ? 'Cancel' : 'Upload New Photo'}
                                 </button>
                                 {showMediaForm && (
@@ -708,16 +863,21 @@ const Admin = () => {
                                             </div>
                                         </div>
                                         <div className="mt-8 flex justify-end">
-                                            <button type="submit" className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary-hover transition-colors shadow-sm">Publish Photo</button>
+                                            <button type="submit" className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary-hover transition-colors shadow-sm">{editingId ? 'Save Changes' : 'Publish Photo'}</button>
                                         </div>
                                     </form>
                                 )}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                                     {mediaItems.length === 0 ? <p className="col-span-full py-8 text-center text-gray-400 font-medium">No photos found.</p> : mediaItems.map(item => (
                                         <div key={item._id} className="group flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative">
-                                            <button onClick={() => deleteRecord('media', item._id)} className="absolute top-2 right-2 bg-black/50 hover:bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 transition-all backdrop-blur-sm shadow-md">
-                                                <span className="material-symbols-outlined text-[16px]">delete</span>
-                                            </button>
+                                            <div className="absolute top-2 right-2 flex gap-1 z-10 opacity-0 group-hover:opacity-100 transition-all">
+                                                <button type="button" onClick={(e) => { e.stopPropagation(); openEditForm('media', item); }} className="bg-blue-500/80 hover:bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm shadow-md">
+                                                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                                                </button>
+                                                <button type="button" onClick={(e) => { e.stopPropagation(); deleteRecord('media', item._id); }} className="bg-black/50 hover:bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm shadow-md">
+                                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                                </button>
+                                            </div>
                                             <div className="aspect-[4/3] bg-gray-100 relative">
                                                 <img src={item.src} alt={item.title} className="w-full h-full object-cover" />
                                                 <div className="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded">{item.category}</div>
@@ -735,7 +895,7 @@ const Admin = () => {
                         {/* SUBTAB: VIDEOS */}
                         {mediaSubTab === 'videos' && (
                             <div className="space-y-6 animate-in fade-in">
-                                <button onClick={() => setShowVideoForm(!showVideoForm)} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all w-fit">
+                                <button onClick={() => { if (!showVideoForm) setEditingId(null); setShowVideoForm(!showVideoForm); }} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all w-fit">
                                     <span className="material-symbols-outlined text-[18px]">video_call</span> {showVideoForm ? 'Cancel' : 'Add New Video'}
                                 </button>
                                 {showVideoForm && (
@@ -764,16 +924,21 @@ const Admin = () => {
                                             </div>
                                         </div>
                                         <div className="mt-8 flex justify-end">
-                                            <button type="submit" className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary-hover transition-colors shadow-sm">Publish Video</button>
+                                            <button type="submit" className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary-hover transition-colors shadow-sm">{editingId ? 'Save Changes' : 'Publish Video'}</button>
                                         </div>
                                     </form>
                                 )}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                                     {videos.length === 0 ? <p className="col-span-full py-8 text-center text-gray-400 font-medium">No videos found.</p> : videos.map(vid => (
                                         <div key={vid._id} className="group relative bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                            <button onClick={() => deleteRecord('video', vid._id)} className="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 transition-all shadow-md">
-                                                <span className="material-symbols-outlined text-[16px]">delete</span>
-                                            </button>
+                                            <div className="absolute top-2 right-2 flex gap-1 z-10 opacity-0 group-hover:opacity-100 transition-all">
+                                                <button type="button" onClick={(e) => { e.stopPropagation(); openEditForm('video', vid); }} className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md">
+                                                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                                                </button>
+                                                <button type="button" onClick={(e) => { e.stopPropagation(); deleteRecord('video', vid._id); }} className="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md">
+                                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                                </button>
+                                            </div>
                                             <div className="aspect-video relative overflow-hidden bg-gray-100">
                                                 <img src={vid.thumb} className="w-full h-full object-cover" alt="Video" />
                                                 <div className="absolute inset-0 bg-black/30 flex items-center justify-center"><span className="material-symbols-outlined text-4xl text-white opacity-80 border-2 border-white rounded-full">play_arrow</span></div>
@@ -791,7 +956,7 @@ const Admin = () => {
                         {/* SUBTAB: PUBLICATIONS */}
                         {mediaSubTab === 'publications' && (
                             <div className="space-y-6 animate-in fade-in">
-                                <button onClick={() => setShowPubForm(!showPubForm)} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all w-fit">
+                                <button onClick={() => { if (!showPubForm) setEditingId(null); setShowPubForm(!showPubForm); }} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all w-fit">
                                     <span className="material-symbols-outlined text-[18px]">library_books</span> {showPubForm ? 'Cancel' : 'Add New Publication'}
                                 </button>
                                 {showPubForm && (
@@ -816,16 +981,21 @@ const Admin = () => {
                                             </div>
                                         </div>
                                         <div className="mt-8 flex justify-end">
-                                            <button type="submit" className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary-hover transition-colors shadow-sm">Publish Document</button>
+                                            <button type="submit" className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary-hover transition-colors shadow-sm">{editingId ? 'Save Changes' : 'Publish Document'}</button>
                                         </div>
                                     </form>
                                 )}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                                     {publications.length === 0 ? <p className="col-span-full py-8 text-center text-gray-400 font-medium">No publications found.</p> : publications.map(pub => (
                                         <div key={pub._id} className="group relative bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                                            <button onClick={() => deleteRecord('publication', pub._id)} className="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 transition-all shadow-md">
-                                                <span className="material-symbols-outlined text-[16px]">delete</span>
-                                            </button>
+                                            <div className="absolute top-2 right-2 flex gap-1 z-10 opacity-0 group-hover:opacity-100 transition-all">
+                                                <button type="button" onClick={(e) => { e.stopPropagation(); openEditForm('pub', pub); }} className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md">
+                                                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                                                </button>
+                                                <button type="button" onClick={(e) => { e.stopPropagation(); deleteRecord('publication', pub._id); }} className="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md">
+                                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                                </button>
+                                            </div>
                                             <div className="aspect-[3/4] bg-gray-50 flex items-center justify-center">
                                                 {pub.img ? <img src={pub.img} className="w-full h-full object-cover" alt="Cover" /> : <span className="material-symbols-outlined text-4xl text-gray-300">book</span>}
                                                 {pub.soon && <div className="absolute inset-0 bg-black/50 flex items-center justify-center uppercase tracking-widest text-white font-bold text-xs">Soon</div>}
@@ -843,7 +1013,7 @@ const Admin = () => {
                         {/* SUBTAB: PRESS */}
                         {mediaSubTab === 'press' && (
                             <div className="space-y-6 animate-in fade-in">
-                                <button onClick={() => setShowPressForm(!showPressForm)} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all w-fit">
+                                <button onClick={() => { if (!showPressForm) setEditingId(null); setShowPressForm(!showPressForm); }} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all w-fit">
                                     <span className="material-symbols-outlined text-[18px]">newspaper</span> {showPressForm ? 'Cancel' : 'Add New Press Coverage'}
                                 </button>
                                 {showPressForm && (
@@ -891,16 +1061,21 @@ const Admin = () => {
                                             </div>
                                         </div>
                                         <div className="mt-8 flex justify-end">
-                                            <button type="submit" className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary-hover transition-colors shadow-sm">Publish Press Record</button>
+                                            <button type="submit" className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary-hover transition-colors shadow-sm">{editingId ? 'Save Changes' : 'Publish Press Record'}</button>
                                         </div>
                                     </form>
                                 )}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {press.length === 0 ? <p className="col-span-full py-8 text-center text-gray-400 font-medium">No press records found.</p> : press.map(p => (
                                         <div key={p._id} className={`group bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-l-4 ${p.color} relative pr-12`}>
-                                            <button onClick={() => deleteRecord('press', p._id)} className="absolute top-4 right-4 bg-gray-100 hover:bg-red-500 text-gray-400 hover:text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors">
-                                                <span className="material-symbols-outlined text-[16px]">delete</span>
-                                            </button>
+                                            <div className="absolute top-4 right-4 flex gap-1">
+                                                <button type="button" onClick={() => openEditForm('press', p)} className="bg-gray-100 hover:bg-blue-500 text-gray-400 hover:text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors">
+                                                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                                                </button>
+                                                <button type="button" onClick={() => deleteRecord('press', p._id)} className="bg-gray-100 hover:bg-red-500 text-gray-400 hover:text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors">
+                                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                                </button>
+                                            </div>
                                             <div className="flex justify-between items-start mb-2">
                                                 <div className="font-bold text-primary">{p.outlet}</div>
                                                 <span className="text-[10px] uppercase font-bold tracking-widest bg-gray-100 px-2 py-1 rounded">{p.tag}</span>
@@ -912,6 +1087,96 @@ const Admin = () => {
                                 </div>
                             </div>
                         )}
+                    </div>
+                )}
+
+                {/* ---------- LIVE SESSIONS TAB ---------- */}
+                {activeTab === 'live_sessions' && (
+                    <div className="space-y-6 animate-in fade-in duration-300">
+                        <div className="flex justify-between items-center">
+                            <h3 className="font-headline font-bold text-2xl text-gray-800">Live Sessions</h3>
+                            <button onClick={() => { if (!showLiveSessionForm) setEditingId(null); setShowLiveSessionForm(!showLiveSessionForm); }} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all">
+                                <span className="material-symbols-outlined text-[18px]">add</span> {showLiveSessionForm ? 'Cancel' : 'Schedule Session'}
+                            </button>
+                        </div>
+
+                        {showLiveSessionForm && (
+                            <form onSubmit={createLiveSession} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                                <h4 className="font-bold text-gray-800 border-b border-gray-100 pb-3 mb-6">Schedule New Live Session</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Title *</label>
+                                        <input type="text" required value={liveSessionForm.title} onChange={e => setLiveSessionForm({...liveSessionForm, title: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Meeting Link (URL) *</label>
+                                        <input type="url" required value={liveSessionForm.meetingLink} onChange={e => setLiveSessionForm({...liveSessionForm, meetingLink: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Speaker Name</label>
+                                        <input type="text" value={liveSessionForm.speaker} onChange={e => setLiveSessionForm({...liveSessionForm, speaker: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">In Collaboration With</label>
+                                        <input type="text" value={liveSessionForm.collaboration} onChange={e => setLiveSessionForm({...liveSessionForm, collaboration: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Date</label>
+                                        <input type="text" placeholder="e.g. 25 Oct 2026" value={liveSessionForm.date} onChange={e => setLiveSessionForm({...liveSessionForm, date: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Time</label>
+                                        <input type="text" placeholder="e.g. 10:00 AM" value={liveSessionForm.time} onChange={e => setLiveSessionForm({...liveSessionForm, time: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Cost (₹) - 0 for Free</label>
+                                        <input type="number" min="0" value={liveSessionForm.cost} onChange={e => setLiveSessionForm({...liveSessionForm, cost: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Description</label>
+                                        <textarea rows="3" value={liveSessionForm.description} onChange={e => setLiveSessionForm({...liveSessionForm, description: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none"></textarea>
+                                    </div>
+                                </div>
+                                <div className="mt-8 flex justify-end">
+                                    <button type="submit" className="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors shadow-sm">{editingId ? 'Save Changes' : 'Save Live Session'}</button>
+                                </div>
+                            </form>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {liveSessions.length === 0 ? (
+                                <p className="col-span-full py-8 text-center text-gray-400 font-medium">No live sessions scheduled.</p>
+                            ) : (
+                                liveSessions.map(session => (
+                                    <div key={session._id} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow relative">
+                                        <div className="p-6">
+                                            <div className="flex justify-between items-start mb-4">
+                                                <span className="bg-red-50 text-red-600 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full flex items-center gap-1"><span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span> LIVE</span>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => openEditForm('live-session', session)} className="text-gray-300 hover:text-blue-500 transition-colors p-1"><span className="material-symbols-outlined text-[20px]">edit</span></button>
+                                                    <button onClick={() => deleteRecord('live-session', session._id)} className="text-gray-300 hover:text-red-500 transition-colors p-1"><span className="material-symbols-outlined text-[20px]">delete</span></button>
+                                                </div>
+                                            </div>
+                                            <h4 className="font-headline font-bold text-xl text-gray-800 mb-2">{session.title}</h4>
+                                            <p className="text-sm text-gray-500 mb-4 line-clamp-2">{session.description}</p>
+                                            
+                                            <div className="space-y-2 text-sm text-gray-600 mb-4">
+                                                {session.speaker && <div className="flex items-center gap-2"><span className="material-symbols-outlined text-[16px]">person</span> {session.speaker}</div>}
+                                                {session.date && <div className="flex items-center gap-2"><span className="material-symbols-outlined text-[16px]">event</span> {session.date} {session.time}</div>}
+                                                {session.collaboration && <div className="flex items-center gap-2 text-primary"><span className="material-symbols-outlined text-[16px]">handshake</span> {session.collaboration}</div>}
+                                            </div>
+
+                                            <div className="flex items-center justify-between mt-auto border-t border-gray-100 pt-4">
+                                                <div className="font-headline font-bold text-2xl text-gray-800">
+                                                    {Number(session.cost) === 0 ? 'Free' : `₹${session.cost}`}
+                                                </div>
+                                                <a href={session.meetingLink} target="_blank" rel="noreferrer" className="text-sm font-bold text-primary hover:underline">Join Link</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
                     </div>
                 )}
 
