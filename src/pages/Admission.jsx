@@ -142,64 +142,40 @@ const Admission = () => {
                     {diplomaCourses.length === 0 ? (
                       <p className="text-gray-500 font-medium text-center py-8">No diploma/degree courses currently listed. Please check back later.</p>
                     ) : (
-                      Object.keys(groupedDiplomaCourses).map(category => (
-                        <div key={category} className="space-y-4">
-                          <button
-                            onClick={() => setActiveCategoryDiploma(activeCategoryDiploma === category ? null : category)}
-                            className="w-full flex items-center justify-between p-5 bg-white border border-outline-variant/20 rounded-2xl shadow-sm hover:shadow-md transition-all group"
-                          >
-                            <h4 className="font-headline font-bold text-lg text-gray-800 flex items-center gap-3">
-                              <span className="w-2 h-8 bg-primary rounded-full group-hover:scale-y-125 transition-transform"></span>
-                              {category}
-                            </h4>
-                            <span className={`material-symbols-outlined text-gray-400 transition-transform ${activeCategoryDiploma === category ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
-                          </button>
-
-                          {activeCategoryDiploma === category && (
-                            <div className="grid grid-cols-1 gap-4 pl-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                              {groupedDiplomaCourses[category].length > 0 ? (
-                                groupedDiplomaCourses[category].map(course => {
-                                  const isOpen = expandedDiplomaCourse === course._id;
-                                  return (
-                                    <div key={course._id} className="bg-white border border-outline-variant/10 rounded-2xl overflow-hidden border-l-4 border-l-primary shadow-sm transition-all duration-300 hover:shadow-md">
-                                      <button
-                                        onClick={() => setExpandedDiplomaCourse(isOpen ? null : course._id)}
-                                        className={`w-full flex items-center justify-between px-6 py-4 text-left transition-all duration-200 group ${isOpen ? 'bg-primary/5' : 'hover:bg-primary/5'}`}
-                                      >
-                                        <div className="flex items-center gap-3">
-                                          <span className={`w-2 h-2 rounded-full bg-primary transition-transform duration-200 ${isOpen ? 'scale-125' : 'group-hover:scale-125'}`}></span>
-                                          <h5 className={`font-bold text-base transition-colors duration-200 ${isOpen ? 'text-primary' : 'text-gray-800 group-hover:text-primary'}`}>{course.courseName}</h5>
-                                        </div>
-                                        <span className={`material-symbols-outlined text-[22px] transition-all duration-300 flex-shrink-0 ml-4 ${isOpen ? 'rotate-180 text-primary' : 'text-gray-400 group-hover:text-primary'}`}>expand_more</span>
-                                      </button>
-                                      {isOpen && (
-                                        <div className="px-6 pb-6 pt-2 border-t border-outline-variant/10 bg-slate-50/60 animate-in fade-in slide-in-from-top-2 duration-300">
-                                          <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mb-5">{course.description}</p>
-                                          <button
-                                            onClick={() => {
-                                              setSelectedCourse(course);
-                                              setShowEnrollModal(true);
-                                            }}
-                                            className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white font-headline font-bold rounded-xl transition-all shadow-md active:scale-95"
-                                          >
-                                            <span className="material-symbols-outlined text-[20px]">how_to_reg</span>
-                                            Register Interest
-                                          </button>
-                                        </div>
-                                      )}
-                                    </div>
-                                  );
-                                })
-                              ) : (
-                                <div className="bg-gray-50 border border-dashed border-gray-200 rounded-2xl p-8 text-center">
-                                  <span className="material-symbols-outlined text-gray-400 text-3xl mb-2">info</span>
-                                  <p className="text-gray-500 font-medium">No courses in this category yet. Stay tuned!</p>
+                      <div className="grid grid-cols-1 gap-4">
+                        {diplomaCourses.map(course => {
+                          const isOpen = expandedDiplomaCourse === course._id;
+                          return (
+                            <div key={course._id} className="bg-white border border-outline-variant/10 rounded-2xl overflow-hidden border-l-4 border-l-primary shadow-sm transition-all duration-300 hover:shadow-md">
+                              <button
+                                onClick={() => setExpandedDiplomaCourse(isOpen ? null : course._id)}
+                                className={`w-full flex items-center justify-between px-6 py-4 text-left transition-all duration-200 group ${isOpen ? 'bg-primary/5' : 'hover:bg-primary/5'}`}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <span className={`w-2 h-2 rounded-full bg-primary transition-transform duration-200 ${isOpen ? 'scale-125' : 'group-hover:scale-125'}`}></span>
+                                  <h5 className={`font-bold text-base transition-colors duration-200 ${isOpen ? 'text-primary' : 'text-gray-800 group-hover:text-primary'}`}>{course.courseName}</h5>
+                                </div>
+                                <span className={`material-symbols-outlined text-[22px] transition-all duration-300 flex-shrink-0 ml-4 ${isOpen ? 'rotate-180 text-primary' : 'text-gray-400 group-hover:text-primary'}`}>expand_more</span>
+                              </button>
+                              {isOpen && (
+                                <div className="px-6 pb-6 pt-2 border-t border-outline-variant/10 bg-slate-50/60 animate-in fade-in slide-in-from-top-2 duration-300">
+                                  <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mb-5">{course.description}</p>
+                                  <button
+                                    onClick={() => {
+                                      setSelectedCourse(course);
+                                      setShowEnrollModal(true);
+                                    }}
+                                    className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white font-headline font-bold rounded-xl transition-all shadow-md active:scale-95"
+                                  >
+                                    <span className="material-symbols-outlined text-[20px]">how_to_reg</span>
+                                    Register Interest
+                                  </button>
                                 </div>
                               )}
                             </div>
-                          )}
-                        </div>
-                      ))
+                          );
+                        })}
+                      </div>
                     )}
                   </div>
                 )}

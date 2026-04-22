@@ -35,7 +35,7 @@ const Footer = () => (
             {/* Brand */}
             <div className="flex-1 max-w-sm">
                 <img
-                    src="/logo/dmfmop_logo.png"
+                    src="/logo/DMF_LOGO_PNG_2.png"
                     alt="DMF - Movement of Positivity"
                     className="h-24 w-auto object-contain mb-4"
                 />

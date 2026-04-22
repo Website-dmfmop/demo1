@@ -117,12 +117,12 @@ export default function Donate() {
                                                     : 'border-outline-variant hover:border-secondary-container hover:text-secondary focus:ring-2 focus:ring-secondary-container'
                                                     }`}
                                             >
-                                                â‚¹{val}
+                                                ₹{val}
                                             </button>
                                         ))}
                                     </div>
                                     <div className="relative mb-8">
-                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-outline font-bold text-xl">â‚¹</span>
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-outline font-bold text-xl">₹</span>
                                         <input
                                             className="w-full pl-10 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary font-body text-lg"
                                             placeholder="Custom Amount"

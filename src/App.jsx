@@ -14,6 +14,8 @@ import Admin from './pages/Admin';
 import Admission from './pages/Admission';
 import JoinUs from './pages/JoinUs';
 
+import JobPlacement from './pages/JobPlacement';
+
 function App() {
   return (
     <BrowserRouter>
@@ -31,6 +33,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/admission" element={<Admission />} />
         <Route path="/join-us" element={<JoinUs />} />
+        <Route path="/job-placement" element={<JobPlacement />} />
       </Routes>
       <Footer />
     </BrowserRouter>

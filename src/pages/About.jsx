@@ -224,6 +224,9 @@ export default function About() {
                             <div className="relative z-10 aspect-[4/5] overflow-hidden rounded-lg shadow-2xl bg-surface-container">
                                 <img alt="Dr. Dnyaneshwar Mulay" className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700" src="/Images/dr_mulay.png" />
                             </div>
+                            <div className="text-center mt-4 relative z-10">
+                                <span className="font-label text-secondary font-bold tracking-widest uppercase text-xl">Passport Man of India</span>
+                            </div>
                             <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-secondary-container/10 -z-10 rounded-full blur-3xl"></div>
                         </div>
                         <div className="md:col-span-8">

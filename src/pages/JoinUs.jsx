@@ -33,7 +33,8 @@ const JoinUs = () => {
             });
 
             if (res.ok) {
-                alert(`Thank you for wanting to become a ${purpose}! Your request has been submitted. We will contact you soon.`);
+                const displayPurpose = purpose === 'Member' ? 'MOP Member' : purpose;
+                alert(`Thank you for wanting to become a ${displayPurpose}! Your request has been submitted. We will contact you soon.`);
                 setFormData({ name: '', email: '', phone: '', address: '', message: '' });
             } else {
                 alert('Submission failed. Please try again.');
@@ -51,7 +52,7 @@ const JoinUs = () => {
             <div className="w-full max-w-3xl">
                 <div className="text-center mb-10">
                     <h1 className="text-4xl md:text-5xl font-display font-bold text-primary mb-4 capitalize">
-                        Become a {purpose}
+                        Become a {purpose === 'Member' ? 'MOP Member' : purpose}
                     </h1>
                     <p className="text-on-surface-variant max-w-xl mx-auto">
                         Fill out the form below to join our mission. Provide your details and our team will get back to you to finalize your status.
@@ -113,7 +114,7 @@ const JoinUs = () => {
                                 onChange={e => setFormData({ ...formData, message: e.target.value })}
                                 className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none placeholder-gray-400" 
                                 rows="4"
-                                placeholder={`Tell us a little about your motivation to become a ${purpose.toLowerCase()}...`}
+                                placeholder={`Tell us a little about your motivation to become a ${purpose === 'Member' ? 'MOP member' : purpose.toLowerCase()}...`}
                             ></textarea>
                         </div>
 

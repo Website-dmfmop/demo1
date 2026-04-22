@@ -18,10 +18,14 @@ const Admin = () => {
   const [press, setPress] = useState([]);
   const [liveSessions, setLiveSessions] = useState([]);
   const [joinees, setJoinees] = useState([]);
+  const [jobs, setJobs] = useState([]);
+  const [jobApplications, setJobApplications] = useState([]);
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionMenuOpenId, setActionMenuOpenId] = useState(null);
+  
+  const [itemToDelete, setItemToDelete] = useState(null);
   
   // Analytics & Media SubTabs
   const [showAnalytics, setShowAnalytics] = useState(false);
@@ -50,6 +54,9 @@ const Admin = () => {
   const [pressForm, setPressForm] = useState({ outlet: '', headline: '', date: '', tag: 'ICOE', color: 'border-primary', url: '', isCustomTag: false, customTag: '' });
   const [showLiveSessionForm, setShowLiveSessionForm] = useState(false);
   const [liveSessionForm, setLiveSessionForm] = useState({ title: '', meetingLink: '', speaker: '', description: '', collaboration: '', date: '', time: '', cost: 0 });
+  
+  const [showJobForm, setShowJobForm] = useState(false);
+  const [jobForm, setJobForm] = useState({ jobRole: '', companyName: '', country: '', openings: 1, description: '', jobLink: '' });
   useEffect(() => {
     setActionMenuOpenId(null);
     setShowAnalytics(false);
@@ -95,6 +102,14 @@ const Admin = () => {
         const res = await fetch(`${API_URL}/api/joinees`);
         if (!res.ok) throw new Error('Failed to fetch joinees');
         setJoinees(await res.json());
+      } else if (activeTab === 'jobs') {
+        const res = await fetch(`${API_URL}/api/jobs`);
+        if (!res.ok) throw new Error('Failed to fetch jobs');
+        setJobs(await res.json());
+      } else if (activeTab === 'job-applications') {
+        const res = await fetch(`${API_URL}/api/job-applications`);
+        if (!res.ok) throw new Error('Failed to fetch job applications');
+        setJobApplications(await res.json());
       }
     } catch (err) {
       setError(err.message);
@@ -133,20 +148,45 @@ const Admin = () => {
     }
   };
 
-  const deleteRecord = async (type, id) => {
+  const updateJobApplicationStatus = async (id, newStatus) => {
     setActionMenuOpenId(null);
-    if (!window.confirm(`Are you sure you want to delete this ${type}? This action cannot be undone.`)) return;
+    try {
+      const res = await fetch(`${API_URL}/api/job-applications/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) fetchData();
+      else alert('Failed to update status');
+    } catch (err) {
+      alert('Error updating status');
+    }
+  };
+
+  const deleteRecord = (type, id) => {
+    setActionMenuOpenId(null);
+    setItemToDelete({ type, id });
+  };
+
+  const confirmDeleteAction = async () => {
+    if (!itemToDelete) return;
+    const { type, id } = itemToDelete;
     try {
       let endpoint = `${API_URL}/api/${type}s/${id}`;
-      // Grammar handling for pluralization edge cases
       if (type === 'media') endpoint = `${API_URL}/api/media/${id}`;
       if (type === 'press') endpoint = `${API_URL}/api/press/${id}`;
+      if (type === 'job-application') endpoint = `${API_URL}/api/job-applications/${id}`;
 
       const res = await fetch(endpoint, { method: 'DELETE' });
-      if (res.ok) fetchData();
-      else alert('Failed to delete');
+      if (res.ok) {
+          fetchData();
+          setItemToDelete(null);
+      } else {
+          const errText = await res.text();
+          alert(`Failed to delete. Server responded: ${res.status} ${errText}`);
+      }
     } catch (err) {
-      alert('Error deleting');
+      alert(`Error deleting: ${err.message}`);
     }
   };
 
@@ -326,6 +366,26 @@ const Admin = () => {
       } catch (err) { alert('Error saving live session'); }
   };
 
+  const createJob = async (e) => {
+      e.preventDefault();
+      try {
+          const url = editingId ? `${API_URL}/api/jobs/${editingId}` : `${API_URL}/api/jobs`;
+          const res = await fetch(url, {
+              method: editingId ? 'PUT' : 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(jobForm)
+          });
+          if (res.ok) {
+              setJobForm({ jobRole: '', companyName: '', country: '', openings: 1, description: '', jobLink: '' });
+              setShowJobForm(false);
+              setEditingId(null);
+              fetchData();
+          } else {
+              alert('Failed to save job posting');
+          }
+      } catch (err) { alert('Error saving job posting'); }
+  };
+
   const openEditForm = (type, item) => {
       setEditingId(item._id);
       if (type === 'course') {
@@ -349,6 +409,9 @@ const Admin = () => {
       } else if (type === 'live-session') {
           setLiveSessionForm({ title: item.title, meetingLink: item.meetingLink, speaker: item.speaker || '', description: item.description || '', collaboration: item.collaboration || '', date: item.date || '', time: item.time || '', cost: item.cost || 0 });
           setShowLiveSessionForm(true);
+      } else if (type === 'job') {
+          setJobForm({ jobRole: item.jobRole, companyName: item.companyName, country: item.country, openings: item.openings || 1, description: item.description || '', jobLink: item.jobLink || '' });
+          setShowJobForm(true);
       }
   };
 
@@ -449,6 +512,15 @@ const Admin = () => {
                 <span className="material-symbols-outlined text-[20px]">group_add</span> Join Requests
             </button>
 
+            <button
+                onClick={() => setActiveTab('job-applications')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'job-applications' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">assignment_ind</span> Job Applications
+            </button>
+
             <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4 mt-8">Manage System</p>
             <button
                 onClick={() => setActiveTab('courses')}
@@ -481,6 +553,14 @@ const Admin = () => {
                 }`}
             >
                 <span className="material-symbols-outlined text-[20px]">live_tv</span> Live Sessions
+            </button>
+            <button
+                onClick={() => setActiveTab('jobs')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'jobs' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">work</span> Job Placements
             </button>
         </nav>
         <div className="p-6 border-t border-white/10 space-y-4">
@@ -517,6 +597,7 @@ const Admin = () => {
                 {activeTab === 'media' && 'Media Management'}
                 {activeTab === 'live_sessions' && 'Live Sessions Management'}
                 {activeTab === 'joinees' && 'Join Requests'}
+                {activeTab === 'jobs' && 'Job Placements Management'}
             </h2>
           </div>
           <div className="flex items-center gap-6">
@@ -1386,7 +1467,183 @@ const Admin = () => {
                     </div>
                 )}
 
+                {/* ---------- JOB PLACEMENTS TAB ---------- */}
+                {activeTab === 'jobs' && (
+                    <div className="space-y-6 animate-in fade-in duration-300">
+                        <div className="flex justify-between items-center">
+                            <h3 className="font-headline font-bold text-2xl text-gray-800">Job Placements</h3>
+                            <button onClick={() => { if (!showJobForm) setEditingId(null); setShowJobForm(!showJobForm); }} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all">
+                                <span className="material-symbols-outlined text-[18px]">add</span> {showJobForm ? 'Cancel' : 'Post New Job'}
+                            </button>
+                        </div>
+
+                        {showJobForm && (
+                            <form onSubmit={createJob} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                                <h4 className="font-bold text-gray-800 border-b border-gray-100 pb-3 mb-6">{editingId ? 'Edit Job Posting' : 'Create New Job Posting'}</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Job Role / Title</label>
+                                        <input type="text" required value={jobForm.jobRole} onChange={e => setJobForm({...jobForm, jobRole: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Company Name</label>
+                                        <input type="text" required value={jobForm.companyName} onChange={e => setJobForm({...jobForm, companyName: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Location / Country</label>
+                                        <input type="text" required value={jobForm.country} onChange={e => setJobForm({...jobForm, country: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Number of Openings</label>
+                                        <input type="number" min="1" required value={jobForm.openings} onChange={e => setJobForm({...jobForm, openings: parseInt(e.target.value) || 1})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Job Description</label>
+                                        <textarea rows="4" value={jobForm.description} onChange={e => setJobForm({...jobForm, description: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" placeholder="Requirements, responsibilities, etc."></textarea>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Application Link (URL)</label>
+                                        <input type="text" value={jobForm.jobLink} onChange={e => setJobForm({...jobForm, jobLink: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" placeholder="https://example.com/apply" />
+                                    </div>
+                                </div>
+                                <div className="mt-6 flex justify-end">
+                                    <button type="submit" className="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white font-bold rounded-lg shadow-md transition-all active:scale-95">Save Job Posting</button>
+                                </div>
+                            </form>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {jobs.length === 0 ? (
+                                <p className="text-gray-500 col-span-full">No job postings available.</p>
+                            ) : (
+                                jobs.map(job => (
+                                    <div key={job._id} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col group relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -z-10 group-hover:bg-primary/10 transition-colors"></div>
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div>
+                                                <h4 className="font-bold text-lg text-gray-800">{job.jobRole}</h4>
+                                                <p className="text-sm text-gray-500 font-medium">{job.companyName}</p>
+                                            </div>
+                                            <span className="bg-secondary-container/20 text-secondary-container text-xs font-bold px-2 py-1 rounded">
+                                                {job.country}
+                                            </span>
+                                        </div>
+                                        <div className="text-xs text-gray-400 mb-4 bg-gray-50 w-fit px-2 py-1 rounded border border-gray-100 font-medium">
+                                            {job.openings} Openings
+                                        </div>
+                                        <p className="text-sm text-gray-600 line-clamp-3 mb-6 flex-grow">{job.description || 'No description provided.'}</p>
+                                        <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                                            <span className="text-xs text-gray-400">{new Date(job.createdAt).toLocaleDateString()}</span>
+                                            <div className="flex gap-2">
+                                                <button onClick={() => openEditForm('job', job)} className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition-colors">
+                                                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                                                </button>
+                                                <button onClick={() => deleteRecord('job', job._id)} className="w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-100 transition-colors">
+                                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* ---------- JOB APPLICATIONS TAB ---------- */}
+                {activeTab === 'job-applications' && (
+                    <div className="space-y-6 animate-in fade-in duration-300">
+                        <div className="flex justify-between items-center">
+                            <h3 className="font-headline font-bold text-2xl text-gray-800">Job Applications</h3>
+                        </div>
+
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm whitespace-nowrap">
+                                    <thead className="bg-gray-50 border-b border-gray-100 text-gray-500 font-bold uppercase tracking-wider">
+                                        <tr>
+                                            <th className="px-6 py-4">Applicant</th>
+                                            <th className="px-6 py-4">Job Role</th>
+                                            <th className="px-6 py-4">Contact</th>
+                                            <th className="px-6 py-4">Date</th>
+                                            <th className="px-6 py-4">Status</th>
+                                            <th className="px-6 py-4 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {jobApplications.length === 0 ? (
+                                            <tr>
+                                                <td colSpan="6" className="px-6 py-8 text-center text-gray-500">No applications found.</td>
+                                            </tr>
+                                        ) : (
+                                            jobApplications.map(app => (
+                                                <tr key={app._id} className="hover:bg-gray-50/50 transition-colors">
+                                                    <td className="px-6 py-4">
+                                                        <div className="font-bold text-gray-800">{app.name}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4 font-bold text-primary">{app.jobRole}</td>
+                                                    <td className="px-6 py-4 text-gray-500">
+                                                        <div className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">mail</span> {app.email}</div>
+                                                        <div className="flex items-center gap-1 mt-1"><span className="material-symbols-outlined text-[14px]">call</span> {app.phone}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-gray-500">{new Date(app.createdAt).toLocaleDateString()}</td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                                            app.status === 'Pending' ? 'bg-orange-100 text-orange-700' :
+                                                            app.status === 'Reviewed' ? 'bg-blue-100 text-blue-700' :
+                                                            'bg-red-100 text-red-700'
+                                                        }`}>
+                                                            {app.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right relative">
+                                                        <button 
+                                                            onClick={(e) => { e.stopPropagation(); setActionMenuOpenId(actionMenuOpenId === app._id ? null : app._id); }}
+                                                            className={`p-1.5 rounded-lg transition-colors ${actionMenuOpenId === app._id ? 'bg-gray-200 text-gray-800' : 'text-gray-400 hover:bg-gray-100'}`}
+                                                        >
+                                                            <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                                                        </button>
+                                                        {actionMenuOpenId === app._id && (
+                                                            <div className="absolute right-12 top-8 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-150" onClick={e => e.stopPropagation()}>
+                                                                <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Update Status</div>
+                                                                <button onClick={() => updateJobApplicationStatus(app._id, 'Pending')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 font-medium">Mark as Pending</button>
+                                                                <button onClick={() => updateJobApplicationStatus(app._id, 'Reviewed')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 font-medium">Mark as Reviewed</button>
+                                                                <button onClick={() => updateJobApplicationStatus(app._id, 'Rejected')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 font-medium">Mark as Rejected</button>
+                                                                <div className="h-px bg-gray-100 my-1"></div>
+                                                                <button onClick={() => deleteRecord('job-application', app._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 mt-1 font-bold">
+                                                                    <span className="material-symbols-outlined text-[16px]">delete</span> Delete Record
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
             </div>
+            )}
+
+            {/* CUSTOM CONFIRMATION MODAL */}
+            {itemToDelete && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span className="material-symbols-outlined text-3xl">delete_forever</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-800 mb-2">Confirm Deletion</h3>
+                        <p className="text-gray-500 mb-6">Are you sure you want to delete this {itemToDelete.type.replace('-', ' ')}? This action cannot be undone.</p>
+                        <div className="flex gap-3">
+                            <button onClick={() => setItemToDelete(null)} className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-colors">Cancel</button>
+                            <button onClick={confirmDeleteAction} className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-colors shadow-md">Delete Record</button>
+                        </div>
+                    </div>
+                </div>
             )}
         </main>
       </div>

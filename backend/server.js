@@ -441,7 +441,72 @@ app.put('/api/press/:id', async (req, res) => {
     } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
-// --- LIVE SESSIONS API ---
+// --- JOB POSTINGS API ---
+app.get('/api/jobs', async (req, res) => {
+    try {
+        const JobPosting = require('./models/JobPosting');
+        const jobs = await JobPosting.find().sort({ createdAt: -1 });
+        res.json(jobs);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/jobs', async (req, res) => {
+    try {
+        const JobPosting = require('./models/JobPosting');
+        const newJob = new JobPosting(req.body);
+        res.status(201).json(await newJob.save());
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+app.delete('/api/jobs/:id', async (req, res) => {
+    try {
+        const JobPosting = require('./models/JobPosting');
+        await JobPosting.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Job deleted' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/jobs/:id', async (req, res) => {
+    try {
+        const JobPosting = require('./models/JobPosting');
+        const updatedJob = await JobPosting.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.json(updatedJob);
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+// --- JOB APPLICATIONS API ---
+app.get('/api/job-applications', async (req, res) => {
+    try {
+        const JobApplication = require('./models/JobApplication');
+        const applications = await JobApplication.find().sort({ createdAt: -1 });
+        res.json(applications);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/job-applications', async (req, res) => {
+    try {
+        const JobApplication = require('./models/JobApplication');
+        const newApp = new JobApplication(req.body);
+        res.status(201).json(await newApp.save());
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+app.delete('/api/job-applications/:id', async (req, res) => {
+    try {
+        const JobApplication = require('./models/JobApplication');
+        await JobApplication.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Application deleted' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/job-applications/:id/status', async (req, res) => {
+    try {
+        const JobApplication = require('./models/JobApplication');
+        const { status } = req.body;
+        const updatedApp = await JobApplication.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        res.json(updatedApp);
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
 app.get('/api/live-sessions', async (req, res) => {
     try {
         const LiveSession = require('./models/LiveSession');

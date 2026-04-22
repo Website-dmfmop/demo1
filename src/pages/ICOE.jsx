@@ -8,12 +8,12 @@ export default function ICOE() {
         <div>
             <main>
                 {/* Hero Section */}
-                <section className="relative w-full flex items-center overflow-hidden bg-primary aspect-[4/3] md:aspect-[16/5]">
+                <section className="relative w-full flex items-center overflow-hidden bg-primary aspect-[16/9] md:aspect-[16/9] mt-[88px] md:mt-0">
                     <div className="absolute inset-0 z-0">
                         <img
                             alt="ICOE Khadki Cantonment Board"
                             className="w-full h-full object-cover"
-                            src="/Images/icoe_page.png"
+                            src="/Images/What_we_do_page.jpeg"
                         />
 
                     </div>

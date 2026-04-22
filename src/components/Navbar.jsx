@@ -19,7 +19,7 @@ const Navbar = () => {
             <div className="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
                 <Link to="/" className="flex items-center gap-3">
                     <img
-                        src="/logo/dmfmop_logo.png"
+                        src="/logo/DMF_LOGO_PNG_2.png"
                         alt="DMF - Movement of Positivity"
                         className="h-14 md:h-16 w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
                     />
@@ -39,6 +39,7 @@ const Navbar = () => {
                         <Link className={getLinkClass('/icoe')} to="/icoe">What we do</Link>
                         <Link className={getLinkClass('/media')} to="/media">Media</Link>
                         <Link className={getLinkClass('/admission')} to="/admission">Admission</Link>
+                        <Link className={getLinkClass('/job-placement')} to="/job-placement">Job Placement</Link>
                         <div className="relative group">
                             <span className="font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] text-white/80 group-hover:text-white cursor-pointer flex items-center gap-1">
                                 Join Us <span className="material-symbols-outlined text-[18px]">arrow_drop_down</span>
@@ -67,6 +68,7 @@ const Navbar = () => {
                     <Link className={getLinkClass('/icoe')} to="/icoe" onClick={() => setMenuOpen(false)}>What we do</Link>
                     <Link className={getLinkClass('/media')} to="/media" onClick={() => setMenuOpen(false)}>Media</Link>
                     <Link className={getLinkClass('/admission')} to="/admission" onClick={() => setMenuOpen(false)}>Admission</Link>
+                    <Link className={getLinkClass('/job-placement')} to="/job-placement" onClick={() => setMenuOpen(false)}>Job Placement</Link>
 
                     <div className="flex flex-col gap-2 mt-2 pt-4 border-t border-white/10">
                         <span className="font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] text-white/50 px-2">Join Us</span>
