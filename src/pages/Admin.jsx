@@ -11,6 +11,7 @@ const Admin = () => {
   const [admissions, setAdmissions] = useState([]);
   const [donations, setDonations] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [diplomaCourses, setDiplomaCourses] = useState([]);
   const [mediaItems, setMediaItems] = useState([]);
   const [videos, setVideos] = useState([]);
   const [publications, setPublications] = useState([]);
@@ -33,6 +34,8 @@ const Admin = () => {
   // Forms State
   const [courseForm, setCourseForm] = useState({ courseName: '', description: '', category: 'General', brochure: null });
   const [showCourseForm, setShowCourseForm] = useState(false);
+  const [diplomaCourseForm, setDiplomaCourseForm] = useState({ courseName: '', description: '', category: 'General' });
+  const [showDiplomaCourseForm, setShowDiplomaCourseForm] = useState(false);
   
   const [showMediaForm, setShowMediaForm] = useState(false);
   const [mediaForm, setMediaForm] = useState({ title: '', category: 'Events', isCustomCategory: false, customCategory: '', date: '', file: null });
@@ -68,6 +71,10 @@ const Admin = () => {
         const res = await fetch(`${API_URL}/api/courses`);
         if (!res.ok) throw new Error('Failed to fetch courses');
         setCourses(await res.json());
+      } else if (activeTab === 'diploma_courses') {
+        const res = await fetch(`${API_URL}/api/diploma-courses`);
+        if (!res.ok) throw new Error('Failed to fetch diploma courses');
+        setDiplomaCourses(await res.json());
       } else if (activeTab === 'media') {
         const [resMedia, resVid, resPub, resPress] = await Promise.all([
           fetch(`${API_URL}/api/media`),
@@ -168,6 +175,29 @@ const Admin = () => {
           }
       } catch (err) {
           alert('Error saving course');
+      }
+  };
+
+  const createDiplomaCourse = async (e) => {
+      e.preventDefault();
+      try {
+          const url = editingId ? `${API_URL}/api/diploma-courses/${editingId}` : `${API_URL}/api/diploma-courses`;
+          const method = editingId ? 'PUT' : 'POST';
+          const res = await fetch(url, {
+              method,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(diplomaCourseForm)
+          });
+          if (res.ok) {
+              setDiplomaCourseForm({ courseName: '', description: '', category: 'General' });
+              setShowDiplomaCourseForm(false);
+              setEditingId(null);
+              fetchData();
+          } else {
+              alert('Failed to save diploma course');
+          }
+      } catch (err) {
+          alert('Error saving diploma course');
       }
   };
 
@@ -301,6 +331,9 @@ const Admin = () => {
       if (type === 'course') {
           setCourseForm({ courseName: item.courseName, description: item.description, category: item.category || 'General', brochure: null });
           setShowCourseForm(true);
+      } else if (type === 'diploma-course') {
+          setDiplomaCourseForm({ courseName: item.courseName, description: item.description, category: item.category || 'General' });
+          setShowDiplomaCourseForm(true);
       } else if (type === 'media') {
           setMediaForm({ title: item.title, category: item.category, isCustomCategory: false, customCategory: '', date: item.date || '', file: null });
           setShowMediaForm(true);
@@ -423,7 +456,15 @@ const Admin = () => {
                 activeTab === 'courses' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
                 }`}
             >
-                <span className="material-symbols-outlined text-[20px]">menu_book</span> Courses
+                <span className="material-symbols-outlined text-[20px]">menu_book</span> Certificate Courses
+            </button>
+            <button
+                onClick={() => setActiveTab('diploma_courses')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'diploma_courses' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">workspace_premium</span> Diploma/Degree Courses
             </button>
             <button
                 onClick={() => setActiveTab('media')}
@@ -472,6 +513,7 @@ const Admin = () => {
                 {activeTab === 'admissions' && 'Admissions Data'}
                 {activeTab === 'donations' && 'Donations Tracker'}
                 {activeTab === 'courses' && 'Course Management'}
+                {activeTab === 'diploma_courses' && 'Diploma/Degree Course Management'}
                 {activeTab === 'media' && 'Media Management'}
                 {activeTab === 'live_sessions' && 'Live Sessions Management'}
                 {activeTab === 'joinees' && 'Join Requests'}
@@ -800,6 +842,72 @@ const Admin = () => {
                                             <p className="text-sm text-gray-500 mb-6 line-clamp-2">{course.description}</p>
                                             
 
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* ---------- DIPLOMA COURSES TAB ---------- */}
+                {activeTab === 'diploma_courses' && (
+                    <div className="space-y-6 animate-in fade-in duration-300">
+                        <div className="flex justify-between items-center">
+                            <h3 className="font-headline font-bold text-2xl text-gray-800">Diploma/Degree Course Offerings</h3>
+                            <button onClick={() => { if (!showDiplomaCourseForm) setEditingId(null); setShowDiplomaCourseForm(!showDiplomaCourseForm); }} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all">
+                                <span className="material-symbols-outlined text-[18px]">add</span> {showDiplomaCourseForm ? 'Cancel' : 'Add New Course'}
+                            </button>
+                        </div>
+
+                        {showDiplomaCourseForm && (
+                            <form onSubmit={createDiplomaCourse} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                                <h4 className="font-bold text-gray-800 border-b border-gray-100 pb-3 mb-6">{editingId ? 'Edit' : 'Create New'} Diploma/Degree Course</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Course Name</label>
+                                        <input type="text" required value={diplomaCourseForm.courseName} onChange={e => setDiplomaCourseForm({...diplomaCourseForm, courseName: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Category</label>
+                                        <select value={diplomaCourseForm.category} onChange={e => setDiplomaCourseForm({...diplomaCourseForm, category: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                                            <option>General</option>
+                                            <option>Language</option>
+                                            <option>Technical Skills</option>
+                                            <option>Soft Skills</option>
+                                        </select>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Description</label>
+                                        <textarea required value={diplomaCourseForm.description} onChange={e => setDiplomaCourseForm({...diplomaCourseForm, description: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" rows="6"></textarea>
+                                    </div>
+                                </div>
+                                <div className="mt-8 flex justify-end">
+                                    <button type="submit" className="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors shadow-sm">{editingId ? 'Save Changes' : 'Save Course'}</button>
+                                </div>
+                            </form>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {diplomaCourses.length === 0 ? (
+                                <p className="col-span-full py-8 text-center text-gray-400 font-medium">No diploma/degree courses yet. Create one to get started.</p>
+                            ) : (
+                                diplomaCourses.map(course => (
+                                    <div key={course._id} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow relative">
+                                        <div className="p-6">
+                                            <div className="flex justify-between items-start mb-4">
+                                                <span className="bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">{course.category}</span>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => openEditForm('diploma-course', course)} className="text-gray-300 hover:text-blue-500 transition-colors p-1"><span className="material-symbols-outlined text-[20px]">edit</span></button>
+                                                    <button onClick={async () => {
+                                                        if (!window.confirm('Delete this course?')) return;
+                                                        await fetch(`${API_URL}/api/diploma-courses/${course._id}`, { method: 'DELETE' });
+                                                        fetchData();
+                                                    }} className="text-gray-300 hover:text-red-500 transition-colors p-1"><span className="material-symbols-outlined text-[20px]">delete</span></button>
+                                                </div>
+                                            </div>
+                                            <h4 className="font-headline font-bold text-xl text-gray-800 mb-2">{course.courseName}</h4>
+                                            <p className="text-sm text-gray-500 line-clamp-3 whitespace-pre-wrap">{course.description}</p>
                                         </div>
                                     </div>
                                 ))

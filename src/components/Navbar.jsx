@@ -45,9 +45,8 @@ const Navbar = () => {
                             </span>
                             <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 py-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top -translate-y-2 group-hover:translate-y-0">
                                 <Link to="/join-us?purpose=Volunteer" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">Become a Volunteer</Link>
-                                <Link to="/join-us?purpose=Member" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">Become a Member</Link>
+                                <Link to="/join-us?purpose=Member" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">Become a MOP Member</Link>
                                 <Link to="/join-us?purpose=Partner" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">Become a Partner</Link>
-                                <Link to="/join-us?purpose=Supporter" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">Become a Supporter</Link>
                             </div>
                         </div>
                     </div>
@@ -68,7 +67,7 @@ const Navbar = () => {
                     <Link className={getLinkClass('/icoe')} to="/icoe" onClick={() => setMenuOpen(false)}>What we do</Link>
                     <Link className={getLinkClass('/media')} to="/media" onClick={() => setMenuOpen(false)}>Media</Link>
                     <Link className={getLinkClass('/admission')} to="/admission" onClick={() => setMenuOpen(false)}>Admission</Link>
-                    
+
                     <div className="flex flex-col gap-2 mt-2 pt-4 border-t border-white/10">
                         <span className="font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] text-white/50 px-2">Join Us</span>
                         <div className="flex flex-col gap-3 pl-4">

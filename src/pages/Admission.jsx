@@ -5,9 +5,15 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const Admission = () => {
   const [liveSessions, setLiveSessions] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [diplomaCourses, setDiplomaCourses] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState('courses');
+  // Certificate courses
   const [activeCategory, setActiveCategory] = useState(null);
-  
+  const [expandedCourse, setExpandedCourse] = useState(null);
+  // Diploma courses
+  const [activeCategoryDiploma, setActiveCategoryDiploma] = useState(null);
+  const [expandedDiplomaCourse, setExpandedDiplomaCourse] = useState(null);
+
   // Enrollment States
   const [showEnrollModal, setShowEnrollModal] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -22,11 +28,13 @@ const Admission = () => {
   useEffect(() => {
     Promise.all([
       fetch(`${API_URL}/api/live-sessions`),
-      fetch(`${API_URL}/api/courses`)
+      fetch(`${API_URL}/api/courses`),
+      fetch(`${API_URL}/api/diploma-courses`)
     ])
-      .then(async ([resSessions, resCourses]) => {
+      .then(async ([resSessions, resCourses, resDiploma]) => {
         if (resSessions.ok) setLiveSessions(await resSessions.json());
         if (resCourses.ok) setCourses(await resCourses.json());
+        if (resDiploma.ok) setDiplomaCourses(await resDiploma.json());
       })
       .catch(err => console.error('Data fetch error:', err));
   }, []);
@@ -72,8 +80,16 @@ const Admission = () => {
   // Standard categories to show even if empty
   const standardCategories = ["General", "Language", "Technical Skills", "Soft Skills"];
 
-  // Group courses by category
+  // Group certificate courses by category
   const groupedCourses = courses.reduce((acc, course) => {
+    const cat = course.category || 'General';
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(course);
+    return acc;
+  }, standardCategories.reduce((obj, cat) => ({ ...obj, [cat]: [] }), {}));
+
+  // Group diploma/degree courses by category
+  const groupedDiplomaCourses = diplomaCourses.reduce((acc, course) => {
     const cat = course.category || 'General';
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(course);
@@ -101,21 +117,102 @@ const Admission = () => {
             </h1>
 
             <p className="text-lg md:text-xl text-on-surface-variant leading-relaxed max-w-2xl mx-auto">
-              Explore our wide range of expert-led courses across various domains. Download detailed brochures to understand the curriculum and learning outcomes for each program.
+              Explore our wide range of expert-led courses across various domains. Click on any course to view the full curriculum and learning outcomes for each program.
             </p>
 
 
 
             {/* TABBED/ACCORDION DIRECTORY SECTION */}
             <div className="mt-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full">
-              {/* 1. COURSES ACCORDION */}
+
+              {/* 1. DIPLOMA/DEGREE COURSES ACCORDION */}
+              <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg transition-all hover:shadow-xl">
+                <button onClick={() => setActiveDropdown(activeDropdown === 'diploma' ? null : 'diploma')} className="w-full flex items-center justify-between p-8 bg-surface hover:bg-surface-container-low transition-colors">
+                  <h3 className="text-2xl md:text-3xl font-display font-bold text-primary flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined text-[24px]">workspace_premium</span>
+                    </div>
+                    Expert Diploma/Degree Course Directory
+                  </h3>
+                  <span className={`material-symbols-outlined text-gray-400 text-3xl transition-transform duration-300 ${activeDropdown === 'diploma' ? 'rotate-180' : ''}`}>expand_more</span>
+                </button>
+
+                {activeDropdown === 'diploma' && (
+                  <div className="p-8 border-t border-outline-variant/20 bg-slate-50/50 space-y-6">
+                    {diplomaCourses.length === 0 ? (
+                      <p className="text-gray-500 font-medium text-center py-8">No diploma/degree courses currently listed. Please check back later.</p>
+                    ) : (
+                      Object.keys(groupedDiplomaCourses).map(category => (
+                        <div key={category} className="space-y-4">
+                          <button
+                            onClick={() => setActiveCategoryDiploma(activeCategoryDiploma === category ? null : category)}
+                            className="w-full flex items-center justify-between p-5 bg-white border border-outline-variant/20 rounded-2xl shadow-sm hover:shadow-md transition-all group"
+                          >
+                            <h4 className="font-headline font-bold text-lg text-gray-800 flex items-center gap-3">
+                              <span className="w-2 h-8 bg-primary rounded-full group-hover:scale-y-125 transition-transform"></span>
+                              {category}
+                            </h4>
+                            <span className={`material-symbols-outlined text-gray-400 transition-transform ${activeCategoryDiploma === category ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
+                          </button>
+
+                          {activeCategoryDiploma === category && (
+                            <div className="grid grid-cols-1 gap-4 pl-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                              {groupedDiplomaCourses[category].length > 0 ? (
+                                groupedDiplomaCourses[category].map(course => {
+                                  const isOpen = expandedDiplomaCourse === course._id;
+                                  return (
+                                    <div key={course._id} className="bg-white border border-outline-variant/10 rounded-2xl overflow-hidden border-l-4 border-l-primary shadow-sm transition-all duration-300 hover:shadow-md">
+                                      <button
+                                        onClick={() => setExpandedDiplomaCourse(isOpen ? null : course._id)}
+                                        className={`w-full flex items-center justify-between px-6 py-4 text-left transition-all duration-200 group ${isOpen ? 'bg-primary/5' : 'hover:bg-primary/5'}`}
+                                      >
+                                        <div className="flex items-center gap-3">
+                                          <span className={`w-2 h-2 rounded-full bg-primary transition-transform duration-200 ${isOpen ? 'scale-125' : 'group-hover:scale-125'}`}></span>
+                                          <h5 className={`font-bold text-base transition-colors duration-200 ${isOpen ? 'text-primary' : 'text-gray-800 group-hover:text-primary'}`}>{course.courseName}</h5>
+                                        </div>
+                                        <span className={`material-symbols-outlined text-[22px] transition-all duration-300 flex-shrink-0 ml-4 ${isOpen ? 'rotate-180 text-primary' : 'text-gray-400 group-hover:text-primary'}`}>expand_more</span>
+                                      </button>
+                                      {isOpen && (
+                                        <div className="px-6 pb-6 pt-2 border-t border-outline-variant/10 bg-slate-50/60 animate-in fade-in slide-in-from-top-2 duration-300">
+                                          <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mb-5">{course.description}</p>
+                                          <button
+                                            onClick={() => {
+                                              setSelectedCourse(course);
+                                              setShowEnrollModal(true);
+                                            }}
+                                            className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white font-headline font-bold rounded-xl transition-all shadow-md active:scale-95"
+                                          >
+                                            <span className="material-symbols-outlined text-[20px]">how_to_reg</span>
+                                            Register Interest
+                                          </button>
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })
+                              ) : (
+                                <div className="bg-gray-50 border border-dashed border-gray-200 rounded-2xl p-8 text-center">
+                                  <span className="material-symbols-outlined text-gray-400 text-3xl mb-2">info</span>
+                                  <p className="text-gray-500 font-medium">No courses in this category yet. Stay tuned!</p>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* 2. CERTIFICATE COURSES ACCORDION */}
               <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg transition-all hover:shadow-xl">
                 <button onClick={() => setActiveDropdown(activeDropdown === 'courses' ? null : 'courses')} className="w-full flex items-center justify-between p-8 bg-surface hover:bg-surface-container-low transition-colors">
                   <h3 className="text-2xl md:text-3xl font-display font-bold text-primary flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
                       <span className="material-symbols-outlined text-[24px]">school</span>
                     </div>
-                    Expert Course Directory
+                    Expert Certificate Course Directory
                   </h3>
                   <span className={`material-symbols-outlined text-gray-400 text-3xl transition-transform duration-300 ${activeDropdown === 'courses' ? 'rotate-180' : ''}`}>expand_more</span>
                 </button>
@@ -127,7 +224,7 @@ const Admission = () => {
                     ) : (
                       Object.keys(groupedCourses).map(category => (
                         <div key={category} className="space-y-4">
-                          <button 
+                          <button
                             onClick={() => setActiveCategory(activeCategory === category ? null : category)}
                             className="w-full flex items-center justify-between p-5 bg-white border border-outline-variant/20 rounded-2xl shadow-sm hover:shadow-md transition-all group"
                           >
@@ -141,42 +238,45 @@ const Admission = () => {
                           {activeCategory === category && (
                             <div className="grid grid-cols-1 gap-4 pl-4 animate-in fade-in slide-in-from-top-2 duration-300">
                               {groupedCourses[category].length > 0 ? (
-                                groupedCourses[category].map(course => (
-                                  <div key={course._id} className="bg-white border border-outline-variant/10 rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:bg-white transition-colors border-l-4 border-l-secondary-container">
-                                    <div className="flex-1">
-                                      <h5 className="font-bold text-lg text-gray-800 mb-1">{course.courseName}</h5>
-                                      <p className="text-sm text-gray-500 line-clamp-2 md:line-clamp-3">{course.description}</p>
-                                      </div>
-                                    <div className="shrink-0 w-full md:w-auto flex flex-col gap-2">
-                                      <button 
-                                        onClick={() => {
-                                          setSelectedCourse(course);
-                                          setShowEnrollModal(true);
-                                        }}
-                                        className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white font-headline font-bold rounded-xl transition-all shadow-md active:scale-95"
+                                groupedCourses[category].map(course => {
+                                  const isOpen = expandedCourse === course._id;
+                                  return (
+                                    <div key={course._id} className="bg-white border border-outline-variant/10 rounded-2xl overflow-hidden border-l-4 border-l-secondary-container shadow-sm transition-all duration-300 hover:shadow-md">
+                                      {/* Clickable course name row */}
+                                      <button
+                                        onClick={() => setExpandedCourse(isOpen ? null : course._id)}
+                                        className={`w-full flex items-center justify-between px-6 py-4 text-left transition-all duration-200 group ${isOpen ? 'bg-primary/5' : 'hover:bg-primary/5'
+                                          }`}
                                       >
-                                        <span className="material-symbols-outlined text-[20px]">how_to_reg</span>
-                                        Register Interest
+                                        <div className="flex items-center gap-3">
+                                          <span className={`w-2 h-2 rounded-full bg-secondary-container transition-transform duration-200 ${isOpen ? 'scale-125' : 'group-hover:scale-125'
+                                            }`}></span>
+                                          <h5 className={`font-bold text-base transition-colors duration-200 ${isOpen ? 'text-primary' : 'text-gray-800 group-hover:text-primary'
+                                            }`}>{course.courseName}</h5>
+                                        </div>
+                                        <span className={`material-symbols-outlined text-[22px] transition-all duration-300 flex-shrink-0 ml-4 ${isOpen ? 'rotate-180 text-primary' : 'text-gray-400 group-hover:text-primary'
+                                          }`}>expand_more</span>
                                       </button>
-                                      {course.brochure ? (
-                                        <a 
-                                          href={`${API_URL}/api/download/${course.brochure.split('/').pop()}`} 
-                                          target="_blank" 
-                                          rel="noopener noreferrer"
-                                          className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 border-2 border-secondary-container text-on-secondary-container hover:bg-secondary-container/10 font-headline font-bold rounded-xl transition-all"
-                                        >
-                                          <span className="material-symbols-outlined text-[20px]">download</span>
-                                          Brochure
-                                        </a>
-                                      ) : (
-                                        <button disabled className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-gray-50 text-gray-400 border border-gray-200 font-headline font-bold rounded-xl cursor-not-allowed">
-                                          <span className="material-symbols-outlined text-[20px]">block</span>
-                                          No Brochure
-                                        </button>
+
+                                      {/* Expandable description + action */}
+                                      {isOpen && (
+                                        <div className="px-6 pb-6 pt-2 border-t border-outline-variant/10 bg-slate-50/60 animate-in fade-in slide-in-from-top-2 duration-300">
+                                          <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mb-5">{course.description}</p>
+                                          <button
+                                            onClick={() => {
+                                              setSelectedCourse(course);
+                                              setShowEnrollModal(true);
+                                            }}
+                                            className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white font-headline font-bold rounded-xl transition-all shadow-md active:scale-95"
+                                          >
+                                            <span className="material-symbols-outlined text-[20px]">how_to_reg</span>
+                                            Register Interest
+                                          </button>
+                                        </div>
                                       )}
                                     </div>
-                                  </div>
-                                ))
+                                  );
+                                })
                               ) : (
                                 <div className="bg-gray-50 border border-dashed border-gray-200 rounded-2xl p-8 text-center">
                                   <span className="material-symbols-outlined text-gray-400 text-3xl mb-2">info</span>
@@ -246,7 +346,7 @@ const Admission = () => {
       {showEnrollModal && selectedCourse && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isEnrolling && setShowEnrollModal(false)}></div>
-          
+
           <div className="relative bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="bg-primary p-6 text-white text-center relative">
@@ -266,21 +366,21 @@ const Admission = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">First Name</label>
-                    <input 
-                      type="text" required 
+                    <input
+                      type="text" required
                       value={enrollForm.firstName}
-                      onChange={e => setEnrollForm({...enrollForm, firstName: e.target.value})}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all" 
+                      onChange={e => setEnrollForm({ ...enrollForm, firstName: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
                       placeholder="John"
                     />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Last Name</label>
-                    <input 
-                      type="text" required 
+                    <input
+                      type="text" required
                       value={enrollForm.lastName}
-                      onChange={e => setEnrollForm({...enrollForm, lastName: e.target.value})}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all" 
+                      onChange={e => setEnrollForm({ ...enrollForm, lastName: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
                       placeholder="Doe"
                     />
                   </div>
@@ -288,28 +388,28 @@ const Admission = () => {
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Email Address</label>
-                  <input 
-                    type="email" required 
+                  <input
+                    type="email" required
                     value={enrollForm.email}
-                    onChange={e => setEnrollForm({...enrollForm, email: e.target.value})}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all" 
+                    onChange={e => setEnrollForm({ ...enrollForm, email: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
                     placeholder="john@example.com"
                   />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Phone Number</label>
-                  <input 
-                    type="tel" required 
+                  <input
+                    type="tel" required
                     value={enrollForm.phone}
-                    onChange={e => setEnrollForm({...enrollForm, phone: e.target.value})}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all" 
+                    onChange={e => setEnrollForm({ ...enrollForm, phone: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
                     placeholder="+91 98765 43210"
                   />
                 </div>
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={isEnrolling}
                   className="w-full py-4 bg-primary hover:bg-primary-hover text-white font-headline font-extrabold text-lg rounded-2xl shadow-lg transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                 >

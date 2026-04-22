@@ -98,7 +98,7 @@ const Footer = () => (
         {/* ── COPYRIGHT BAR ── */}
         <div className="px-12 py-6 flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto border-t border-white/5 gap-4 relative z-10">
             <p className="text-gray-400 text-xs uppercase tracking-widest">
-                © 2025 Dr. Dnyaneshwar Mule Foundation. All Rights Reserved.
+                © 2025 Dr. Dnyaneshwar Mulay Foundation. All Rights Reserved.
             </p>
             <div className="flex gap-8">
                 <a className="text-gray-400 text-[10px] uppercase tracking-widest hover:text-white" href="#">Privacy Policy</a>

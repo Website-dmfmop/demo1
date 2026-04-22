@@ -232,6 +232,48 @@ app.put('/api/courses/:id', upload.single('brochure'), async (req, res) => {
     }
 });
 
+// --- DIPLOMA COURSES API ---
+app.get('/api/diploma-courses', async (req, res) => {
+    try {
+        const DiplomaCourse = require('./models/DiplomaCourse');
+        const courses = await DiplomaCourse.find().sort({ createdAt: -1 });
+        res.json(courses);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/diploma-courses', async (req, res) => {
+    try {
+        const DiplomaCourse = require('./models/DiplomaCourse');
+        const newCourse = new DiplomaCourse(req.body);
+        const savedCourse = await newCourse.save();
+        res.status(201).json(savedCourse);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.put('/api/diploma-courses/:id', async (req, res) => {
+    try {
+        const DiplomaCourse = require('./models/DiplomaCourse');
+        const updatedCourse = await DiplomaCourse.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.json(updatedCourse);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.delete('/api/diploma-courses/:id', async (req, res) => {
+    try {
+        const DiplomaCourse = require('./models/DiplomaCourse');
+        await DiplomaCourse.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Diploma course deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // --- MEDIA API ---
 app.get('/api/media', async (req, res) => {
     try {

@@ -671,11 +671,12 @@ export default function ICOE() {
                                 {[...Array(2)].flatMap((_, pass) =>
                                     [
                                         { logo: '/logo/KCB.png', name: 'Khadki Cantonment Board' },
-                                        { logo: '/logo/Ministry_of_defence.png', name: 'Ministry of Defence' },
+                                        { logo: '/logo/MOFD.png', name: 'Ministry of Defence' },
                                         { logo: '/logo/niti-aayog-logo-vector.png', name: 'NITI Aayog' },
                                         { logo: '/logo/nsdc.png', name: 'NSDC' },
                                         { logo: '/logo/coep.png', name: 'COEP' },
                                         { logo: '/logo/Savitribai_Phule_Pune_University_Logo.png', name: 'SPPU' },
+                                        { logo: '/logo/AadiTechLogo.png', name: 'AADI Tech' },
                                     ].map((p, i) => (
                                         <div
                                             key={`${pass}-${i}`}
