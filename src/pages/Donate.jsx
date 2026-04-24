@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -233,10 +234,10 @@ export default function Donate() {
                             <div className="bg-primary p-8 rounded-xl text-white">
                                 <h3 className="font-headline text-xl font-bold mb-4">Corporate Partnerships</h3>
                                 <p className="text-white/80 text-sm mb-6 leading-relaxed">Join hands with the foundation for sustainable CSR initiatives. Let's build a legacy together.</p>
-                                <a className="inline-flex items-center gap-2 text-secondary-container font-bold hover:gap-4 transition-all uppercase text-xs tracking-widest" href="#">
+                                <Link className="inline-flex items-center gap-2 text-secondary-container font-bold hover:gap-4 transition-all uppercase text-xs tracking-widest" to="/join-us?purpose=Partner">
                                     Become a Partner
                                     <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
-const Footer = () => (
+const Footer = () => {
+    const location = useLocation();
+    if (location.pathname.startsWith('/admin')) {
+        return null;
+    }
+
+    return (
     <footer className="bg-[#00003c] text-white pt-0 pb-0 relative overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute inset-0 pointer-events-none opacity-5">
@@ -113,6 +119,7 @@ const Footer = () => (
             <div className="flex-1 bg-[#2e7d32]"></div>
         </div>
     </footer>
-);
+    );
+};
 
 export default Footer;

@@ -6,6 +6,10 @@ const Navbar = () => {
     const path = location.pathname;
     const [menuOpen, setMenuOpen] = useState(false);
 
+    if (path.startsWith('/admin')) {
+        return null;
+    }
+
     const getLinkClass = (targetPath) => {
         const isActive = path === targetPath;
         return `font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] ${isActive

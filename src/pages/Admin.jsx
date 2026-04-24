@@ -415,6 +415,54 @@ const Admin = () => {
       }
   };
 
+  const handleExportCSV = () => {
+    let dataToExport = [];
+    let filename = `${activeTab}_export.csv`;
+
+    switch (activeTab) {
+      case 'admissions': dataToExport = admissions; break;
+      case 'donations': dataToExport = donations; break;
+      case 'courses': dataToExport = courses; break;
+      case 'diploma_courses': dataToExport = diplomaCourses; break;
+      case 'live_sessions': dataToExport = liveSessions; break;
+      case 'joinees': dataToExport = joinees; break;
+      case 'jobs': dataToExport = jobs; break;
+      case 'job-applications': dataToExport = jobApplications; break;
+      default: return alert("Export not supported for this section");
+    }
+
+    if (!dataToExport || dataToExport.length === 0) {
+      return alert("No data available to export.");
+    }
+
+    const allKeys = new Set();
+    dataToExport.forEach(item => Object.keys(item).forEach(key => allKeys.add(key)));
+    const headers = Array.from(allKeys);
+
+    const csvContent = [
+      headers.join(','),
+      ...dataToExport.map(row => 
+        headers.map(header => {
+          let cell = row[header];
+          if (cell === null || cell === undefined) cell = '';
+          else if (typeof cell === 'object') cell = JSON.stringify(cell);
+          else cell = String(cell);
+          return `"${cell.replace(/"/g, '""')}"`;
+        }).join(',')
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Helper counters & sorted arrays
   const sortedAdmissions = [...admissions].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
   const sortedDonations = [...donations].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -601,6 +649,10 @@ const Admin = () => {
             </h2>
           </div>
           <div className="flex items-center gap-6">
+            <button onClick={handleExportCSV} className="flex items-center gap-2 px-4 py-2 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg text-green-700 hover:text-green-800 transition-all text-sm font-semibold shadow-sm">
+                <span className="material-symbols-outlined text-[18px]">download</span>
+                Export CSV
+            </button>
             <button onClick={fetchData} className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-gray-600 hover:text-primary transition-all text-sm font-semibold shadow-sm">
                 <span className={`material-symbols-outlined text-[18px] ${loading ? 'animate-spin' : ''}`}>refresh</span>
                 Refresh Data
