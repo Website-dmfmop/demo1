@@ -539,6 +539,47 @@ app.put('/api/live-sessions/:id', async (req, res) => {
     } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
+
+// --- PARTNER REQUESTS API ---
+app.get('/api/partner-requests', async (req, res) => {
+    try {
+        const PartnerRequest = require('./models/PartnerRequest');
+        const partners = await PartnerRequest.find().sort({ createdAt: -1 });
+        res.json(partners);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/partner-requests', upload.single('pdfFile'), async (req, res) => {
+    try {
+        const PartnerRequest = require('./models/PartnerRequest');
+        const data = { ...req.body };
+        if (req.file) data.pdfFile = '/uploads/' + req.file.filename;
+        const newPartner = new PartnerRequest(data);
+        res.status(201).json(await newPartner.save());
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+app.put('/api/partner-requests/:id/status', async (req, res) => {
+    try {
+        const PartnerRequest = require('./models/PartnerRequest');
+        const { status } = req.body;
+        if (!['Pending', 'Under Review', 'Approved', 'Rejected'].includes(status)) {
+            return res.status(400).json({ error: 'Invalid status' });
+        }
+        const updated = await PartnerRequest.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        if (!updated) return res.status(404).json({ error: 'Partner request not found' });
+        res.json(updated);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.delete('/api/partner-requests/:id', async (req, res) => {
+    try {
+        const PartnerRequest = require('./models/PartnerRequest');
+        await PartnerRequest.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Partner request deleted' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

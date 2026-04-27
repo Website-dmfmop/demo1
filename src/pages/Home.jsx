@@ -52,7 +52,6 @@ export default function Home() {
     const [currentSlide, setCurrentSlide] = useState(0);
     const slideImages = [
         "/Images/home_page_slide_image_1.jpeg",
-        "/Images/home_page_slide_image_2.jpeg",
         "/Images/home_page_slide_image_3.jpeg",
         "/Images/Job_fair.jpeg",
         "/Images/MoU_COEP.jpeg",

@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const JoinUs = () => {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const [purpose, setPurpose] = useState(searchParams.get('purpose') || 'Volunteer');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Redirect to dedicated partner page
+    useEffect(() => {
+        if (searchParams.get('purpose') === 'Partner') {
+            navigate('/become-a-partner', { replace: true });
+        }
+    }, [searchParams, navigate]);
     const [formData, setFormData] = useState({
         name: '',
         email: '',

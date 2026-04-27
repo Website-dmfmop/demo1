@@ -15,6 +15,17 @@ import Admission from './pages/Admission';
 import JoinUs from './pages/JoinUs';
 
 import JobPlacement from './pages/JobPlacement';
+import MovementOfPositivity from './pages/MovementOfPositivity';
+import CenterOfExcellence from './pages/CenterOfExcellence';
+import WordsBeyondBorders from './pages/WordsBeyondBorders';
+import NursingCollege from './pages/NursingCollege';
+import SocialInnovationPath from './pages/SocialInnovationPath';
+import SheLeads from './pages/SheLeads';
+import SkillReach from './pages/SkillReach';
+import ShelterHome from './pages/ShelterHome';
+import DTNTLivesMatter from './pages/DTNTLivesMatter';
+import JobFair from './pages/JobFair';
+import BecomePartner from './pages/BecomePartner';
 
 function App() {
   return (
@@ -34,6 +45,17 @@ function App() {
         <Route path="/admission" element={<Admission />} />
         <Route path="/join-us" element={<JoinUs />} />
         <Route path="/job-placement" element={<JobPlacement />} />
+        <Route path="/movement-of-positivity" element={<MovementOfPositivity />} />
+        <Route path="/international-center-of-excellence" element={<CenterOfExcellence />} />
+        <Route path="/words-beyond-borders" element={<WordsBeyondBorders />} />
+        <Route path="/nursing-college" element={<NursingCollege />} />
+        <Route path="/social-innovation-path" element={<SocialInnovationPath />} />
+        <Route path="/she-leads" element={<SheLeads />} />
+        <Route path="/skill-reach" element={<SkillReach />} />
+        <Route path="/shelter-home" element={<ShelterHome />} />
+        <Route path="/dtnt-lives-matter" element={<DTNTLivesMatter />} />
+        <Route path="/job-fair" element={<JobFair />} />
+        <Route path="/become-a-partner" element={<BecomePartner />} />
       </Routes>
       <Footer />
     </BrowserRouter>

@@ -20,10 +20,12 @@ const Admin = () => {
   const [joinees, setJoinees] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [jobApplications, setJobApplications] = useState([]);
+  const [partnerRequests, setPartnerRequests] = useState([]);
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionMenuOpenId, setActionMenuOpenId] = useState(null);
+  const [selectedPartnerDetails, setSelectedPartnerDetails] = useState(null);
   
   const [itemToDelete, setItemToDelete] = useState(null);
   
@@ -110,6 +112,10 @@ const Admin = () => {
         const res = await fetch(`${API_URL}/api/job-applications`);
         if (!res.ok) throw new Error('Failed to fetch job applications');
         setJobApplications(await res.json());
+      } else if (activeTab === 'partner-requests') {
+        const res = await fetch(`${API_URL}/api/partner-requests`);
+        if (!res.ok) throw new Error('Failed to fetch partner requests');
+        setPartnerRequests(await res.json());
       }
     } catch (err) {
       setError(err.message);
@@ -163,6 +169,21 @@ const Admin = () => {
     }
   };
 
+  const updatePartnerRequestStatus = async (id, newStatus) => {
+    setActionMenuOpenId(null);
+    try {
+      const res = await fetch(`${API_URL}/api/partner-requests/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) fetchData();
+      else alert('Failed to update status');
+    } catch (err) {
+      alert('Error updating status');
+    }
+  };
+
   const deleteRecord = (type, id) => {
     setActionMenuOpenId(null);
     setItemToDelete({ type, id });
@@ -176,6 +197,7 @@ const Admin = () => {
       if (type === 'media') endpoint = `${API_URL}/api/media/${id}`;
       if (type === 'press') endpoint = `${API_URL}/api/press/${id}`;
       if (type === 'job-application') endpoint = `${API_URL}/api/job-applications/${id}`;
+      if (type === 'partner-request') endpoint = `${API_URL}/api/partner-requests/${id}`;
 
       const res = await fetch(endpoint, { method: 'DELETE' });
       if (res.ok) {
@@ -428,6 +450,7 @@ const Admin = () => {
       case 'joinees': dataToExport = joinees; break;
       case 'jobs': dataToExport = jobs; break;
       case 'job-applications': dataToExport = jobApplications; break;
+      case 'partner-requests': dataToExport = partnerRequests; break;
       default: return alert("Export not supported for this section");
     }
 
@@ -569,6 +592,15 @@ const Admin = () => {
                 <span className="material-symbols-outlined text-[20px]">assignment_ind</span> Job Applications
             </button>
 
+            <button
+                onClick={() => setActiveTab('partner-requests')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'partner-requests' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">handshake</span> Partner Requests
+            </button>
+
             <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4 mt-8">Manage System</p>
             <button
                 onClick={() => setActiveTab('courses')}
@@ -646,6 +678,8 @@ const Admin = () => {
                 {activeTab === 'live_sessions' && 'Live Sessions Management'}
                 {activeTab === 'joinees' && 'Join Requests'}
                 {activeTab === 'jobs' && 'Job Placements Management'}
+                {activeTab === 'job-applications' && 'Job Applications'}
+                {activeTab === 'partner-requests' && 'Partnership Requests'}
             </h2>
           </div>
           <div className="flex items-center gap-6">
@@ -1678,6 +1712,147 @@ const Admin = () => {
                     </div>
                 )}
 
+                {/* ---------- PARTNER REQUESTS TAB ---------- */}
+                {activeTab === 'partner-requests' && (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6">
+                                <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-3xl">handshake</span>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Requests</p>
+                                    <h3 className="text-3xl font-headline font-bold text-gray-800">{partnerRequests.length}</h3>
+                                </div>
+                            </div>
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6">
+                                <div className="w-16 h-16 rounded-2xl bg-yellow-50 text-yellow-500 flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-3xl">pending_actions</span>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Pending Review</p>
+                                    <h3 className="text-3xl font-headline font-bold text-gray-800">{partnerRequests.filter(p => p.status === 'Pending').length}</h3>
+                                </div>
+                            </div>
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6">
+                                <div className="w-16 h-16 rounded-2xl bg-green-50 text-green-500 flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-3xl">verified</span>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Approved</p>
+                                    <h3 className="text-3xl font-headline font-bold text-gray-800">{partnerRequests.filter(p => p.status === 'Approved').length}</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-visible relative">
+                            <div className="px-6 py-5 border-b border-gray-100">
+                                <h3 className="font-headline font-bold text-lg text-gray-800">Partnership Requests</h3>
+                                <p className="text-xs text-gray-400 mt-1">All submissions from the Become a Partner page</p>
+                            </div>
+                            <div className="overflow-x-auto min-h-[300px]">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-gray-50 text-gray-500 font-semibold text-xs uppercase tracking-wider">
+                                        <tr>
+                                            <th className="px-6 py-4 border-b border-gray-200">Organization</th>
+                                            <th className="px-6 py-4 border-b border-gray-200">Contact</th>
+                                            <th className="px-6 py-4 border-b border-gray-200">Project Title</th>
+                                            <th className="px-6 py-4 border-b border-gray-200">Partnership Type</th>
+                                            <th className="px-6 py-4 border-b border-gray-200">Country</th>
+                                            <th className="px-6 py-4 border-b border-gray-200">Proposal</th>
+                                            <th className="px-6 py-4 border-b border-gray-200">Status</th>
+                                            <th className="px-6 py-4 border-b border-gray-200">Date</th>
+                                            <th className="px-6 py-4 border-b border-gray-200 text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100 bg-white">
+                                        {partnerRequests.length === 0 ? (
+                                            <tr><td colSpan="8" className="py-12 text-center text-gray-400 font-medium">No partner requests yet.</td></tr>
+                                        ) : (
+                                            partnerRequests.map(partner => {
+                                                const pStatus = partner.status || 'Pending';
+                                                let statusColor = 'bg-yellow-100 text-yellow-700';
+                                                if (pStatus === 'Approved') statusColor = 'bg-green-100 text-green-700';
+                                                if (pStatus === 'Rejected') statusColor = 'bg-red-100 text-red-700';
+                                                if (pStatus === 'Under Review') statusColor = 'bg-blue-100 text-blue-700';
+                                                return (
+                                                    <tr key={partner._id} className="hover:bg-blue-50/30 transition-colors">
+                                                        <td className="px-6 py-4">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-lg shrink-0">
+                                                                    {(partner.organizationName || 'O').charAt(0).toUpperCase()}
+                                                                </div>
+                                                                <div>
+                                                                    <div className="font-bold text-gray-800">{partner.organizationName}</div>
+                                                                    <div className="text-xs text-gray-400">{partner.website || '—'}</div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <div className="font-semibold text-gray-700">{partner.contactName}</div>
+                                                            <div className="text-xs text-gray-400">{partner.email}</div>
+                                                            <div className="text-xs text-gray-400">{partner.phone}</div>
+                                                        </td>
+                                                        <td className="px-6 py-4 max-w-[200px]">
+                                                            <div className="font-semibold text-gray-800 truncate">{partner.projectTitle}</div>
+                                                            <div className="text-xs text-gray-400 line-clamp-2">{partner.purposeOfPartnership}</div>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <span className="text-xs bg-primary/10 text-primary font-semibold px-3 py-1 rounded-full whitespace-nowrap">{partner.partnershipType}</span>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-gray-600 text-sm">{partner.country}</td>
+                                                        <td className="px-6 py-4">
+                                                            {partner.pdfFile ? (
+                                                                <a 
+                                                                    href={`${API_URL}${partner.pdfFile}`} 
+                                                                    target="_blank" 
+                                                                    rel="noopener noreferrer"
+                                                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors"
+                                                                >
+                                                                    <span className="material-symbols-outlined text-[16px]">description</span> View PDF
+                                                                </a>
+                                                            ) : (
+                                                                <span className="text-xs text-gray-400 font-medium">No File</span>
+                                                            )}
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${statusColor}`}>{pStatus}</span>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-xs text-gray-400 whitespace-nowrap">{new Date(partner.createdAt).toLocaleDateString()}</td>
+                                                        <td className="px-6 py-4 text-right relative">
+                                                            <button onClick={(e) => { e.stopPropagation(); setActionMenuOpenId(actionMenuOpenId === partner._id ? null : partner._id); }} className={`p-1.5 rounded-lg transition-colors ${actionMenuOpenId === partner._id ? 'bg-gray-200 text-gray-800' : 'text-gray-400 hover:bg-gray-100'}`}>
+                                                                <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                                                            </button>
+                                                            {actionMenuOpenId === partner._id && (
+                                                                <div className="absolute right-12 top-8 w-52 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-150" onClick={e => e.stopPropagation()}>
+                                                                    <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Actions</div>
+                                                                    <button onClick={() => { setSelectedPartnerDetails(partner); setActionMenuOpenId(null); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary font-medium flex items-center gap-2">
+                                                                        <span className="material-symbols-outlined text-[18px]">visibility</span> View Full Details
+                                                                    </button>
+                                                                    <div className="h-px bg-gray-100 my-1"></div>
+                                                                    <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 mt-1">Update Status</div>
+                                                                    <button onClick={() => updatePartnerRequestStatus(partner._id, 'Pending')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 font-medium">Mark as Pending</button>
+                                                                    <button onClick={() => updatePartnerRequestStatus(partner._id, 'Under Review')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 font-medium">Mark as Under Review</button>
+                                                                    <button onClick={() => updatePartnerRequestStatus(partner._id, 'Approved')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 font-medium">Mark as Approved</button>
+                                                                    <button onClick={() => updatePartnerRequestStatus(partner._id, 'Rejected')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 font-medium">Mark as Rejected</button>
+                                                                    <div className="h-px bg-gray-100 my-1"></div>
+                                                                    <button onClick={() => deleteRecord('partner-request', partner._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 mt-1 font-bold">
+                                                                        <span className="material-symbols-outlined text-[16px]">delete</span> Delete Record
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </>
+                )}
+
             </div>
             )}
 
@@ -1693,6 +1868,78 @@ const Admin = () => {
                         <div className="flex gap-3">
                             <button onClick={() => setItemToDelete(null)} className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-colors">Cancel</button>
                             <button onClick={confirmDeleteAction} className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-colors shadow-md">Delete Record</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* PARTNER DETAILS MODAL */}
+            {selectedPartnerDetails && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setSelectedPartnerDetails(null)}>
+                    <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+                        <div className="sticky top-0 bg-white px-6 py-4 border-b border-gray-100 flex items-center justify-between z-10">
+                            <div>
+                                <h3 className="text-xl font-headline font-bold text-gray-800">Partnership Details</h3>
+                                <p className="text-sm text-gray-500 mt-1">{selectedPartnerDetails.organizationName}</p>
+                            </div>
+                            <button onClick={() => setSelectedPartnerDetails(null)} className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div className="p-6 space-y-8">
+                            {/* Project Section */}
+                            <div>
+                                <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">Project Information</h4>
+                                <div className="space-y-4">
+                                    <div>
+                                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Project Title</p>
+                                        <p className="text-gray-800 font-medium">{selectedPartnerDetails.projectTitle}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Project Description</p>
+                                        <p className="text-gray-700 text-sm whitespace-pre-wrap leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">{selectedPartnerDetails.projectDescription}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Assessment & Solution Section */}
+                            <div>
+                                <h4 className="text-sm font-bold text-green-700 uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">Assessment & Solution</h4>
+                                <div className="space-y-4">
+                                    <div>
+                                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Lead Assessment</p>
+                                        <p className="text-gray-700 text-sm whitespace-pre-wrap leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">{selectedPartnerDetails.leadAssessment}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Proposed Solution</p>
+                                        <p className="text-gray-700 text-sm whitespace-pre-wrap leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">{selectedPartnerDetails.proposedSolution}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Purpose Section */}
+                            <div>
+                                <h4 className="text-sm font-bold text-blue-700 uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">Partnership Purpose</h4>
+                                <div className="space-y-4">
+                                    <div>
+                                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Purpose of Partnership</p>
+                                        <p className="text-gray-700 text-sm whitespace-pre-wrap leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">{selectedPartnerDetails.purposeOfPartnership}</p>
+                                    </div>
+                                    {selectedPartnerDetails.pdfFile && (
+                                        <div className="pt-2">
+                                            <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-2">Proposal Document</p>
+                                            <a 
+                                                href={`${API_URL}${selectedPartnerDetails.pdfFile}`} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-50 text-blue-600 rounded-xl font-bold hover:bg-blue-100 transition-colors border border-blue-100"
+                                            >
+                                                <span className="material-symbols-outlined text-[20px]">description</span> View Proposal PDF
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

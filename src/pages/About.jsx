@@ -23,11 +23,6 @@ const BASE_SLIDES = [
         alt: 'DMF Community Initiatives',
         caption: 'Empowering Communities Through Education',
     },
-    {
-        src: '/Images/5.png',
-        alt: 'DMF Community Initiatives',
-        caption: 'Empowering Communities Through Education',
-    },
 ];
 
 const MOBILE_EXTRA_SLIDES = [
