@@ -26,6 +26,7 @@ import ShelterHome from './pages/ShelterHome';
 import DTNTLivesMatter from './pages/DTNTLivesMatter';
 import JobFair from './pages/JobFair';
 import BecomePartner from './pages/BecomePartner';
+import SlotBooking from './pages/SlotBooking';
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
         <Route path="/dtnt-lives-matter" element={<DTNTLivesMatter />} />
         <Route path="/job-fair" element={<JobFair />} />
         <Route path="/become-a-partner" element={<BecomePartner />} />
+        <Route path="/slot-booking" element={<SlotBooking />} />
       </Routes>
       <Footer />
     </BrowserRouter>

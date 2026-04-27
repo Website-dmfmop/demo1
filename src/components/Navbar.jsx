@@ -52,6 +52,8 @@ const Navbar = () => {
                                 <Link to="/join-us?purpose=Volunteer" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">Become a Volunteer</Link>
                                 <Link to="/join-us?purpose=Member" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">Become a MOP Member</Link>
                                 <Link to="/join-us?purpose=Partner" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">Become a Partner</Link>
+                                <div className="h-px bg-gray-100 my-1"></div>
+                                <Link to="/slot-booking" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">calendar_month</span>Book a Slot</Link>
                             </div>
                         </div>
                     </div>
@@ -81,6 +83,7 @@ const Navbar = () => {
                             <Link to="/join-us?purpose=Member" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">Become a Member</Link>
                             <Link to="/join-us?purpose=Partner" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">Become a Partner</Link>
                             <Link to="/join-us?purpose=Supporter" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">Become a Supporter</Link>
+                            <Link to="/slot-booking" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">Book a Slot</Link>
                         </div>
                     </div>
                 </div>

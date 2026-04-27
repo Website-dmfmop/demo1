@@ -21,6 +21,7 @@ const Admin = () => {
   const [jobs, setJobs] = useState([]);
   const [jobApplications, setJobApplications] = useState([]);
   const [partnerRequests, setPartnerRequests] = useState([]);
+  const [slotBookings, setSlotBookings] = useState([]);
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -116,6 +117,10 @@ const Admin = () => {
         const res = await fetch(`${API_URL}/api/partner-requests`);
         if (!res.ok) throw new Error('Failed to fetch partner requests');
         setPartnerRequests(await res.json());
+      } else if (activeTab === 'slot-bookings') {
+        const res = await fetch(`${API_URL}/api/slot-bookings`);
+        if (!res.ok) throw new Error('Failed to fetch slot bookings');
+        setSlotBookings(await res.json());
       }
     } catch (err) {
       setError(err.message);
@@ -198,6 +203,7 @@ const Admin = () => {
       if (type === 'press') endpoint = `${API_URL}/api/press/${id}`;
       if (type === 'job-application') endpoint = `${API_URL}/api/job-applications/${id}`;
       if (type === 'partner-request') endpoint = `${API_URL}/api/partner-requests/${id}`;
+      if (type === 'slot-booking') endpoint = `${API_URL}/api/slot-bookings/${id}`;
 
       const res = await fetch(endpoint, { method: 'DELETE' });
       if (res.ok) {
@@ -451,6 +457,7 @@ const Admin = () => {
       case 'jobs': dataToExport = jobs; break;
       case 'job-applications': dataToExport = jobApplications; break;
       case 'partner-requests': dataToExport = partnerRequests; break;
+      case 'slot-bookings': dataToExport = slotBookings; break;
       default: return alert("Export not supported for this section");
     }
 
@@ -600,6 +607,14 @@ const Admin = () => {
             >
                 <span className="material-symbols-outlined text-[20px]">handshake</span> Partner Requests
             </button>
+            <button
+                onClick={() => setActiveTab('slot-bookings')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'slot-bookings' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">event_available</span> Slot Bookings
+            </button>
 
             <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4 mt-8">Manage System</p>
             <button
@@ -680,6 +695,7 @@ const Admin = () => {
                 {activeTab === 'jobs' && 'Job Placements Management'}
                 {activeTab === 'job-applications' && 'Job Applications'}
                 {activeTab === 'partner-requests' && 'Partnership Requests'}
+                {activeTab === 'slot-bookings' && 'Slot Bookings'}
             </h2>
           </div>
           <div className="flex items-center gap-6">
@@ -1853,6 +1869,107 @@ const Admin = () => {
                     </>
                 )}
 
+            </div>
+            )}
+
+            {/* SLOT BOOKINGS TAB */}
+            {activeTab === 'slot-bookings' && (
+            <div className="animate-in fade-in zoom-in-95 duration-300">
+                {slotBookings.length === 0 ? (
+                    <div className="bg-white rounded-2xl p-12 text-center border border-gray-100 shadow-sm">
+                        <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span className="material-symbols-outlined text-4xl text-primary/40">event_busy</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-800">No Bookings Found</h3>
+                        <p className="text-gray-500 mt-2">There are currently no slot booking requests.</p>
+                    </div>
+                ) : (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                            <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0"><span className="material-symbols-outlined">calendar_today</span></div>
+                                <div><p className="text-xs font-bold text-gray-400 uppercase">Total Bookings</p><p className="text-2xl font-bold text-gray-800 leading-none mt-1">{slotBookings.length}</p></div>
+                            </div>
+                            <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center shrink-0"><span className="material-symbols-outlined">event_available</span></div>
+                                <div><p className="text-xs font-bold text-gray-400 uppercase">Confirmed</p><p className="text-2xl font-bold text-gray-800 leading-none mt-1">{slotBookings.filter(b => b.status === 'Confirmed').length}</p></div>
+                            </div>
+                            <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center shrink-0"><span className="material-symbols-outlined">pending_actions</span></div>
+                                <div><p className="text-xs font-bold text-gray-400 uppercase">Pending Review</p><p className="text-2xl font-bold text-gray-800 leading-none mt-1">{slotBookings.filter(b => b.status === 'Booked').length}</p></div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                            <div className="overflow-x-auto min-h-[300px]">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-gray-50 text-gray-500 font-semibold text-xs uppercase tracking-wider">
+                                        <tr>
+                                            <th className="px-6 py-4 border-b border-gray-200">Visitor Info</th>
+                                            <th className="px-6 py-4 border-b border-gray-200">Date & Time</th>
+                                            <th className="px-6 py-4 border-b border-gray-200">Purpose</th>
+                                            <th className="px-6 py-4 border-b border-gray-200">Message</th>
+                                            <th className="px-6 py-4 border-b border-gray-200">Status</th>
+                                            <th className="px-6 py-4 border-b border-gray-200">Applied On</th>
+                                            <th className="px-6 py-4 border-b border-gray-200 text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {slotBookings.map((booking) => {
+                                            const statusColor = 
+                                                booking.status === 'Confirmed' ? 'bg-green-50 text-green-700' :
+                                                booking.status === 'Completed' ? 'bg-blue-50 text-blue-700' :
+                                                booking.status === 'Cancelled' ? 'bg-red-50 text-red-700' :
+                                                'bg-yellow-50 text-yellow-700';
+
+                                            return (
+                                                <tr key={booking._id} className="hover:bg-gray-50/50 transition-colors group">
+                                                    <td className="px-6 py-4">
+                                                        <div className="font-bold text-gray-800">{booking.name}</div>
+                                                        <div className="text-xs text-gray-400">{booking.email}</div>
+                                                        <div className="text-xs text-gray-400">{booking.phone}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="font-semibold text-gray-800 flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px] text-primary">calendar_month</span> {booking.date}</div>
+                                                        <div className="text-xs text-gray-500 mt-1 flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px]">schedule</span> {booking.timeSlot}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className="text-xs bg-primary/10 text-primary font-semibold px-3 py-1 rounded-full whitespace-nowrap">{booking.purpose}</span>
+                                                    </td>
+                                                    <td className="px-6 py-4 max-w-[200px]">
+                                                        <div className="text-xs text-gray-600 line-clamp-3">{booking.message || '—'}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${statusColor}`}>{booking.status}</span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-xs text-gray-400 whitespace-nowrap">{new Date(booking.createdAt).toLocaleDateString()}</td>
+                                                    <td className="px-6 py-4 text-right relative">
+                                                        <button onClick={(e) => { e.stopPropagation(); setActionMenuOpenId(actionMenuOpenId === booking._id ? null : booking._id); }} className={`p-1.5 rounded-lg transition-colors ${actionMenuOpenId === booking._id ? 'bg-gray-200 text-gray-800' : 'text-gray-400 hover:bg-gray-100'}`}>
+                                                            <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                                                        </button>
+                                                        {actionMenuOpenId === booking._id && (
+                                                            <div className="absolute right-12 top-8 w-52 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-150" onClick={e => e.stopPropagation()}>
+                                                                <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Update Status</div>
+                                                                <button onClick={() => updateSlotBookingStatus(booking._id, 'Booked')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 font-medium">Mark as Booked</button>
+                                                                <button onClick={() => updateSlotBookingStatus(booking._id, 'Confirmed')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 font-medium">Mark as Confirmed</button>
+                                                                <button onClick={() => updateSlotBookingStatus(booking._id, 'Completed')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 font-medium">Mark as Completed</button>
+                                                                <button onClick={() => updateSlotBookingStatus(booking._id, 'Cancelled')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 font-medium">Mark as Cancelled</button>
+                                                                <div className="h-px bg-gray-100 my-1"></div>
+                                                                <button onClick={() => deleteRecord('slot-booking', booking._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 mt-1 font-bold">
+                                                                    <span className="material-symbols-outlined text-[16px]">delete</span> Delete Record
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
             )}
 

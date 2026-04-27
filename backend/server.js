@@ -580,6 +580,73 @@ app.delete('/api/partner-requests/:id', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+
+// --- SLOT BOOKINGS API ---
+app.get('/api/slot-bookings', async (req, res) => {
+    try {
+        const SlotBooking = require('./models/SlotBooking');
+        const bookings = await SlotBooking.find().sort({ createdAt: -1 });
+        res.json(bookings);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.get('/api/slot-bookings/booked', async (req, res) => {
+    try {
+        const SlotBooking = require('./models/SlotBooking');
+        const { date } = req.query;
+        if (!date) return res.status(400).json({ error: 'Date is required' });
+        
+        const bookings = await SlotBooking.find({ 
+            date, 
+            status: { $ne: 'Cancelled' } 
+        }).select('timeSlot');
+        
+        res.json(bookings.map(b => b.timeSlot));
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/slot-bookings', async (req, res) => {
+    try {
+        const SlotBooking = require('./models/SlotBooking');
+        const { date, timeSlot } = req.body;
+        
+        // Check if already booked
+        const existingBooking = await SlotBooking.findOne({ 
+            date, 
+            timeSlot, 
+            status: { $ne: 'Cancelled' } 
+        });
+        
+        if (existingBooking) {
+            return res.status(400).json({ error: 'This time slot is already booked. Please choose another one.' });
+        }
+        
+        const newBooking = new SlotBooking(req.body);
+        res.status(201).json(await newBooking.save());
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+app.put('/api/slot-bookings/:id/status', async (req, res) => {
+    try {
+        const SlotBooking = require('./models/SlotBooking');
+        const { status } = req.body;
+        if (!['Booked', 'Confirmed', 'Completed', 'Cancelled'].includes(status)) {
+            return res.status(400).json({ error: 'Invalid status' });
+        }
+        const updated = await SlotBooking.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        if (!updated) return res.status(404).json({ error: 'Booking not found' });
+        res.json(updated);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.delete('/api/slot-bookings/:id', async (req, res) => {
+    try {
+        const SlotBooking = require('./models/SlotBooking');
+        await SlotBooking.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Booking deleted' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
