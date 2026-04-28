@@ -110,7 +110,7 @@ export default function SlotBooking() {
                             </p>
                         </div>
                         <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 aspect-[4/3]">
-                            <img alt="Book a Slot" className="w-full h-full object-cover" src="/Images/icoe_page.png" />
+                            <img alt="Book a Slot" className="w-full h-full object-cover" src="/Images/book_slot.jpeg" />
                         </div>
                     </div>
                 </div>
