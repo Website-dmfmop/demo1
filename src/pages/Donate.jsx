@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import { donateTranslations } from '../translations/pages';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Donate() {
+    const { language } = useLanguage();
+    const t = donateTranslations[language];
     const [amount, setAmount] = useState(100);
     const [customAmount, setCustomAmount] = useState('');
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -69,12 +73,12 @@ export default function Donate() {
                     </div>
                     <div className="relative max-w-7xl mx-auto px-8 w-full">
                         <div className="max-w-2xl">
-                            <span className="font-label text-secondary-container uppercase tracking-widest font-semibold text-sm mb-4 block">GIVE FOR THE FUTURE</span>
+                            <span className="font-label text-secondary-container uppercase tracking-widest font-semibold text-sm mb-4 block">{t.heroTag}</span>
                             <h1 className="font-headline text-5xl md:text-7xl font-extrabold text-white leading-tight tracking-tighter mb-6">
-                                Fuel the <span className="text-secondary-container">Change</span>
+                                {t.heroTitle} <span className="text-secondary-container">{t.heroTitleHighlight}</span>
                             </h1>
                             <p className="text-white/90 text-xl leading-relaxed max-w-xl font-body">
-                                Your contribution provides the structural support needed for education, legal empowerment, and sustainable healthcare in underserved communities.
+                                {t.heroDesc}
                             </p>
                         </div>
                     </div>
@@ -89,19 +93,19 @@ export default function Donate() {
                                     <div className="w-20 h-20 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
                                         <span className="material-symbols-outlined text-4xl">check_circle</span>
                                     </div>
-                                    <h3 className="text-3xl font-display font-bold text-primary mb-3">Thank You!</h3>
-                                    <p className="text-on-surface-variant mb-8 text-lg">Your generosity fuels the change. We have received your donation info.</p>
+                                    <h3 className="text-3xl font-display font-bold text-primary mb-3">{t.thankYou}</h3>
+                                    <p className="text-on-surface-variant mb-8 text-lg">{t.thankYouDesc}</p>
                                     <button
                                         onClick={() => setStatus('')}
                                         className="px-8 py-3 bg-secondary-container hover:bg-secondary text-white rounded-lg transition-colors font-medium"
                                     >
-                                        Donate Again
+                                        {t.donateAgain}
                                     </button>
                                 </div>
                             ) : (
                                 <form onSubmit={handleDonation}>
                                     <div className="flex items-center justify-between mb-10">
-                                        <h2 className="font-headline text-3xl font-bold text-primary">Make a Donation</h2>
+                                        <h2 className="font-headline text-3xl font-bold text-primary">{t.makeDonation}</h2>
                                         <div className="flex bg-surface-container rounded-full p-1">
                                             <button type="button" className="px-6 py-2 rounded-full text-sm font-semibold transition-all bg-primary text-white">One-time</button>
                                             <button type="button" className="px-6 py-2 rounded-full text-sm font-semibold transition-all text-on-surface-variant hover:bg-surface-variant">Monthly</button>
@@ -179,7 +183,7 @@ export default function Donate() {
                                         ) : (
                                             <>
                                                 <span className="material-symbols-outlined" data-weight="fill">favorite</span>
-                                                COMPLETE DONATION
+                                                {t.completeDonation}
                                             </>
                                         )}
                                     </button>
@@ -200,15 +204,15 @@ export default function Donate() {
                         <div className="lg:col-span-5 space-y-6">
                             <div className="bg-surface-container-low p-8 rounded-xl relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-secondary-container/10 rounded-bl-full -mr-10 -mt-10"></div>
-                                <h3 className="font-headline text-2xl font-bold text-primary mb-6">Where Your Money Goes</h3>
+                                <h3 className="font-headline text-2xl font-bold text-primary mb-6">{t.whereMoneyGoes}</h3>
                                 <div className="space-y-8">
                                     <div className="flex gap-4">
                                         <div className="w-12 h-12 shrink-0 bg-primary text-white rounded-lg flex items-center justify-center">
                                             <span className="material-symbols-outlined">school</span>
                                         </div>
                                         <div>
-                                            <h4 className="font-headline font-bold text-on-surface">Universal Education</h4>
-                                            <p className="text-on-surface-variant text-sm mt-1">Funding scholarships and digital labs for underprivileged rural students.</p>
+                                            <h4 className="font-headline font-bold text-on-surface">{t.universalEdu}</h4>
+                                            <p className="text-on-surface-variant text-sm mt-1">{t.universalEduDesc}</p>
                                         </div>
                                     </div>
                                     <div className="flex gap-4">
@@ -216,8 +220,8 @@ export default function Donate() {
                                             <span className="material-symbols-outlined">gavel</span>
                                         </div>
                                         <div>
-                                            <h4 className="font-headline font-bold text-on-surface">Legal Empowerment</h4>
-                                            <p className="text-on-surface-variant text-sm mt-1">Providing legal aid and awareness workshops for marginalized communities.</p>
+                                            <h4 className="font-headline font-bold text-on-surface">{t.legalEmpowerment}</h4>
+                                            <p className="text-on-surface-variant text-sm mt-1">{t.legalEmpowermentDesc}</p>
                                         </div>
                                     </div>
                                     <div className="flex gap-4">
@@ -225,8 +229,8 @@ export default function Donate() {
                                             <span className="material-symbols-outlined">medical_services</span>
                                         </div>
                                         <div>
-                                            <h4 className="font-headline font-bold text-on-surface">Mobile Medical Units</h4>
-                                            <p className="text-on-surface-variant text-sm mt-1">Deploying healthcare professionals to remote areas with limited access.</p>
+                                            <h4 className="font-headline font-bold text-on-surface">{t.mobileMedical}</h4>
+                                            <p className="text-on-surface-variant text-sm mt-1">{t.mobileMedicalDesc}</p>
                                         </div>
                                     </div>
                                 </div>

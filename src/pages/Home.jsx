@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import { homeTranslations } from '../translations/home';
+import { commonTranslations } from '../translations/common';
 
 /* ─── Animated Counter Hook ───────────────────────────────────────────── */
 function useCountUp(target, duration = 2000, startWhen = false) {
@@ -45,6 +48,10 @@ function StatCounter({ icon, num, suffix, label, started }) {
 }
 
 export default function Home() {
+    const { language } = useLanguage();
+    const t = homeTranslations[language];
+    const tc = commonTranslations[language];
+
     /* Intersection observer to trigger the counter when section scrolls into view */
     const counterRef = useRef(null);
     const [counterStarted, setCounterStarted] = useState(false);
@@ -106,10 +113,10 @@ export default function Home() {
                     <div className="relative z-10 max-w-7xl mx-auto px-8 w-full pb-12 md:pb-0">
                         <div className="max-w-3xl">
                             <span className="inline-block px-4 py-1 mb-4 bg-secondary-container text-on-secondary-container text-xs font-bold tracking-widest uppercase rounded-full">
-                                DMF • Movement of Positivity
+                                {t.heroTag}
                             </span>
                             <h1 className="font-headline text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-8 tracking-tighter">
-                                ENABLING COMMUNITIES <span className="text-secondary-container"><div>PROMOTING </div> <div>JUSTICE.</div></span>
+                                {t.heroTitle1} <span className="text-secondary-container"><div>{t.heroTitle2} </div> <div>{t.heroTitle3}</div></span>
                             </h1>
                         </div>
                     </div>
@@ -120,13 +127,13 @@ export default function Home() {
                     <div className="max-w-7xl mx-auto">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
                             <div className="md:col-span-2">
-                                <span className="text-secondary font-bold text-xs tracking-widest uppercase mb-3 block">About DMF</span>
-                                <h2 className="font-headline text-3xl font-bold text-primary mb-4">Dr. Dnyaneshwar Mulay Foundation</h2>
+                                <span className="text-secondary font-bold text-xs tracking-widest uppercase mb-3 block">{t.aboutTag}</span>
+                                <h2 className="font-headline text-3xl font-bold text-primary mb-4">{t.aboutTitle}</h2>
                                 <p className="text-on-surface-variant leading-relaxed mb-4">
-                                    Since 2019, DMF is a globally recognized organization with deep roots in India, committed to providing innovative and beneficial solutions. During flood emergencies in Kolhapur Sangali district in Maharashtra, and subsequently during COVID-19, DMF strengthened its work and today conducts significant activities contributing to social change.
+                                    {t.aboutP1}
                                 </p>
                                 <p className="text-on-surface-variant leading-relaxed text-sm">
-                                    <strong className="text-primary">Dr. Dnyaneshwar Mulay</strong> is the Founder &amp; President of DMF. The non-profit specializes in Social Innovation, Urban &amp; Rural mobilization, Capacity (skill) building, and Transforming Rural &amp; Urban Education Through Digital Classrooms and Innovation Labs.
+                                    <strong className="text-primary">{t.aboutP2Name}</strong>{t.aboutP2}
                                 </p>
                             </div>
                             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl shadow-lg group bg-surface-container-lowest">
@@ -176,8 +183,8 @@ export default function Home() {
                 <section className="py-24 bg-surface px-8">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
-                            <span className="text-secondary font-bold text-xs tracking-widest uppercase mb-3 block">The Foundation</span>
-                            <h2 className="font-headline text-4xl font-bold text-primary">The Pillars of DMF</h2>
+                            <span className="text-secondary font-bold text-xs tracking-widest uppercase mb-3 block">{t.pillarsTag}</span>
+                            <h2 className="font-headline text-4xl font-bold text-primary">{t.pillarsTitle}</h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                             {/* Positivity Column (MOP) */}
@@ -187,10 +194,10 @@ export default function Home() {
                                 </div>
                                 <div className="relative z-10">
                                     <span className="material-symbols-outlined text-primary text-5xl mb-6 block" data-icon="sentiment_very_satisfied">sentiment_very_satisfied</span>
-                                    <h3 className="font-headline text-3xl font-extrabold text-primary mb-4">MOVEMENT OF POSITIVITY</h3>
-                                    <p className="text-primary/80 font-medium mb-8 leading-relaxed">Movement of Positivity (MOP) — building a network of active citizens to foster optimism, hope, and constructive action in every community we serve.</p>
+                                    <h3 className="font-headline text-3xl font-extrabold text-primary mb-4">{t.mopTitle}</h3>
+                                    <p className="text-primary/80 font-medium mb-8 leading-relaxed">{t.mopDesc}</p>
                                     <span className="inline-flex items-center gap-2 font-headline text-xs font-black tracking-widest text-primary uppercase border-b-2 border-primary/20 group-hover:border-primary transition-all">
-                                        Learn More <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                        {tc.learnMore} <span className="material-symbols-outlined text-sm">arrow_forward</span>
                                     </span>
                                 </div>
                             </Link>
@@ -201,10 +208,10 @@ export default function Home() {
                                 </div>
                                 <div className="relative z-10">
                                     <span className="material-symbols-outlined text-primary text-5xl mb-6 block" data-icon="school">school</span>
-                                    <h3 className="font-headline text-3xl font-extrabold text-primary mb-4">ICOE</h3>
-                                    <p className="text-on-surface-variant font-medium mb-8 leading-relaxed">International Centre of Excellence — a collaborative initiative focused on international placement, skill development, and foreign employment.</p>
+                                    <h3 className="font-headline text-3xl font-extrabold text-primary mb-4">{t.icoeTitle}</h3>
+                                    <p className="text-on-surface-variant font-medium mb-8 leading-relaxed">{t.icoeDesc}</p>
                                     <span className="inline-flex items-center gap-2 font-headline text-xs font-black tracking-widest text-primary uppercase border-b-2 border-primary/20 group-hover:border-primary transition-all">
-                                        Learn More <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                        {tc.learnMore} <span className="material-symbols-outlined text-sm">arrow_forward</span>
                                     </span>
                                 </div>
                             </Link>
@@ -215,10 +222,10 @@ export default function Home() {
                                 </div>
                                 <div className="relative z-10">
                                     <span className="material-symbols-outlined text-white text-5xl mb-6 block" data-icon="auto_stories">auto_stories</span>
-                                    <h3 className="font-headline text-3xl font-extrabold text-white mb-4">WORDS BEYOND BORDERS</h3>
-                                    <p className="text-white/80 font-medium mb-8 leading-relaxed">Words Beyond Borders — an international literary gathering celebrating diplomats who enrich the world of literature across diverse cultural landscapes.</p>
+                                    <h3 className="font-headline text-3xl font-extrabold text-white mb-4">{t.wbbTitle}</h3>
+                                    <p className="text-white/80 font-medium mb-8 leading-relaxed">{t.wbbDesc}</p>
                                     <span className="inline-flex items-center gap-2 font-headline text-xs font-black tracking-widest text-white uppercase border-b-2 border-white/20 group-hover:border-white transition-all">
-                                        Learn More <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                        {tc.learnMore} <span className="material-symbols-outlined text-sm">arrow_forward</span>
                                     </span>
                                 </div>
                             </Link>
@@ -239,12 +246,12 @@ export default function Home() {
                     </div>
                     <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 w-full">
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8 justify-center items-start">
-                            <StatCounter icon="groups" num={10000} suffix="+" label="ICOE Beneficiaries" started={counterStarted} />
-                            <StatCounter icon="language" num={6} suffix="" label="Languages Taught" started={counterStarted} />
-                            <StatCounter icon="flight_takeoff" num={200} suffix="+" label="Global Placements" started={counterStarted} />
-                            <StatCounter icon="woman" num={25} suffix="" label="Women Entrepreneurs" started={counterStarted} />
-                            <StatCounter icon="school" num={230} suffix="+" label="Youth Enrolled" started={counterStarted} />
-                            <StatCounter icon="handshake" num={8} suffix="+" label="Partner Institutions" started={counterStarted} />
+                            <StatCounter icon="groups" num={10000} suffix="+" label={t.counterBeneficiaries} started={counterStarted} />
+                            <StatCounter icon="language" num={6} suffix="" label={t.counterLanguages} started={counterStarted} />
+                            <StatCounter icon="flight_takeoff" num={200} suffix="+" label={t.counterPlacements} started={counterStarted} />
+                            <StatCounter icon="woman" num={25} suffix="" label={t.counterWomen} started={counterStarted} />
+                            <StatCounter icon="school" num={230} suffix="+" label={t.counterYouth} started={counterStarted} />
+                            <StatCounter icon="handshake" num={8} suffix="+" label={t.counterPartners} started={counterStarted} />
                         </div>
                     </div>
                 </section>
@@ -255,8 +262,8 @@ export default function Home() {
                         {/* Header */}
                         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
                             <div className="max-w-xl">
-                                <h2 className="text-xs font-headline font-black text-secondary tracking-[0.3em] uppercase mb-4">Our Initiatives</h2>
-                                <p className="font-headline text-4xl md:text-5xl font-extrabold text-primary leading-tight">Catalyzing systemic change through action.</p>
+                                <h2 className="text-xs font-headline font-black text-secondary tracking-[0.3em] uppercase mb-4">{t.initiativesTag}</h2>
+                                <p className="font-headline text-4xl md:text-5xl font-extrabold text-primary leading-tight">{t.initiativesTitle}</p>
                             </div>
                         </div>
 
@@ -268,8 +275,8 @@ export default function Home() {
                                     <img alt="Smart Education" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="/Images/4.png" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent"></div>
                                     <div className="absolute bottom-0 left-0 p-10">
-                                        <span className="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-black tracking-widest uppercase mb-4 inline-block">Education</span>
-                                        <h4 className="text-3xl font-headline font-bold text-white mb-2">Classrooms &amp; Innovation Labs</h4>
+                                        <span className="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-black tracking-widest uppercase mb-4 inline-block">{t.educationTag}</span>
+                                        <h4 className="text-3xl font-headline font-bold text-white mb-2">{t.educationTitle}</h4>
 
                                     </div>
                                 </div>
@@ -281,8 +288,8 @@ export default function Home() {
                                     <img alt="Community Mobilization" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="/Images/5.png" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#2e7d32]/90 via-transparent to-transparent"></div>
                                     <div className="absolute bottom-0 left-0 p-8">
-                                        <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 text-[10px] font-black tracking-widest uppercase mb-4 inline-block">Community</span>
-                                        <h4 className="text-2xl font-headline font-bold text-white mb-2">Community Mobilization</h4>
+                                        <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 text-[10px] font-black tracking-widest uppercase mb-4 inline-block">{t.communityTag}</span>
+                                        <h4 className="text-2xl font-headline font-bold text-white mb-2">{t.communityTitle}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -290,14 +297,14 @@ export default function Home() {
 
                         {/* Slogan / Quote — full width below both images */}
                         <div className="bg-surface-container-lowest p-8 rounded-xl shadow-sm border-l-4 border-secondary-container">
-                            <p className="italic text-primary/70 font-medium mb-4 text-lg">"The mission is to create a society based on positivity, compassion and creativity. In a short period, the DMF has touched the lives of hundreds of people."</p>
+                            <p className="italic text-primary/70 font-medium mb-4 text-lg">{t.quoteText}</p>
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
                                     <span className="material-symbols-outlined text-white text-sm">person</span>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-primary">Dr. Dnyaneshwar Mulay</p>
-                                    <p className="text-[10px] text-on-surface-variant uppercase tracking-tighter">Founder &amp; President, DMF</p>
+                                    <p className="text-xs font-bold text-primary">{t.quoteName}</p>
+                                    <p className="text-[10px] text-on-surface-variant uppercase tracking-tighter">{t.quoteRole}</p>
                                 </div>
                             </div>
                         </div>
@@ -308,8 +315,8 @@ export default function Home() {
                 <section className="py-24 bg-surface px-8 overflow-hidden">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
-                            <h2 className="text-xs font-headline font-black text-secondary tracking-[0.3em] uppercase mb-4">Our Goals</h2>
-                            <p className="font-headline text-4xl md:text-5xl font-extrabold text-primary leading-tight">Sustainable Development Goals</p>
+                            <h2 className="text-xs font-headline font-black text-secondary tracking-[0.3em] uppercase mb-4">{t.sdgTag}</h2>
+                            <p className="font-headline text-4xl md:text-5xl font-extrabold text-primary leading-tight">{t.sdgTitle}</p>
                         </div>
                         
                         {/* Goals Marquee */}

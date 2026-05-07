@@ -1,8 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import { commonTranslations } from '../translations/common';
 
 const Footer = () => {
     const location = useLocation();
+    const { language } = useLanguage();
+    const t = commonTranslations[language];
+
     if (location.pathname.startsWith('/admin')) {
         return null;
     }
@@ -19,10 +24,10 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto px-12 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
                     <p className="text-[#fe9832] font-headline text-xs font-black tracking-[0.2em] uppercase mb-1">
-                        Support The Mission
+                        {t.footerSupportMission}
                     </p>
                     <h2 className="font-headline text-xl font-extrabold text-white leading-tight tracking-tight">
-                        Make a Difference Today
+                        {t.footerMakeDifference}
                     </h2>
                 </div>
                 <Link
@@ -31,7 +36,7 @@ const Footer = () => {
                     className="shrink-0 inline-flex items-center gap-2 px-8 py-3 bg-[#fe9832] text-[#00003c] font-headline font-black text-xs tracking-[0.15em] uppercase rounded-sm shadow-lg hover:bg-white hover:text-[#00003c] transition-all duration-300 active:scale-95"
                 >
                     <span className="material-symbols-outlined text-base">favorite</span>
-                    DONATE NOW
+                    {t.footerDonateNow}
                 </Link>
             </div>
         </div>
@@ -46,28 +51,23 @@ const Footer = () => {
                     className="h-24 w-auto object-contain mb-4"
                 />
                 <p className="text-gray-300 font-body leading-relaxed mb-6 text-sm">
-                    Creating a society based on positivity, compassion and creativity.
-                    Globally recognized since 2019 with major presence in Western Maharashtra.
+                    {t.footerBrandDesc}
                 </p>
                 <div className="text-gray-400 text-xs mb-1">
                     🌐 <a href="https://www.dmfmop.org" className="hover:text-[#fe9832] transition-colors">www.dmfmop.org</a>
                 </div>
-                {/* <div className="text-gray-400 text-xs mb-1">
-                    📧 <a href="mailto:corporate@dmfmop.org" className="hover:text-[#fe9832] transition-colors">corporate@dmfmop.org</a>
-                </div>
-                <div className="text-gray-400 text-xs">📞 +91 8378086159</div> */}
             </div>
 
             {/* Quick Links */}
             <div className="bg-white/5 p-8 rounded-xl backdrop-blur-sm border border-white/10 w-full md:w-auto min-w-[180px] flex flex-col gap-4 h-[270px] ">
                 <h5 className="text-[#fe9832] font-headline font-bold text-sm tracking-widest uppercase mb-2">
-                    Quick Links
+                    {t.footerQuickLinks}
                 </h5>
                 <ul className="space-y-3">
-                    <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/">Home</Link></li>
-                    <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/about">What We Are</Link></li>
-                    <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/icoe">What We Do</Link></li>
-                    <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/media">Media</Link></li>
+                    <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/">{t.footerHome}</Link></li>
+                    <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/about">{t.footerWhatWeAre}</Link></li>
+                    <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/icoe">{t.footerWhatWeDo}</Link></li>
+                    <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/media">{t.footerMedia}</Link></li>
                 </ul>
             </div>
 
@@ -75,15 +75,14 @@ const Footer = () => {
             <div className="bg-white/5 p-8 rounded-xl backdrop-blur-sm border border-white/10 max-w-xs">
                 <div className="flex items-center justify-between mb-4">
                     <h5 className="font-headline font-bold text-sm tracking-widest uppercase text-white mb-0">
-                        ICOE Office
+                        {t.footerIcoeOffice}
                     </h5>
                     <a href="https://maps.app.goo.gl/JWAhkrRXGfwi28ur8?g_st=aw" target="_blank" rel="noopener noreferrer" className="text-[#fe9832] hover:text-white transition-colors" title="View on Google Maps">
                         <span className="material-symbols-outlined text-2xl">location_on</span>
                     </a>
                 </div>
                 <p className="text-sm text-gray-300 mb-4 leading-relaxed">
-                    First Floor, Maharishi Valmiki Library, Nehru Garden,
-                    Dr. Babasaheb Ambedkar Road, Khadki, Pune 411003.
+                    {t.footerAddress}
                 </p>
                 <p className="text-sm text-[#fe9832] font-bold">corporate@dmfmop.org</p>
                 <p className="text-sm text-gray-300 mt-2">+91 8378086159</p>
@@ -104,11 +103,11 @@ const Footer = () => {
         {/* ── COPYRIGHT BAR ── */}
         <div className="px-12 py-6 flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto border-t border-white/5 gap-4 relative z-10">
             <p className="text-gray-400 text-xs uppercase tracking-widest">
-                © 2025 Dr. Dnyaneshwar Mulay Foundation. All Rights Reserved.
+                {t.footerCopyright}
             </p>
             <div className="flex gap-8">
-                <a className="text-gray-400 text-[10px] uppercase tracking-widest hover:text-white" href="#">Privacy Policy</a>
-                <a className="text-gray-400 text-[10px] uppercase tracking-widest hover:text-white" href="#">Terms of Service</a>
+                <a className="text-gray-400 text-[10px] uppercase tracking-widest hover:text-white" href="#">{t.footerPrivacy}</a>
+                <a className="text-gray-400 text-[10px] uppercase tracking-widest hover:text-white" href="#">{t.footerTerms}</a>
             </div>
         </div>
 

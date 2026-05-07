@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import { aboutTranslations } from '../translations/about';
+import { commonTranslations } from '../translations/common';
 
 const BASE_SLIDES = [
     {
@@ -49,6 +52,10 @@ const MOBILE_EXTRA_SLIDES = [
 ];
 
 export default function About() {
+    const { language } = useLanguage();
+    const t = aboutTranslations[language];
+    const tc = commonTranslations[language];
+
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
@@ -112,6 +119,58 @@ export default function About() {
         return () => clearInterval(id);
     }, [next]);
 
+    const roles = [
+        { role: t.rolePresident, org: t.orgDMF },
+        { role: t.roleAdvisor, org: t.orgICOE },
+        { role: t.roleFormerAdvisor, org: t.orgNSDC },
+        { role: t.roleFormerSecretary, org: t.orgMEA },
+    ];
+
+    const focusAreas = [
+        {
+            icon: 'lightbulb',
+            title: t.socialInnovation,
+            desc: t.socialInnovationDesc,
+            color: 'border-primary',
+            iconColor: 'text-primary',
+        },
+        {
+            icon: 'build',
+            title: t.skillReach,
+            desc: t.skillReachDesc,
+            color: 'border-[#2e7d32]',
+            iconColor: 'text-[#2e7d32]',
+        },
+        {
+            icon: 'woman',
+            title: t.womensLeadership,
+            desc: t.womensLeadershipDesc,
+            color: 'border-secondary-container',
+            iconColor: 'text-secondary-container',
+        },
+        {
+            icon: 'flight_takeoff',
+            title: t.intlJobPlacement,
+            desc: t.intlJobPlacementDesc,
+            color: 'border-primary',
+            iconColor: 'text-primary',
+        },
+        {
+            icon: 'account_balance',
+            title: t.governanceLeadership,
+            desc: t.governanceLeadershipDesc,
+            color: 'border-[#2e7d32]',
+            iconColor: 'text-[#2e7d32]',
+        },
+        {
+            icon: 'medical_services',
+            title: t.healthcareEducation,
+            desc: t.healthcareEducationDesc,
+            color: 'border-secondary-container',
+            iconColor: 'text-secondary-container',
+        },
+    ];
+
     return (
         <div>
             <main>
@@ -123,13 +182,11 @@ export default function About() {
                         const isExiting = i === prev_idx;
                         let slideStyle = {};
                         if (isActive && sliding) {
-                            // entering from right or left
                             slideStyle = {
                                 animation: `slideIn${direction === 'right' ? 'Right' : 'Left'} 0.6s cubic-bezier(0.4,0,0.2,1) forwards`,
                                 zIndex: 2,
                             };
                         } else if (isExiting && sliding) {
-                            // exiting to left or right
                             slideStyle = {
                                 animation: `slideOut${direction === 'right' ? 'Left' : 'Right'} 0.6s cubic-bezier(0.4,0,0.2,1) forwards`,
                                 zIndex: 1,
@@ -153,26 +210,6 @@ export default function About() {
                             </div>
                         );
                     })}
-
-                    {/* Content overlay */}
-                    {/* <div className="relative z-10 max-w-7xl mx-auto px-8 w-full pt-24">
-                        <div className="max-w-3xl">
-                            <span className="inline-block font-label text-secondary-container text-sm font-semibold tracking-[0.2em] uppercase mb-4">
-                                Dr. Dnyaneshwar Mulay Foundation • DMF
-                            </span>
-                            <h1 className="font-headline text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-6">
-                                Movement of <span className="text-secondary-container">Positivity</span>
-                            </h1>
-                            <p className="font-body text-xl text-white/80 leading-relaxed max-w-2xl mb-4">
-                                A globally recognized organization committed to providing innovative and beneficial solutions since 2019.
-                            </p>
-                            <div className="flex flex-wrap gap-3 mt-6">
-                                <span className="bg-secondary-container text-on-secondary-container text-xs font-bold px-4 py-2 rounded-full uppercase tracking-widest">80G Exemption</span>
-                                <span className="bg-white/20 text-white text-xs font-bold px-4 py-2 rounded-full uppercase tracking-widest">12A Exemption</span>
-                                <span className="bg-[#2e7d32] text-white text-xs font-bold px-4 py-2 rounded-full uppercase tracking-widest">Since 2019</span>
-                            </div>
-                        </div>
-                    </div> */}
 
                     {/* ── Arrow Controls ── */}
                     <button
@@ -220,34 +257,23 @@ export default function About() {
                                 <img alt="Dr. Dnyaneshwar Mulay" className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700" src="/Images/dr_mulay.png" />
                             </div>
                             <div className="text-center mt-4 relative z-10">
-                                <span className="font-label text-secondary font-bold tracking-widest uppercase text-xl">Passport Man of India</span>
+                                <span className="font-label text-secondary font-bold tracking-widest uppercase text-xl">{t.passportMan}</span>
                             </div>
                             <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-secondary-container/10 -z-10 rounded-full blur-3xl"></div>
                         </div>
                         <div className="md:col-span-8">
-                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-4 block">FOUNDER & PRESIDENT</span>
-                            <h2 className="font-headline text-4xl font-bold text-primary mb-6 leading-tight">Dr. Dnyaneshwar Mulay</h2>
+                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-4 block">{t.founderTag}</span>
+                            <h2 className="font-headline text-4xl font-bold text-primary mb-6 leading-tight">{t.founderName}</h2>
                             <div className="space-y-5 text-on-surface-variant leading-relaxed text-base">
-                                <p>
-                                    Dr. Dnyaneshwar Mulay is a distinguished career diplomat of the Indian Foreign Service and the Founder & President of the Dr. Dnyaneshwar Mulay Foundation. He previously served as Secretary in the Ministry of External Affairs, Government of India, and as an Advisor to the National Skill Development Corporation.
-                                </p>
-                                <p>
-                                    Since 2019, DMF is a globally recognized organization with deep roots in India, committed to providing innovative and beneficial solutions. During flood emergencies in Kolhapur Sangali district in Maharashtra and subsequently during COVID-19, DMF strengthened its work and today conducts significant activities contributing to social change.
-                                </p>
-                                <p>
-                                    The non-profit organization specializes in Social Innovation, Urban & Rural mobilization, Capacity Skill building, and Transforming Rural & Urban Education Through Digital Classrooms and Innovation Labs.
-                                </p>
+                                <p>{t.bioP1}</p>
+                                <p>{t.bioP2}</p>
+                                <p>{t.bioP3}</p>
                                 <div className="pt-4 border-l-4 border-secondary pl-6 italic text-primary font-medium">
-                                    "Our Vision: Work towards creating a modern, democratic, progressive nation. Promoting equality, justice and freedom as core values of a citizen's life."
+                                    {t.bioQuote}
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                                {[
-                                    { role: 'President', org: 'Dr. Dnyaneshwar Mulay Foundation' },
-                                    { role: 'Advisor', org: 'ICOE, Khadki Cantonment' },
-                                    { role: 'Former Advisor', org: 'NSDC, Govt. of India' },
-                                    { role: 'Former Secretary', org: 'MEA, Govt. of India' },
-                                ].map((r, i) => (
+                                {roles.map((r, i) => (
                                     <div key={i} className="bg-surface-container-low p-4 rounded-lg border-t-2 border-secondary-container">
                                         <div className="text-[#fe9832] font-bold text-xs uppercase tracking-wide mb-1">{r.role}</div>
                                         <div className="text-primary text-xs font-medium leading-tight">{r.org}</div>
@@ -262,89 +288,43 @@ export default function About() {
                 <section className="py-24 bg-surface-container-low">
                     <div className="max-w-7xl mx-auto px-8">
                         <div className="text-center mb-16">
-                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">Core Principles</span>
-                            <h2 className="font-headline text-4xl font-extrabold text-primary">Mission & Vision</h2>
+                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">{t.corePrinciples}</span>
+                            <h2 className="font-headline text-4xl font-extrabold text-primary">{t.missionVision}</h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {/* Mission Card */}
                             <div className="bg-surface-container-lowest p-12 relative overflow-hidden group rounded-xl">
                                 <div className="absolute top-0 left-0 w-1.5 h-full bg-primary transition-all duration-300 group-hover:w-3 rounded-r"></div>
                                 <span className="material-symbols-outlined text-4xl text-primary mb-6" data-icon="flag">flag</span>
-                                <h3 className="font-headline text-3xl font-bold text-primary mb-4">Our Mission</h3>
+                                <h3 className="font-headline text-3xl font-bold text-primary mb-4">{t.ourMission}</h3>
                                 <p className="text-on-surface-variant text-lg leading-relaxed">
-                                    To create a society based on <strong className="text-primary">positivity, compassion and creativity</strong>. In a short period, DMF has touched the lives of hundreds of people through educational, economic, social and cultural programs for the least privileged segments of our society.
+                                    To create a society based on <strong className="text-primary">{t.missionText}</strong>{t.missionDesc}
                                 </p>
                             </div>
                             {/* Vision Card */}
                             <div className="bg-surface-container-lowest p-12 relative overflow-hidden group rounded-xl">
                                 <div className="absolute top-0 left-0 w-1.5 h-full bg-secondary-container transition-all duration-300 group-hover:w-3 rounded-r"></div>
                                 <span className="material-symbols-outlined text-4xl text-secondary-container mb-6" data-icon="visibility">visibility</span>
-                                <h3 className="font-headline text-3xl font-bold text-primary mb-4">Our Vision</h3>
+                                <h3 className="font-headline text-3xl font-bold text-primary mb-4">{t.ourVision}</h3>
                                 <p className="text-on-surface-variant text-lg leading-relaxed">
-                                    To work towards creating a <strong className="text-primary">modern, democratic, progressive nation</strong>. Promoting equality, justice and freedom as core values of a citizen's life.
+                                    {t.visionPre}<strong className="text-primary">{t.visionText}</strong>{t.visionDesc}
                                 </p>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* ── Organization Overview ──────────────────────────── */}
-
-
                 {/* ── Core Focus Areas ───────────────────────────────── */}
                 <section className="py-20 bg-surface-container-low px-8">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-14">
-                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">What We Do</span>
-                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Core Focus Areas</h2>
+                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">{t.whatWeDo}</span>
+                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">{t.coreFocusAreas}</h2>
                             <div className="w-16 h-1 bg-secondary-container mx-auto mb-4"></div>
-                            <p className="text-on-surface-variant max-w-2xl mx-auto">DMF works across six interconnected domains to create holistic and lasting change in communities across India.</p>
+                            <p className="text-on-surface-variant max-w-2xl mx-auto">{t.coreFocusDesc}</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {[
-                                {
-                                    icon: 'lightbulb',
-                                    title: 'Social Innovation',
-                                    desc: 'Running Social Innovation Labs that bring together students, academicians, government, and industry to co-create scalable solutions for real-world challenges.',
-                                    color: 'border-primary',
-                                    iconColor: 'text-primary',
-                                },
-                                {
-                                    icon: 'build',
-                                    title: 'Skill Reach',
-                                    desc: 'Delivering SkillReach programmes in foreign languages (German, Japanese), digital skills, and vocational trades to hundreds of youth from defence and civilian families.',
-                                    color: 'border-[#2e7d32]',
-                                    iconColor: 'text-[#2e7d32]',
-                                },
-                                {
-                                    icon: 'woman',
-                                    title: "Women's Leadership",
-                                    desc: 'Empowering women through the She Leads programme — forming producer groups, providing financial literacy, and connecting them to markets through enterprise development.',
-                                    color: 'border-secondary-container',
-                                    iconColor: 'text-secondary-container',
-                                },
-                                {
-                                    icon: 'flight_takeoff',
-                                    title: 'International Job Placement',
-                                    desc: 'Facilitating international employment opportunities for youth in Germany and other countries through partnerships with global recruitment agencies.',
-                                    color: 'border-primary',
-                                    iconColor: 'text-primary',
-                                },
-                                {
-                                    icon: 'account_balance',
-                                    title: 'Governance & Leadership',
-                                    desc: 'Through the Centre of Excellence, DMF develops ethical, positive leaders committed to values-based governance and citizen-centric public service.',
-                                    color: 'border-[#2e7d32]',
-                                    iconColor: 'text-[#2e7d32]',
-                                },
-                                {
-                                    icon: 'medical_services',
-                                    title: 'Healthcare Education',
-                                    desc: 'The Nursing Institute offers the GNM (General Nursing & Midwifery) 3-year diploma, preparing compassionate and globally competent healthcare professionals.',
-                                    color: 'border-secondary-container',
-                                    iconColor: 'text-secondary-container',
-                                },
-                            ].map((area, i) => (
+                            {focusAreas.map((area, i) => (
                                 <div key={i} className={`bg-surface-container-lowest rounded-2xl p-8 border-t-4 ${area.color} shadow-sm hover:-translate-y-2 transition-all duration-300`}>
                                     <span className={`material-symbols-outlined text-4xl mb-5 block ${area.iconColor}`}>{area.icon}</span>
                                     <h4 className="font-headline font-bold text-primary text-lg mb-3">{area.title}</h4>
@@ -361,11 +341,11 @@ export default function About() {
                     <div className="relative z-10">
                         {/* Heading */}
                         <div className="text-center mb-14 px-8">
-                            <span className="font-label text-secondary-container text-xs font-bold tracking-widest uppercase mb-3 block">International Presence</span>
-                            <h2 className="font-headline text-4xl font-extrabold text-white mb-4">Our Global Partners</h2>
+                            <span className="font-label text-secondary-container text-xs font-bold tracking-widest uppercase mb-3 block">{t.intlPresence}</span>
+                            <h2 className="font-headline text-4xl font-extrabold text-white mb-4">{t.globalPartners}</h2>
                             <div className="w-16 h-1 bg-secondary-container mx-auto mb-4"></div>
                             <p className="text-white/60 max-w-xl mx-auto text-sm leading-relaxed">
-                                DMF collaborates with institutions, placement partners, and organisations across the globe to create international opportunities for Indian youth.
+                                {t.globalPartnersDesc}
                             </p>
                         </div>
 
@@ -435,8 +415,8 @@ export default function About() {
                 <section className="py-24 bg-surface-container-high">
                     <div className="max-w-7xl mx-auto px-8">
                         <div className="text-center mb-16">
-                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-4 block">ICOE LEADERSHIP</span>
-                            <h2 className="font-headline text-4xl font-extrabold text-primary">Meet Our Team</h2>
+                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-4 block">{t.icoeLeadership}</span>
+                            <h2 className="font-headline text-4xl font-extrabold text-primary">{t.meetTeam}</h2>
                         </div>
                         {/* Team Row — 3 members in one line */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -445,18 +425,18 @@ export default function About() {
                                 <div className="flip-card-inner rounded-xl">
                                     <div className="flip-card-front bg-surface-container-lowest flex flex-col rounded-xl overflow-hidden shadow-sm">
                                         <div className="flex-1 bg-gradient-to-br from-primary to-primary-container relative overflow-hidden">
-                                            <img alt="Dr. Bharati Patil" className="w-full h-full object-cover object-top" src="/Images/dr_bharti.png" />
+                                            <img alt={t.bharatiName} className="w-full h-full object-cover object-top" src="/Images/dr_bharti.png" />
                                         </div>
                                         <div className="p-6 shrink-0 bg-surface-container-lowest text-center min-h-[96px] flex flex-col justify-center">
-                                            <h4 className="font-headline text-xl font-bold text-primary mb-1">Dr. Bharati Patil</h4>
-                                            <p className="text-[#fe9832] font-medium text-xs sm:text-sm uppercase tracking-wide">Vice President<br />Dr. Dnyaneshwar Mulay Foundation</p>
+                                            <h4 className="font-headline text-xl font-bold text-primary mb-1">{t.bharatiName}</h4>
+                                            <p className="text-[#fe9832] font-medium text-xs sm:text-sm uppercase tracking-wide">{t.vpTitle}<br />Dr. Dnyaneshwar Mulay Foundation</p>
                                         </div>
                                     </div>
                                     <div className="flip-card-back bg-white rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center shadow-xl border-t-[6px] border-primary">
-                                        <h4 className="font-headline text-2xl sm:text-3xl font-bold text-primary mb-4">Dr. Bharati Patil</h4>
+                                        <h4 className="font-headline text-2xl sm:text-3xl font-bold text-primary mb-4">{t.bharatiName}</h4>
                                         <div className="w-12 h-1 bg-secondary-container mb-6"></div>
                                         <p className="font-body text-sm sm:text-base leading-relaxed text-on-surface-variant">
-                                            A visionary Edupreneur serving as Vice President of DMF, holding a PhD in Education. Dedicated to transforming learning through innovation, leadership, and a commitment to excellence — a dynamic force shaping the future of global learning.
+                                            {t.bharatiBio}
                                         </p>
                                     </div>
                                 </div>
@@ -466,18 +446,18 @@ export default function About() {
                                 <div className="flip-card-inner rounded-xl">
                                     <div className="flip-card-front bg-surface-container-lowest flex flex-col rounded-xl overflow-hidden shadow-sm">
                                         <div className="flex-1 bg-gradient-to-br from-primary to-primary-container relative overflow-hidden">
-                                            <img alt="Mr. Ujjwal Sathe" className="w-full h-full object-cover object-top" src="/Images/mr_ujjwal.png" />
+                                            <img alt={t.ujjwalName} className="w-full h-full object-cover object-top" src="/Images/mr_ujjwal.png" />
                                         </div>
                                         <div className="p-6 shrink-0 bg-surface-container-lowest text-center min-h-[96px] flex flex-col justify-center">
-                                            <h4 className="font-headline text-xl font-bold text-primary mb-1">Mr. Ujjwal Sathe</h4>
-                                            <p className="text-[#fe9832] font-medium text-xs sm:text-sm uppercase tracking-wide">CEO<br />Dr. Dnyaneshwar Mulay Foundation</p>
+                                            <h4 className="font-headline text-xl font-bold text-primary mb-1">{t.ujjwalName}</h4>
+                                            <p className="text-[#fe9832] font-medium text-xs sm:text-sm uppercase tracking-wide">{t.ceoTitle}<br />Dr. Dnyaneshwar Mulay Foundation</p>
                                         </div>
                                     </div>
                                     <div className="flip-card-back bg-white rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center shadow-xl border-t-[6px] border-primary">
-                                        <h4 className="font-headline text-2xl sm:text-3xl font-bold text-primary mb-4">Mr. Ujjwal Sathe</h4>
+                                        <h4 className="font-headline text-2xl sm:text-3xl font-bold text-primary mb-4">{t.ujjwalName}</h4>
                                         <div className="w-12 h-1 bg-secondary-container mb-6"></div>
                                         <p className="font-body text-sm sm:text-base leading-relaxed text-on-surface-variant">
-                                            A visionary entrepreneur and automobile expert, accomplished Automobile Engineer from VJTI, Mumbai. Driven by strong values of humanity and equality, he provides strategic direction and leadership as CEO of DMF.
+                                            {t.ujjwalBio}
                                         </p>
                                     </div>
                                 </div>
@@ -487,18 +467,18 @@ export default function About() {
                                 <div className="flip-card-inner rounded-xl">
                                     <div className="flip-card-front bg-surface-container-lowest flex flex-col rounded-xl overflow-hidden shadow-sm">
                                         <div className="flex-1 bg-gradient-to-br from-primary to-primary-container relative overflow-hidden">
-                                            <img alt="Mr. Riyaj Pirjade" className="w-full h-full object-cover object-top" src="/Images/mr_riyaj.png" />
+                                            <img alt={t.riyajName} className="w-full h-full object-cover object-top" src="/Images/mr_riyaj.png" />
                                         </div>
                                         <div className="p-6 shrink-0 bg-surface-container-lowest text-center min-h-[96px] flex flex-col justify-center">
-                                            <h4 className="font-headline text-xl font-bold text-primary mb-1">Mr. Riyaj Pirjade</h4>
-                                            <p className="text-[#fe9832] font-medium text-xs sm:text-sm uppercase tracking-wide">Director — ICOE<br />Dr. Dnyaneshwar Mulay Foundation</p>
+                                            <h4 className="font-headline text-xl font-bold text-primary mb-1">{t.riyajName}</h4>
+                                            <p className="text-[#fe9832] font-medium text-xs sm:text-sm uppercase tracking-wide">{t.directorTitle}<br />Dr. Dnyaneshwar Mulay Foundation</p>
                                         </div>
                                     </div>
                                     <div className="flip-card-back bg-white rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center shadow-xl border-t-[6px] border-primary">
-                                        <h4 className="font-headline text-2xl sm:text-3xl font-bold text-primary mb-4">Mr. Riyaj Pirjade</h4>
+                                        <h4 className="font-headline text-2xl sm:text-3xl font-bold text-primary mb-4">{t.riyajName}</h4>
                                         <div className="w-12 h-1 bg-secondary-container mb-6"></div>
                                         <p className="font-body text-sm sm:text-base leading-relaxed text-on-surface-variant">
-                                            Pursuing PhD in Social Innovation, MSW Community Development. Contributed to NITI Aayog projects, Savitribai Phule Pune University, SKF India & Symbiosis University CSR programs.
+                                            {t.riyajBio}
                                         </p>
                                     </div>
                                 </div>
@@ -512,16 +492,16 @@ export default function About() {
                     <div className="absolute inset-0 bg-primary-container opacity-20"></div>
                     <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}></div>
                     <div className="relative z-10 max-w-4xl mx-auto px-8 text-center">
-                        <h2 className="font-headline text-4xl md:text-5xl font-extrabold text-white mb-8">Join the Movement of Positivity</h2>
+                        <h2 className="font-headline text-4xl md:text-5xl font-extrabold text-white mb-8">{t.joinMovement}</h2>
                         <p className="font-body text-xl text-white/70 mb-12 leading-relaxed">
-                            Be part of a legacy that prioritizes human dignity. Whether through contribution or volunteering, your involvement matters.
+                            {t.ctaDesc}
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                             <Link to="/donate" className="w-full sm:w-auto px-10 py-4 bg-secondary-container text-on-secondary-container font-headline font-bold rounded-md hover:bg-secondary-fixed-dim transition-all shadow-xl active:scale-95 uppercase tracking-widest text-sm">
-                                DONATE TO DMF
+                                {tc.donateToDMF}
                             </Link>
                             <Link to="/icoe" className="w-full sm:w-auto px-10 py-4 border border-white/30 text-white font-headline font-bold rounded-md hover:bg-white/10 transition-all active:scale-95 uppercase tracking-widest text-sm">
-                                EXPLORE ICOE
+                                {tc.exploreICOE}
                             </Link>
                         </div>
                     </div>

@@ -1,0 +1,86 @@
+export const homeTranslations = {
+    en: {
+        heroTag: "DMF • Movement of Positivity",
+        heroTitle1: "ENABLING COMMUNITIES",
+        heroTitle2: "PROMOTING",
+        heroTitle3: "JUSTICE.",
+
+        aboutTag: "About DMF",
+        aboutTitle: "Dr. Dnyaneshwar Mulay Foundation",
+        aboutP1: "Since 2019, DMF is a globally recognized organization with deep roots in India, committed to providing innovative and beneficial solutions. During flood emergencies in Kolhapur Sangali district in Maharashtra, and subsequently during COVID-19, DMF strengthened its work and today conducts significant activities contributing to social change.",
+        aboutP2Name: "Dr. Dnyaneshwar Mulay",
+        aboutP2: " is the Founder & President of DMF. The non-profit specializes in Social Innovation, Urban & Rural mobilization, Capacity (skill) building, and Transforming Rural & Urban Education Through Digital Classrooms and Innovation Labs.",
+
+        pillarsTag: "The Foundation",
+        pillarsTitle: "The Pillars of DMF",
+        mopTitle: "MOVEMENT OF POSITIVITY",
+        mopDesc: "Movement of Positivity (MOP) — building a network of active citizens to foster optimism, hope, and constructive action in every community we serve.",
+        icoeTitle: "ICOE",
+        icoeDesc: "International Centre of Excellence — a collaborative initiative focused on international placement, skill development, and foreign employment.",
+        wbbTitle: "WORDS BEYOND BORDERS",
+        wbbDesc: "Words Beyond Borders — an international literary gathering celebrating diplomats who enrich the world of literature across diverse cultural landscapes.",
+
+        counterBeneficiaries: "ICOE Beneficiaries",
+        counterLanguages: "Languages Taught",
+        counterPlacements: "Global Placements",
+        counterWomen: "Women Entrepreneurs",
+        counterYouth: "Youth Enrolled",
+        counterPartners: "Partner Institutions",
+
+        initiativesTag: "Our Initiatives",
+        initiativesTitle: "Catalyzing systemic change through action.",
+        educationTag: "Education",
+        educationTitle: "Classrooms & Innovation Labs",
+        communityTag: "Community",
+        communityTitle: "Community Mobilization",
+
+        quoteText: '"The mission is to create a society based on positivity, compassion and creativity. In a short period, the DMF has touched the lives of hundreds of people."',
+        quoteName: "Dr. Dnyaneshwar Mulay",
+        quoteRole: "Founder & President, DMF",
+
+        sdgTag: "Our Goals",
+        sdgTitle: "Sustainable Development Goals",
+    },
+    hi: {
+        heroTag: "DMF • सकारात्मकता का आंदोलन",
+        heroTitle1: "समुदायों को सशक्त बनाना",
+        heroTitle2: "न्याय को",
+        heroTitle3: "बढ़ावा देना।",
+
+        aboutTag: "DMF के बारे में",
+        aboutTitle: "डॉ. ज्ञानेश्वर मुळे फाउंडेशन",
+        aboutP1: "2019 से, DMF भारत में गहरी जड़ों वाला एक विश्व स्तर पर मान्यता प्राप्त संगठन है, जो नवाचारपूर्ण और लाभकारी समाधान प्रदान करने के लिए प्रतिबद्ध है। महाराष्ट्र के कोल्हापुर-सांगली जिले में बाढ़ आपातकाल और उसके बाद कोविड-19 के दौरान, DMF ने अपने कार्य को मजबूत किया और आज सामाजिक परिवर्तन में महत्वपूर्ण योगदान दे रहा है।",
+        aboutP2Name: "डॉ. ज्ञानेश्वर मुळे",
+        aboutP2: " DMF के संस्थापक और अध्यक्ष हैं। यह गैर-लाभकारी संगठन सामाजिक नवाचार, शहरी और ग्रामीण संगठन, कौशल निर्माण, और डिजिटल कक्षाओं और इनोवेशन लैब्स के माध्यम से ग्रामीण और शहरी शिक्षा के परिवर्तन में विशेषज्ञता रखता है।",
+
+        pillarsTag: "फाउंडेशन",
+        pillarsTitle: "DMF के स्तंभ",
+        mopTitle: "सकारात्मकता का आंदोलन",
+        mopDesc: "सकारात्मकता का आंदोलन (MOP) — सक्रिय नागरिकों का एक नेटवर्क बनाना जो हमारे द्वारा सेवित प्रत्येक समुदाय में आशावाद, उम्मीद और रचनात्मक कार्रवाई को बढ़ावा दे।",
+        icoeTitle: "ICOE",
+        icoeDesc: "अंतर्राष्ट्रीय उत्कृष्टता केंद्र — अंतर्राष्ट्रीय प्लेसमेंट, कौशल विकास और विदेशी रोजगार पर केंद्रित एक सहयोगी पहल।",
+        wbbTitle: "वर्ड्स बियॉन्ड बॉर्डर्स",
+        wbbDesc: "वर्ड्स बियॉन्ड बॉर्डर्स — एक अंतर्राष्ट्रीय साहित्यिक सम्मेलन जो विविध सांस्कृतिक परिदृश्यों में साहित्य की दुनिया को समृद्ध करने वाले राजनयिकों का उत्सव है।",
+
+        counterBeneficiaries: "ICOE लाभार्थी",
+        counterLanguages: "भाषाएं सिखाई गईं",
+        counterPlacements: "वैश्विक प्लेसमेंट",
+        counterWomen: "महिला उद्यमी",
+        counterYouth: "युवा नामांकित",
+        counterPartners: "सहयोगी संस्थान",
+
+        initiativesTag: "हमारी पहल",
+        initiativesTitle: "कार्रवाई के माध्यम से व्यवस्थित परिवर्तन को उत्प्रेरित करना।",
+        educationTag: "शिक्षा",
+        educationTitle: "कक्षाएं और इनोवेशन लैब्स",
+        communityTag: "समुदाय",
+        communityTitle: "सामुदायिक संगठन",
+
+        quoteText: '"मिशन सकारात्मकता, करुणा और रचनात्मकता पर आधारित समाज बनाना है। कम समय में, DMF ने सैकड़ों लोगों के जीवन को छुआ है।"',
+        quoteName: "डॉ. ज्ञानेश्वर मुळे",
+        quoteRole: "संस्थापक और अध्यक्ष, DMF",
+
+        sdgTag: "हमारे लक्ष्य",
+        sdgTitle: "सतत विकास लक्ष्य",
+    },
+};

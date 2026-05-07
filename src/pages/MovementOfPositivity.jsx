@@ -1,6 +1,10 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import { subPageTranslations } from '../translations/subPages';
 
 export default function MovementOfPositivity() {
+    const { language } = useLanguage();
+    const t = subPageTranslations[language];
     return (
         <div>
             <main>

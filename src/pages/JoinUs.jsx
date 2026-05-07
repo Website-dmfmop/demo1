@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import { subPageTranslations } from '../translations/subPages';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const JoinUs = () => {
+    const { language } = useLanguage();
+    const t = subPageTranslations[language];
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [purpose, setPurpose] = useState(searchParams.get('purpose') || 'Volunteer');
@@ -42,14 +46,15 @@ const JoinUs = () => {
 
             if (res.ok) {
                 const displayPurpose = purpose === 'Member' ? 'MOP Member' : purpose;
-                alert(`Thank you for wanting to become a ${displayPurpose}! Your request has been submitted. We will contact you soon.`);
+                const displayPurposeHi = purpose === 'Member' ? 'MOP सदस्य' : (purpose === 'Volunteer' ? 'स्वयंसेवक' : purpose);
+                alert(language === 'hi' ? `${displayPurposeHi} बनने की इच्छा के लिए धन्यवाद! आपका अनुरोध जमा हो गया है। हम जल्द ही आपसे संपर्क करेंगे।` : `Thank you for wanting to become a ${displayPurpose}! Your request has been submitted. We will contact you soon.`);
                 setFormData({ name: '', email: '', phone: '', address: '', message: '' });
             } else {
-                alert('Submission failed. Please try again.');
+                alert(language === 'hi' ? 'जमा करना विफल रहा। कृपया पुनः प्रयास करें।' : 'Submission failed. Please try again.');
             }
         } catch (err) {
             console.error('Join Us Error:', err);
-            alert('An error occurred. Please try again later.');
+            alert(language === 'hi' ? 'एक त्रुटि हुई। कृपया बाद में पुनः प्रयास करें।' : 'An error occurred. Please try again later.');
         } finally {
             setIsSubmitting(false);
         }
@@ -60,10 +65,12 @@ const JoinUs = () => {
             <div className="w-full max-w-3xl">
                 <div className="text-center mb-10">
                     <h1 className="text-4xl md:text-5xl font-display font-bold text-primary mb-4 capitalize">
-                        Become a {purpose === 'Member' ? 'MOP Member' : purpose}
+                        {language === 'hi'
+                            ? (purpose === 'Member' ? 'MOP सदस्य बनें' : (purpose === 'Volunteer' ? 'स्वयंसेवक बनें' : `${purpose} बनें`))
+                            : `Become a ${purpose === 'Member' ? 'MOP Member' : purpose}`}
                     </h1>
                     <p className="text-on-surface-variant max-w-xl mx-auto">
-                        Fill out the form below to join our mission. Provide your details and our team will get back to you to finalize your status.
+                        {language === 'hi' ? 'हमारे मिशन में शामिल होने के लिए नीचे दिया गया फॉर्म भरें। अपना विवरण प्रदान करें और हमारी टीम आपकी स्थिति को अंतिम रूप देने के लिए आपसे संपर्क करेगी।' : 'Fill out the form below to join our mission. Provide your details and our team will get back to you to finalize your status.'}
                     </p>
                 </div>
 
@@ -71,7 +78,7 @@ const JoinUs = () => {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Full Name</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">{t.fullName}</label>
                                 <input 
                                     type="text" required 
                                     value={formData.name}
@@ -81,7 +88,7 @@ const JoinUs = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">{t.emailAddress}</label>
                                 <input 
                                     type="email" required 
                                     value={formData.email}
@@ -94,7 +101,7 @@ const JoinUs = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Phone Number</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">{t.phoneNumber}</label>
                                 <input 
                                     type="tel" required 
                                     value={formData.phone}
@@ -104,7 +111,7 @@ const JoinUs = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Current Address</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">{language === 'hi' ? 'वर्तमान पता' : 'Current Address'}</label>
                                 <input 
                                     type="text" required 
                                     value={formData.address}
@@ -116,13 +123,13 @@ const JoinUs = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Why do you want to join? (Optional)</label>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">{language === 'hi' ? 'आप क्यों जुड़ना चाहते हैं? (वैकल्पिक)' : 'Why do you want to join? (Optional)'}</label>
                             <textarea 
                                 value={formData.message}
                                 onChange={e => setFormData({ ...formData, message: e.target.value })}
                                 className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none placeholder-gray-400" 
                                 rows="4"
-                                placeholder={`Tell us a little about your motivation to become a ${purpose === 'Member' ? 'MOP member' : purpose.toLowerCase()}...`}
+                                placeholder={language === 'hi' ? `हमें बताएं कि आप ${purpose === 'Member' ? 'MOP सदस्य' : (purpose === 'Volunteer' ? 'स्वयंसेवक' : purpose)} बनने के लिए क्यों प्रेरित हैं...` : `Tell us a little about your motivation to become a ${purpose === 'Member' ? 'MOP member' : purpose.toLowerCase()}...`}
                             ></textarea>
                         </div>
 
@@ -132,7 +139,7 @@ const JoinUs = () => {
                                 disabled={isSubmitting}
                                 className="w-full md:w-auto px-10 py-4 bg-primary hover:bg-primary-hover text-white font-headline font-bold rounded-2xl shadow-md cursor-pointer transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
-                                {isSubmitting ? 'Submitting...' : 'Submit Request'}
+                                {isSubmitting ? t.submitting : t.submitRequest}
                                 {!isSubmitting && <span className="material-symbols-outlined text-[20px]">send</span>}
                             </button>
                         </div>

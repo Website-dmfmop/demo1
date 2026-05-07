@@ -1,6 +1,10 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import { subPageTranslations } from '../translations/subPages';
 
 export default function Events() {
+  const { language } = useLanguage();
+  const t = subPageTranslations[language];
   return (
     <div>
 
@@ -9,7 +13,7 @@ export default function Events() {
         <section className="relative px-8 pt-32 pb-24 overflow-hidden">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
             <div className="md:col-span-7 z-10">
-              <span className="font-label text-secondary font-bold uppercase tracking-[0.2em] text-xs mb-4 block">Our Calendar</span>
+              <span className="font-label text-secondary font-bold uppercase tracking-[0.2em] text-xs mb-4 block">{language === 'hi' ? 'हमारा कैलेंडर' : 'Our Calendar'}</span>
               <h1 className="font-headline text-5xl md:text-7xl font-extrabold tracking-tight text-primary leading-[1.1] mb-6">
                 Collective <span className="text-secondary-container">Action</span> &amp; Diplomatic Discourse
               </h1>

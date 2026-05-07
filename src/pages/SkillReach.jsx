@@ -1,6 +1,10 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import { subPageTranslations } from '../translations/subPages';
 
 export default function SkillReach() {
+    const { language } = useLanguage();
+    const t = subPageTranslations[language];
     return (
         <div>
             <main>
@@ -11,13 +15,13 @@ export default function SkillReach() {
                             <div>
                                 <div className="flex items-center gap-3 mb-8">
                                     <div className="w-12 h-1 bg-secondary-container shrink-0"></div>
-                                    <p className="text-white text-sm font-medium tracking-wider uppercase bg-green-700 px-4 py-2 rounded-lg">Skill Reach</p>
+                                    <p className="text-white text-sm font-medium tracking-wider uppercase bg-green-700 px-4 py-2 rounded-lg">{language === 'hi' ? 'स्किल रीच' : 'Skill Reach'}</p>
                                 </div>
                                 <h1 className="font-headline font-black text-5xl md:text-6xl lg:text-7xl leading-[0.9] text-white uppercase tracking-tight">
-                                    <span className="block mb-2">EQUIPPING</span>
-                                    <span className="block mb-2">YOUTH</span>
-                                    <span className="block text-secondary-container mb-2">GLOBAL</span>
-                                    <span className="block text-secondary-container">OPPORTUNITIES.</span>
+                                    <span className="block mb-2">{language === 'hi' ? 'युवाओं को' : 'EQUIPPING'}</span>
+                                    <span className="block mb-2">{language === 'hi' ? 'सुसज्जित करना' : 'YOUTH'}</span>
+                                    <span className="block text-secondary-container mb-2">{language === 'hi' ? 'वैश्विक' : 'GLOBAL'}</span>
+                                    <span className="block text-secondary-container">{language === 'hi' ? 'अवसर।' : 'OPPORTUNITIES.'}</span>
                                 </h1>
                             </div>
                             {/* Right: Image */}
@@ -30,17 +34,17 @@ export default function SkillReach() {
                 <section id="skill-reach" className="py-24 bg-surface px-8 min-h-screen">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
-                            <span className="font-label text-secondary-container text-xs font-bold tracking-widest uppercase mb-3 block">FROM LOCAL TALENT TO GLOBAL IMPACT</span>
-                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">Skill Reach</h2>
+                            <span className="font-label text-secondary-container text-xs font-bold tracking-widest uppercase mb-3 block">{language === 'hi' ? 'स्थानीय प्रतिभा से वैश्विक प्रभाव' : 'FROM LOCAL TALENT TO GLOBAL IMPACT'}</span>
+                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">{language === 'hi' ? 'स्किल रीच' : 'Skill Reach'}</h2>
                             <div className="w-16 h-1 bg-secondary-container mx-auto mb-4"></div>
-                            <p className="text-on-surface-variant max-w-2xl mx-auto">DMF's ongoing programs actively focus on skill enhancement, entrepreneurship development, career guidance, and language proficiency, benefiting hundreds of youth and women from defence families and civilian communities.</p>
+                            <p className="text-on-surface-variant max-w-2xl mx-auto">{language === 'hi' ? 'DMF के चल रहे कार्यक्रम कौशल वृद्धि, उद्यमिता विकास, करियर मार्गदर्शन और भाषा दक्षता पर सक्रिय रूप से केंद्रित हैं, जिससे रक्षा परिवारों और नागरिक समुदायों के सैकड़ों युवाओं और महिलाओं को लाभ हो रहा है।' : 'DMF\'s ongoing programs actively focus on skill enhancement, entrepreneurship development, career guidance, and language proficiency, benefiting hundreds of youth and women from defence families and civilian communities.'}</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div className="bg-surface-container-low rounded-2xl overflow-hidden shadow-lg hover:-translate-y-1 transition-all duration-300">
                                 <div className="bg-primary p-6">
-                                    <span className="text-secondary-container font-bold text-[10px] tracking-widest uppercase mb-2 block">Program 01</span>
-                                    <h3 className="font-headline text-2xl font-extrabold text-white mb-1">Community Mobilization</h3>
-                                    <p className="text-white/70 text-xs font-semibold italic">Reach – Engage – Empower</p>
+                                    <span className="text-secondary-container font-bold text-[10px] tracking-widest uppercase mb-2 block">{language === 'hi' ? 'कार्यक्रम 01' : 'Program 01'}</span>
+                                    <h3 className="font-headline text-2xl font-extrabold text-white mb-1">{language === 'hi' ? 'सामुदायिक गतिशीलता' : 'Community Mobilization'}</h3>
+                                    <p className="text-white/70 text-xs font-semibold italic">{language === 'hi' ? 'पहुँचें – जुड़ें – सशक्त करें' : 'Reach – Engage – Empower'}</p>
                                 </div>
                                 <div className="p-6 space-y-4">
                                     <div>
@@ -60,9 +64,9 @@ export default function SkillReach() {
 
                             <div className="bg-surface-container-low rounded-2xl overflow-hidden shadow-lg hover:-translate-y-1 transition-all duration-300">
                                 <div className="bg-[#2e7d32] p-6">
-                                    <span className="text-white/70 font-bold text-[10px] tracking-widest uppercase mb-2 block">Program 02</span>
-                                    <h3 className="font-headline text-2xl font-extrabold text-white mb-1">Counselling Sessions</h3>
-                                    <p className="text-white/70 text-xs font-semibold italic">Guiding Talent, Shaping Careers</p>
+                                    <span className="text-white/70 font-bold text-[10px] tracking-widest uppercase mb-2 block">{language === 'hi' ? 'कार्यक्रम 02' : 'Program 02'}</span>
+                                    <h3 className="font-headline text-2xl font-extrabold text-white mb-1">{language === 'hi' ? 'परामर्श सत्र' : 'Counselling Sessions'}</h3>
+                                    <p className="text-white/70 text-xs font-semibold italic">{language === 'hi' ? 'प्रतिभा का मार्गदर्शन, करियर को आकार देना' : 'Guiding Talent, Shaping Careers'}</p>
                                 </div>
                                 <div className="p-6 space-y-4">
                                     <div>
@@ -96,9 +100,9 @@ export default function SkillReach() {
 
                             <div className="bg-surface-container-low rounded-2xl overflow-hidden shadow-lg hover:-translate-y-1 transition-all duration-300">
                                 <div className="bg-secondary-container p-6">
-                                    <span className="text-on-secondary-container/70 font-bold text-[10px] tracking-widest uppercase mb-2 block">Program 03</span>
-                                    <h3 className="font-headline text-2xl font-extrabold text-on-secondary-container mb-1">Digital & Technical Skills</h3>
-                                    <p className="text-on-secondary-container/70 text-xs font-semibold italic">Building Digital Competencies</p>
+                                    <span className="text-on-secondary-container/70 font-bold text-[10px] tracking-widest uppercase mb-2 block">{language === 'hi' ? 'कार्यक्रम 03' : 'Program 03'}</span>
+                                    <h3 className="font-headline text-2xl font-extrabold text-on-secondary-container mb-1">{language === 'hi' ? 'डिजिटल और तकनीकी कौशल' : 'Digital & Technical Skills'}</h3>
+                                    <p className="text-on-secondary-container/70 text-xs font-semibold italic">{language === 'hi' ? 'डिजिटल दक्षता का निर्माण' : 'Building Digital Competencies'}</p>
                                 </div>
                                 <div className="p-6 space-y-4">
                                     <div>
@@ -135,9 +139,9 @@ export default function SkillReach() {
 
                             <div className="bg-surface-container-low rounded-2xl overflow-hidden shadow-lg hover:-translate-y-1 transition-all duration-300">
                                 <div className="bg-primary p-6">
-                                    <span className="text-secondary-container font-bold text-[10px] tracking-widest uppercase mb-2 block">Program 04</span>
-                                    <h3 className="font-headline text-2xl font-extrabold text-white mb-1">Career Guidance & Defence</h3>
-                                    <p className="text-white/70 text-xs font-semibold italic">Shaping Futures, Serving the Nation</p>
+                                    <span className="text-secondary-container font-bold text-[10px] tracking-widest uppercase mb-2 block">{language === 'hi' ? 'कार्यक्रम 04' : 'Program 04'}</span>
+                                    <h3 className="font-headline text-2xl font-extrabold text-white mb-1">{language === 'hi' ? 'करियर मार्गदर्शन और रक्षा' : 'Career Guidance & Defence'}</h3>
+                                    <p className="text-white/70 text-xs font-semibold italic">{language === 'hi' ? 'भविष्य को आकार देना, राष्ट्र की सेवा' : 'Shaping Futures, Serving the Nation'}</p>
                                 </div>
                                 <div className="p-6 space-y-4">
                                     <div>

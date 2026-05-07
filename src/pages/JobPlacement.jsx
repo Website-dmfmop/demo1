@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import { subPageTranslations } from '../translations/subPages';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const JobPlacement = () => {
+    const { language } = useLanguage();
+    const t = subPageTranslations[language];
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -82,7 +86,7 @@ const JobPlacement = () => {
                         Job Placements
                     </div>
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-primary leading-[1.1]">
-                        Discover Your Next <span className="text-secondary-container">Career Opportunity</span>
+                        {language === 'hi' ? 'अपना अगला ' : 'Discover Your Next '}<span className="text-secondary-container">{language === 'hi' ? 'करियर अवसर खोजें' : 'Career Opportunity'}</span>
                     </h1>
                     <p className="text-lg md:text-xl text-on-surface-variant leading-relaxed max-w-2xl mx-auto">
                         Explore global job openings curated by Dr. Dnyaneshwar Mulay Foundation to help you build a successful career.

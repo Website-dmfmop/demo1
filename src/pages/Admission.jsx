@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import { admissionTranslations } from '../translations/pages';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Admission = () => {
+  const { language } = useLanguage();
+  const t = admissionTranslations[language];
   const [liveSessions, setLiveSessions] = useState([]);
   const [courses, setCourses] = useState([]);
   const [diplomaCourses, setDiplomaCourses] = useState([]);
@@ -109,15 +113,15 @@ const Admission = () => {
           <div className="flex-1 text-center lg:text-left space-y-8 lg:pr-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-bold text-sm uppercase tracking-widest">
               <span className="material-symbols-outlined text-[18px]">school</span>
-              Admissions Open
+              {t.admissionsOpen}
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-primary leading-[1.1]">
-              Begin Your Journey to <span className="text-secondary-container relative inline-block">Excellence<svg className="absolute w-full h-3 -bottom-1 left-0 text-secondary-container/30" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="4" fill="transparent" /></svg></span>
+              {t.heroTitle} <span className="text-secondary-container relative inline-block">{t.heroHighlight}<svg className="absolute w-full h-3 -bottom-1 left-0 text-secondary-container/30" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="4" fill="transparent" /></svg></span>
             </h1>
 
             <p className="text-lg md:text-xl text-on-surface-variant leading-relaxed max-w-2xl mx-auto">
-              Explore our wide range of expert-led courses across various domains. Click on any course to view the full curriculum and learning outcomes for each program.
+              {t.heroDesc}
             </p>
 
 
@@ -326,7 +330,7 @@ const Admission = () => {
           <div className="relative bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="bg-primary p-6 text-white text-center relative">
-              <h3 className="text-2xl font-display font-bold">Register Your Interest</h3>
+              <h3 className="text-2xl font-display font-bold">{t.registerTitle}</h3>
               <p className="text-primary-container/80 text-sm mt-1">{selectedCourse.courseName}</p>
               {!isEnrolling && (
                 <button onClick={() => setShowEnrollModal(false)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
@@ -337,11 +341,11 @@ const Admission = () => {
 
             {/* Modal Body */}
             <div className="p-8">
-              <p className="text-sm text-gray-500 mb-6 text-center">Fill in your details and our team will get in touch with you shortly.</p>
+              <p className="text-sm text-gray-500 mb-6 text-center">{t.fillDetails}</p>
               <form onSubmit={handleEnrollSubmit} className="space-y-5">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">First Name</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t.firstName}</label>
                     <input
                       type="text" required
                       value={enrollForm.firstName}
@@ -351,7 +355,7 @@ const Admission = () => {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Last Name</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t.lastName}</label>
                     <input
                       type="text" required
                       value={enrollForm.lastName}
@@ -363,7 +367,7 @@ const Admission = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Email Address</label>
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t.emailAddress}</label>
                   <input
                     type="email" required
                     value={enrollForm.email}
@@ -374,7 +378,7 @@ const Admission = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Phone Number</label>
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t.phoneNumber}</label>
                   <input
                     type="tel" required
                     value={enrollForm.phone}
@@ -396,7 +400,7 @@ const Admission = () => {
                     </>
                   ) : (
                     <>
-                      Submit Registration
+                      {t.submitRegistration}
                       <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
                     </>
                   )}

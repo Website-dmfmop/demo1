@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import FloatingLangToggle from './components/FloatingLangToggle';
 import Home from './pages/Home';
 import About from './pages/About';
 import Events from './pages/Events';
@@ -31,8 +33,10 @@ import SlotBooking from './pages/SlotBooking';
 function App() {
   return (
     <BrowserRouter>
+      <LanguageProvider>
       <ScrollToTop />
       <Navbar />
+      <FloatingLangToggle />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -60,6 +64,7 @@ function App() {
         <Route path="/slot-booking" element={<SlotBooking />} />
       </Routes>
       <Footer />
+      </LanguageProvider>
     </BrowserRouter>
   );
 }
