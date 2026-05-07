@@ -253,7 +253,7 @@ export default function Home() {
                 <section className="py-32 bg-surface-container-low px-8 overflow-hidden">
                     <div className="max-w-7xl mx-auto">
                         {/* Header */}
-                        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+                        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
                             <div className="max-w-xl">
                                 <h2 className="text-xs font-headline font-black text-secondary tracking-[0.3em] uppercase mb-4">Our Initiatives</h2>
                                 <p className="font-headline text-4xl md:text-5xl font-extrabold text-primary leading-tight">Catalyzing systemic change through action.</p>
@@ -299,6 +299,38 @@ export default function Home() {
                                     <p className="text-xs font-bold text-primary">Dr. Dnyaneshwar Mulay</p>
                                     <p className="text-[10px] text-on-surface-variant uppercase tracking-tighter">Founder &amp; President, DMF</p>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Sustainable Development Goals */}
+                <section className="py-24 bg-surface px-8 overflow-hidden">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-xs font-headline font-black text-secondary tracking-[0.3em] uppercase mb-4">Our Goals</h2>
+                            <p className="font-headline text-4xl md:text-5xl font-extrabold text-primary leading-tight">Sustainable Development Goals</p>
+                        </div>
+                        
+                        {/* Goals Marquee */}
+                        <div className="overflow-hidden relative w-full rounded-xl">
+                            {/* Gradient overlays for smooth edges */}
+                            <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-surface to-transparent z-10 pointer-events-none"></div>
+                            <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-surface to-transparent z-10 pointer-events-none"></div>
+                            
+                            <div className="animate-marquee gap-8 items-center py-4">
+                                {/* First set of images */}
+                                {Array.from({ length: 17 }, (_, i) => (
+                                    <div key={`goal-1-${i}`} className="flex-shrink-0 w-40 md:w-56 rounded-lg overflow-hidden shadow-sm goal-image bg-white p-3">
+                                        <img src={`/goals/${i + 1}.png`} alt={`Goal ${i + 1}`} className="w-full h-auto object-contain" />
+                                    </div>
+                                ))}
+                                {/* Duplicated set for seamless loop */}
+                                {Array.from({ length: 17 }, (_, i) => (
+                                    <div key={`goal-2-${i}`} className="flex-shrink-0 w-40 md:w-56 rounded-lg overflow-hidden shadow-sm goal-image bg-white p-3">
+                                        <img src={`/goals/${i + 1}.png`} alt={`Goal ${i + 1}`} className="w-full h-auto object-contain" />
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
