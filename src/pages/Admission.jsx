@@ -10,13 +10,23 @@ const Admission = () => {
   const [liveSessions, setLiveSessions] = useState([]);
   const [courses, setCourses] = useState([]);
   const [diplomaCourses, setDiplomaCourses] = useState([]);
-  const [activeDropdown, setActiveDropdown] = useState('courses');
+  const [competitiveExams, setCompetitiveExams] = useState([]);
+  const [openDropdowns, setOpenDropdowns] = useState({
+    diploma: true,
+    courses: true,
+    sessions: true,
+    exams: true
+  });
+  const toggleDropdown = (key) => {
+    setOpenDropdowns(prev => ({ ...prev, [key]: !prev[key] }));
+  };
   // Certificate courses
   const [activeCategory, setActiveCategory] = useState(null);
   const [expandedCourse, setExpandedCourse] = useState(null);
   // Diploma courses
   const [activeCategoryDiploma, setActiveCategoryDiploma] = useState(null);
   const [expandedDiplomaCourse, setExpandedDiplomaCourse] = useState(null);
+  const [expandedExam, setExpandedExam] = useState(null);
 
   // Enrollment States
   const [showEnrollModal, setShowEnrollModal] = useState(false);
@@ -33,12 +43,14 @@ const Admission = () => {
     Promise.all([
       fetch(`${API_URL}/api/live-sessions`),
       fetch(`${API_URL}/api/courses`),
-      fetch(`${API_URL}/api/diploma-courses`)
+      fetch(`${API_URL}/api/diploma-courses`),
+      fetch(`${API_URL}/api/competitive-exams`)
     ])
-      .then(async ([resSessions, resCourses, resDiploma]) => {
+      .then(async ([resSessions, resCourses, resDiploma, resExams]) => {
         if (resSessions.ok) setLiveSessions(await resSessions.json());
         if (resCourses.ok) setCourses(await resCourses.json());
         if (resDiploma.ok) setDiplomaCourses(await resDiploma.json());
+        if (resExams.ok) setCompetitiveExams(await resExams.json());
       })
       .catch(err => console.error('Data fetch error:', err));
   }, []);
@@ -131,17 +143,17 @@ const Admission = () => {
 
               {/* 1. DIPLOMA/DEGREE COURSES ACCORDION */}
               <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg transition-all hover:shadow-xl">
-                <button onClick={() => setActiveDropdown(activeDropdown === 'diploma' ? null : 'diploma')} className="w-full flex items-center justify-between p-8 bg-surface hover:bg-surface-container-low transition-colors">
+                <button onClick={() => toggleDropdown('diploma')} className="w-full flex items-center justify-between p-8 bg-surface hover:bg-surface-container-low transition-colors">
                   <h3 className="text-2xl md:text-3xl font-display font-bold text-primary flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
                       <span className="material-symbols-outlined text-[24px]">workspace_premium</span>
                     </div>
                     Expert Diploma/Degree Course Directory
                   </h3>
-                  <span className={`material-symbols-outlined text-gray-400 text-3xl transition-transform duration-300 ${activeDropdown === 'diploma' ? 'rotate-180' : ''}`}>expand_more</span>
+                  <span className={`material-symbols-outlined text-gray-400 text-3xl transition-transform duration-300 ${openDropdowns.diploma ? 'rotate-180' : ''}`}>expand_more</span>
                 </button>
 
-                {activeDropdown === 'diploma' && (
+                {openDropdowns.diploma && (
                   <div className="p-8 border-t border-outline-variant/20 bg-slate-50/50 space-y-6">
                     {diplomaCourses.length === 0 ? (
                       <p className="text-gray-500 font-medium text-center py-8">No diploma/degree courses currently listed. Please check back later.</p>
@@ -187,17 +199,17 @@ const Admission = () => {
 
               {/* 2. CERTIFICATE COURSES ACCORDION */}
               <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg transition-all hover:shadow-xl">
-                <button onClick={() => setActiveDropdown(activeDropdown === 'courses' ? null : 'courses')} className="w-full flex items-center justify-between p-8 bg-surface hover:bg-surface-container-low transition-colors">
+                <button onClick={() => toggleDropdown('courses')} className="w-full flex items-center justify-between p-8 bg-surface hover:bg-surface-container-low transition-colors">
                   <h3 className="text-2xl md:text-3xl font-display font-bold text-primary flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
                       <span className="material-symbols-outlined text-[24px]">school</span>
                     </div>
                     Expert Certificate Course Directory
                   </h3>
-                  <span className={`material-symbols-outlined text-gray-400 text-3xl transition-transform duration-300 ${activeDropdown === 'courses' ? 'rotate-180' : ''}`}>expand_more</span>
+                  <span className={`material-symbols-outlined text-gray-400 text-3xl transition-transform duration-300 ${openDropdowns.courses ? 'rotate-180' : ''}`}>expand_more</span>
                 </button>
 
-                {activeDropdown === 'courses' && (
+                {openDropdowns.courses && (
                   <div className="p-8 border-t border-outline-variant/20 bg-slate-50/50 space-y-6">
                     {courses.length === 0 ? (
                       <p className="text-gray-500 font-medium text-center py-8">No courses currently listed. Please check back later.</p>
@@ -242,16 +254,29 @@ const Admission = () => {
                                       {isOpen && (
                                         <div className="px-6 pb-6 pt-2 border-t border-outline-variant/10 bg-slate-50/60 animate-in fade-in slide-in-from-top-2 duration-300">
                                           <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mb-5">{course.description}</p>
-                                          <button
-                                            onClick={() => {
-                                              setSelectedCourse(course);
-                                              setShowEnrollModal(true);
-                                            }}
-                                            className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white font-headline font-bold rounded-xl transition-all shadow-md active:scale-95"
-                                          >
-                                            <span className="material-symbols-outlined text-[20px]">how_to_reg</span>
-                                            Register Interest
-                                          </button>
+                                           <div className="flex flex-wrap gap-3">
+                                            <button
+                                              onClick={() => {
+                                                setSelectedCourse(course);
+                                                setShowEnrollModal(true);
+                                              }}
+                                              className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white font-headline font-bold rounded-xl transition-all shadow-md active:scale-95"
+                                            >
+                                              <span className="material-symbols-outlined text-[20px]">how_to_reg</span>
+                                              Register Interest
+                                            </button>
+                                            {course.brochure && (
+                                              <a
+                                                href={`${API_URL}${course.brochure}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 px-6 py-3 bg-secondary-container hover:bg-[#d6e3c5] text-[#2c381e] font-headline font-bold rounded-xl transition-all shadow-md active:scale-95 text-sm"
+                                              >
+                                                <span className="material-symbols-outlined text-[20px]">download</span>
+                                                Download supportive doc
+                                              </a>
+                                            )}
+                                          </div>
                                         </div>
                                       )}
                                     </div>
@@ -274,17 +299,17 @@ const Admission = () => {
 
               {/* 2. LIVE SESSIONS ACCORDION */}
               <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg transition-all hover:shadow-xl">
-                <button onClick={() => setActiveDropdown(activeDropdown === 'sessions' ? null : 'sessions')} className="w-full flex items-center justify-between p-8 bg-surface hover:bg-surface-container-low transition-colors">
+                <button onClick={() => toggleDropdown('sessions')} className="w-full flex items-center justify-between p-8 bg-surface hover:bg-surface-container-low transition-colors">
                   <h3 className="text-2xl md:text-3xl font-display font-bold text-primary flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-secondary-container/20 text-secondary-container flex items-center justify-center shrink-0">
                       <span className="material-symbols-outlined text-[24px]">podcasts</span>
                     </div>
                     Live Learning Sessions
                   </h3>
-                  <span className={`material-symbols-outlined text-gray-400 text-3xl transition-transform duration-300 ${activeDropdown === 'sessions' ? 'rotate-180' : ''}`}>expand_more</span>
+                  <span className={`material-symbols-outlined text-gray-400 text-3xl transition-transform duration-300 ${openDropdowns.sessions ? 'rotate-180' : ''}`}>expand_more</span>
                 </button>
 
-                {activeDropdown === 'sessions' && (
+                {openDropdowns.sessions && (
                   <div className="p-8 border-t border-outline-variant/20 bg-slate-50/50 space-y-4">
                     {liveSessions.length === 0 ? (
                       <p className="text-gray-500 font-medium text-center py-12">No live sessions scheduled right now. Stay tuned for updates!</p>
@@ -313,6 +338,75 @@ const Admission = () => {
                           </div>
                         </div>
                       ))
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* 3. COMPETITIVE EXAMS ACCORDION */}
+              <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg transition-all hover:shadow-xl">
+                <button onClick={() => toggleDropdown('exams')} className="w-full flex items-center justify-between p-8 bg-surface hover:bg-surface-container-low transition-colors">
+                  <h3 className="text-2xl md:text-3xl font-display font-bold text-primary flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined text-[24px]">assignment</span>
+                    </div>
+                    Expert Competitive Exam Directory
+                  </h3>
+                  <span className={`material-symbols-outlined text-gray-400 text-3xl transition-transform duration-300 ${openDropdowns.exams ? 'rotate-180' : ''}`}>expand_more</span>
+                </button>
+
+                {openDropdowns.exams && (
+                  <div className="p-8 border-t border-outline-variant/20 bg-slate-50/50 space-y-6">
+                    {competitiveExams.length === 0 ? (
+                      <p className="text-gray-500 font-medium text-center py-8">No competitive exam details currently listed. Please check back later.</p>
+                    ) : (
+                      <div className="grid grid-cols-1 gap-4">
+                        {competitiveExams.map(exam => {
+                          const isExamOpen = expandedExam === exam._id;
+                          return (
+                            <div key={exam._id} className="bg-white border border-outline-variant/10 rounded-2xl overflow-hidden border-l-4 border-l-primary shadow-sm transition-all duration-300 hover:shadow-md">
+                              <button
+                                onClick={() => setExpandedExam(isExamOpen ? null : exam._id)}
+                                className={`w-full flex items-center justify-between px-6 py-4 text-left transition-all duration-200 group ${isExamOpen ? 'bg-primary/5' : 'hover:bg-primary/5'}`}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <span className={`w-2 h-2 rounded-full bg-primary transition-transform duration-200 ${isExamOpen ? 'scale-125' : 'group-hover:scale-125'}`}></span>
+                                  <h5 className={`font-bold text-base transition-colors duration-200 ${isExamOpen ? 'text-primary' : 'text-gray-800 group-hover:text-primary'}`}>{exam.examName} <span className="text-xs font-normal text-gray-400 ml-2">({exam.category})</span></h5>
+                                </div>
+                                <span className={`material-symbols-outlined text-[22px] transition-all duration-300 flex-shrink-0 ml-4 ${isExamOpen ? 'rotate-180 text-primary' : 'text-gray-400 group-hover:text-primary'}`}>expand_more</span>
+                              </button>
+                              {isExamOpen && (
+                                <div className="px-6 pb-6 pt-2 border-t border-outline-variant/10 bg-slate-50/60 animate-in fade-in slide-in-from-top-2 duration-300">
+                                  <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mb-5">{exam.description}</p>
+                                  <div className="flex flex-wrap gap-3">
+                                    <button
+                                      onClick={() => {
+                                        setSelectedCourse({ category: exam.category, courseName: exam.examName });
+                                        setShowEnrollModal(true);
+                                      }}
+                                      className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white font-headline font-bold rounded-xl transition-all shadow-md active:scale-95"
+                                    >
+                                      <span className="material-symbols-outlined text-[20px]">how_to_reg</span>
+                                      Register Interest
+                                    </button>
+                                    {exam.brochure && (
+                                      <a
+                                        href={`${API_URL}${exam.brochure}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 px-6 py-3 bg-secondary-container hover:bg-[#d6e3c5] text-[#2c381e] font-headline font-bold rounded-xl transition-all shadow-md active:scale-95 text-sm"
+                                      >
+                                        <span className="material-symbols-outlined text-[20px]">download</span>
+                                        Download supportive doc
+                                      </a>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     )}
                   </div>
                 )}

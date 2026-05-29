@@ -274,6 +274,54 @@ app.delete('/api/diploma-courses/:id', async (req, res) => {
     }
 });
 
+// --- COMPETITIVE EXAMS API ---
+app.get('/api/competitive-exams', async (req, res) => {
+    try {
+        const CompetitiveExam = require('./models/CompetitiveExam');
+        const exams = await CompetitiveExam.find().sort({ createdAt: -1 });
+        res.json(exams);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/competitive-exams', upload.single('brochure'), async (req, res) => {
+    try {
+        const CompetitiveExam = require('./models/CompetitiveExam');
+        const data = { ...req.body };
+        if (req.file) data.brochure = '/uploads/' + req.file.filename;
+
+        const newExam = new CompetitiveExam(data);
+        const savedExam = await newExam.save();
+        res.status(201).json(savedExam);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.put('/api/competitive-exams/:id', upload.single('brochure'), async (req, res) => {
+    try {
+        const CompetitiveExam = require('./models/CompetitiveExam');
+        const data = { ...req.body };
+        if (req.file) data.brochure = '/uploads/' + req.file.filename;
+
+        const updatedExam = await CompetitiveExam.findByIdAndUpdate(req.params.id, data, { new: true });
+        res.json(updatedExam);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.delete('/api/competitive-exams/:id', async (req, res) => {
+    try {
+        const CompetitiveExam = require('./models/CompetitiveExam');
+        await CompetitiveExam.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Competitive exam deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // --- MEDIA API ---
 app.get('/api/media', async (req, res) => {
     try {

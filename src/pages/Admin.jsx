@@ -12,6 +12,7 @@ const Admin = () => {
   const [donations, setDonations] = useState([]);
   const [courses, setCourses] = useState([]);
   const [diplomaCourses, setDiplomaCourses] = useState([]);
+  const [competitiveExams, setCompetitiveExams] = useState([]);
   const [mediaItems, setMediaItems] = useState([]);
   const [videos, setVideos] = useState([]);
   const [publications, setPublications] = useState([]);
@@ -43,6 +44,8 @@ const Admin = () => {
   const [showCourseForm, setShowCourseForm] = useState(false);
   const [diplomaCourseForm, setDiplomaCourseForm] = useState({ courseName: '', description: '', category: 'General' });
   const [showDiplomaCourseForm, setShowDiplomaCourseForm] = useState(false);
+  const [competitiveExamForm, setCompetitiveExamForm] = useState({ examName: '', description: '', category: 'General', brochure: null });
+  const [showCompetitiveExamForm, setShowCompetitiveExamForm] = useState(false);
   
   const [showMediaForm, setShowMediaForm] = useState(false);
   const [mediaForm, setMediaForm] = useState({ title: '', category: 'Events', isCustomCategory: false, customCategory: '', date: '', file: null });
@@ -85,6 +88,10 @@ const Admin = () => {
         const res = await fetch(`${API_URL}/api/diploma-courses`);
         if (!res.ok) throw new Error('Failed to fetch diploma courses');
         setDiplomaCourses(await res.json());
+      } else if (activeTab === 'competitive_exams') {
+        const res = await fetch(`${API_URL}/api/competitive-exams`);
+        if (!res.ok) throw new Error('Failed to fetch competitive exams');
+        setCompetitiveExams(await res.json());
       } else if (activeTab === 'media') {
         const [resMedia, resVid, resPub, resPress] = await Promise.all([
           fetch(`${API_URL}/api/media`),
@@ -204,6 +211,7 @@ const Admin = () => {
       if (type === 'job-application') endpoint = `${API_URL}/api/job-applications/${id}`;
       if (type === 'partner-request') endpoint = `${API_URL}/api/partner-requests/${id}`;
       if (type === 'slot-booking') endpoint = `${API_URL}/api/slot-bookings/${id}`;
+      if (type === 'competitive-exam') endpoint = `${API_URL}/api/competitive-exams/${id}`;
 
       const res = await fetch(endpoint, { method: 'DELETE' });
       if (res.ok) {
@@ -266,6 +274,34 @@ const Admin = () => {
           }
       } catch (err) {
           alert('Error saving diploma course');
+      }
+  };
+
+  const createCompetitiveExam = async (e) => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append('examName', competitiveExamForm.examName);
+      formData.append('description', competitiveExamForm.description);
+      formData.append('category', competitiveExamForm.category);
+      if (competitiveExamForm.brochure) formData.append('brochure', competitiveExamForm.brochure);
+
+      try {
+          const url = editingId ? `${API_URL}/api/competitive-exams/${editingId}` : `${API_URL}/api/competitive-exams`;
+          const method = editingId ? 'PUT' : 'POST';
+          const res = await fetch(url, {
+              method,
+              body: formData
+          });
+          if (res.ok) {
+              setCompetitiveExamForm({ examName: '', description: '', category: 'General', brochure: null });
+              setShowCompetitiveExamForm(false);
+              setEditingId(null);
+              fetchData();
+          } else {
+              alert('Failed to save competitive exam');
+          }
+      } catch (err) {
+          alert('Error saving competitive exam');
       }
   };
 
@@ -422,6 +458,9 @@ const Admin = () => {
       } else if (type === 'diploma-course') {
           setDiplomaCourseForm({ courseName: item.courseName, description: item.description, category: item.category || 'General' });
           setShowDiplomaCourseForm(true);
+      } else if (type === 'competitive-exam') {
+          setCompetitiveExamForm({ examName: item.examName, description: item.description, category: item.category || 'General', brochure: null });
+          setShowCompetitiveExamForm(true);
       } else if (type === 'media') {
           setMediaForm({ title: item.title, category: item.category, isCustomCategory: false, customCategory: '', date: item.date || '', file: null });
           setShowMediaForm(true);
@@ -452,6 +491,7 @@ const Admin = () => {
       case 'donations': dataToExport = donations; break;
       case 'courses': dataToExport = courses; break;
       case 'diploma_courses': dataToExport = diplomaCourses; break;
+      case 'competitive_exams': dataToExport = competitiveExams; break;
       case 'live_sessions': dataToExport = liveSessions; break;
       case 'joinees': dataToExport = joinees; break;
       case 'jobs': dataToExport = jobs; break;
@@ -634,6 +674,14 @@ const Admin = () => {
                 <span className="material-symbols-outlined text-[20px]">workspace_premium</span> Diploma/Degree Courses
             </button>
             <button
+                onClick={() => setActiveTab('competitive_exams')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'competitive_exams' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">assignment</span> Competitive Exams
+            </button>
+            <button
                 onClick={() => setActiveTab('media')}
                 className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
                 activeTab === 'media' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
@@ -689,6 +737,7 @@ const Admin = () => {
                 {activeTab === 'donations' && 'Donations Tracker'}
                 {activeTab === 'courses' && 'Course Management'}
                 {activeTab === 'diploma_courses' && 'Diploma/Degree Course Management'}
+                {activeTab === 'competitive_exams' && 'Competitive Exam Management'}
                 {activeTab === 'media' && 'Media Management'}
                 {activeTab === 'live_sessions' && 'Live Sessions Management'}
                 {activeTab === 'joinees' && 'Join Requests'}
@@ -1023,7 +1072,15 @@ const Admin = () => {
                                             </div>
                                             <h4 className="font-headline font-bold text-xl text-gray-800 mb-2">{course.courseName}</h4>
                                             <p className="text-sm text-gray-500 mb-6 line-clamp-2">{course.description}</p>
-                                            
+                                            {course.brochure && (
+                                                <div className="flex items-center gap-1 text-xs font-bold text-green-600">
+                                                    <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                                                    <span>Supportive Doc Uploaded</span>
+                                                    <a href={`${API_URL}${course.brochure}`} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline flex items-center gap-0.5 ml-auto">
+                                                        View <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+                                                    </a>
+                                                </div>
+                                            )}
 
                                         </div>
                                     </div>
@@ -1091,6 +1148,84 @@ const Admin = () => {
                                             </div>
                                             <h4 className="font-headline font-bold text-xl text-gray-800 mb-2">{course.courseName}</h4>
                                             <p className="text-sm text-gray-500 line-clamp-3 whitespace-pre-wrap">{course.description}</p>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* ---------- COMPETITIVE EXAMS TAB ---------- */}
+                {activeTab === 'competitive_exams' && (
+                    <div className="space-y-6 animate-in fade-in duration-300">
+                        <div className="flex justify-between items-center">
+                            <h3 className="font-headline font-bold text-2xl text-gray-800">Competitive Exam Details</h3>
+                            <button onClick={() => { if (!showCompetitiveExamForm) setEditingId(null); setShowCompetitiveExamForm(!showCompetitiveExamForm); }} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover flex items-center gap-2 shadow-md transition-all">
+                                <span className="material-symbols-outlined text-[18px]">add</span> {showCompetitiveExamForm ? 'Cancel' : 'Add New Exam'}
+                            </button>
+                        </div>
+
+                        {showCompetitiveExamForm && (
+                            <form onSubmit={createCompetitiveExam} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                                <h4 className="font-bold text-gray-800 border-b border-gray-100 pb-3 mb-6">{editingId ? 'Edit' : 'Create New'} Competitive Exam Detail</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Exam Name</label>
+                                        <input type="text" required value={competitiveExamForm.examName} onChange={e => setCompetitiveExamForm({...competitiveExamForm, examName: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Category</label>
+                                        <select value={competitiveExamForm.category} onChange={e => setCompetitiveExamForm({...competitiveExamForm, category: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                                            <option>General</option>
+                                            <option>Civil Services</option>
+                                            <option>Banking</option>
+                                            <option>Railways</option>
+                                            <option>Defense</option>
+                                            <option>Others</option>
+                                        </select>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Description</label>
+                                        <textarea required value={competitiveExamForm.description} onChange={e => setCompetitiveExamForm({...competitiveExamForm, description: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" rows="6"></textarea>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Upload Supportive Document (Image/PDF)</label>
+                                        <input type="file" accept="image/*,application/pdf" onChange={e => setCompetitiveExamForm({...competitiveExamForm, brochure: e.target.files[0]})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                        {editingId && <p className="text-[10px] text-gray-400 mt-1 italic">Leave empty to keep existing document</p>}
+                                    </div>
+                                </div>
+                                <div className="mt-8 flex justify-end">
+                                    <button type="submit" className="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors shadow-sm">{editingId ? 'Save Changes' : 'Save Exam'}</button>
+                                </div>
+                            </form>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {competitiveExams.length === 0 ? (
+                                <p className="col-span-full py-8 text-center text-gray-400 font-medium">No competitive exam details yet. Create one to get started.</p>
+                            ) : (
+                                competitiveExams.map(exam => (
+                                    <div key={exam._id} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow relative">
+                                        <div className="p-6">
+                                            <div className="flex justify-between items-start mb-4">
+                                                <span className="bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">{exam.category}</span>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => openEditForm('competitive-exam', exam)} className="text-gray-300 hover:text-blue-500 transition-colors p-1"><span className="material-symbols-outlined text-[20px]">edit</span></button>
+                                                    <button onClick={() => deleteRecord('competitive-exam', exam._id)} className="text-gray-300 hover:text-red-500 transition-colors p-1"><span className="material-symbols-outlined text-[20px]">delete</span></button>
+                                                </div>
+                                            </div>
+                                            <h4 className="font-headline font-bold text-xl text-gray-800 mb-2">{exam.examName}</h4>
+                                            <p className="text-sm text-gray-500 mb-4 line-clamp-3 whitespace-pre-wrap">{exam.description}</p>
+                                            {exam.brochure && (
+                                                <div className="flex items-center gap-1 text-xs font-bold text-green-600">
+                                                    <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                                                    <span>Supportive Doc Uploaded</span>
+                                                    <a href={`${API_URL}${exam.brochure}`} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline flex items-center gap-0.5 ml-auto">
+                                                        View <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+                                                    </a>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))
