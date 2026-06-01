@@ -52,8 +52,12 @@ cd ..
 # Install any new frontend packages
 npm install
 
-# Rebuild the static frontend files for Nginx to serve
+# Rebuild the static frontend files
 npm run build
+
+# Clear the old live files and copy the newly built ones to Nginx's folder
+rm -rf /var/www/dmfmop-frontend/*
+cp -a build/. /var/www/dmfmop-frontend/
 ```
 
 ## Step 6: Verify
