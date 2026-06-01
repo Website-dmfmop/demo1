@@ -49,6 +49,10 @@ If your recent changes included frontend updates (like changing React components
 # Go back to the main project folder
 cd ..
 
+# Add your keys to the server's .env files so the build can see them
+echo "VITE_RECAPTCHA_SITE_KEY=6LdM_gYtAAAAAMojxWTkMf6bpU8a85jUeMa5XheE" >> /root/demo1/.env
+echo "RECAPTCHA_SECRET_KEY=6LdM_gYtAAAAAIHAAqAybhl-cz9uDBOberVA8cbW" >> /root/demo1/backend/.env
+
 # Install any new frontend packages
 npm install
 
