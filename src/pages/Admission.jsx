@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { admissionTranslations } from '../translations/pages';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -38,6 +39,7 @@ const Admission = () => {
     email: '',
     phone: ''
   });
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   useEffect(() => {
     Promise.all([
@@ -61,6 +63,10 @@ const Admission = () => {
 
   const handleEnrollSubmit = async (e) => {
     e.preventDefault();
+    if (!captchaToken) {
+        alert('Please verify that you are not a robot.');
+        return;
+    }
     setIsEnrolling(true);
     try {
       const payload = {
@@ -70,6 +76,7 @@ const Admission = () => {
         contactNumber: enrollForm.phone,
         courseCategory: selectedCourse.category,
         subCourse: selectedCourse.courseName,
+        captchaToken,
       };
 
       const res = await fetch(`${API_URL}/api/admissions`, {
@@ -479,6 +486,14 @@ const Admission = () => {
                     onChange={e => setEnrollForm({ ...enrollForm, phone: e.target.value })}
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
                     placeholder="+91 98765 43210"
+                  />
+                </div>
+
+                {/* CAPTCHA */}
+                <div className="flex justify-center pt-2">
+                  <ReCAPTCHA
+                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                    onChange={(token) => setCaptchaToken(token)}
                   />
                 </div>
 

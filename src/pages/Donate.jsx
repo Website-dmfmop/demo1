@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { donateTranslations } from '../translations/pages';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -12,6 +13,7 @@ export default function Donate() {
     const [customAmount, setCustomAmount] = useState('');
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
     const [status, setStatus] = useState('');
+    const [captchaToken, setCaptchaToken] = useState(null);
 
     const handleAmountClick = (val) => {
         setAmount(val);
@@ -29,6 +31,10 @@ export default function Donate() {
 
     const handleDonation = async (e) => {
         e.preventDefault();
+        if (!captchaToken) {
+            setStatus('error');
+            return;
+        }
         setStatus('submitting');
         try {
             const finalAmount = customAmount ? parseInt(customAmount) : amount;
@@ -45,6 +51,7 @@ export default function Donate() {
                     email: formData.email,
                     amount: finalAmount,
                     message: formData.message,
+                    captchaToken
                 })
             });
 
@@ -169,9 +176,17 @@ export default function Donate() {
 
                                     {status === 'error' && (
                                         <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-sm">
-                                            There was an error processing your donation. Please try again.
+                                            There was an error processing your donation. Please ensure you checked the CAPTCHA box and try again.
                                         </div>
                                     )}
+
+                                    {/* CAPTCHA */}
+                                    <div className="flex justify-center mb-6">
+                                        <ReCAPTCHA
+                                            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                                            onChange={(token) => setCaptchaToken(token)}
+                                        />
+                                    </div>
 
                                     <button
                                         type="submit"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { subPageTranslations } from '../translations/subPages';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -42,6 +43,7 @@ export default function SlotBooking() {
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState('');
+    const [captchaToken, setCaptchaToken] = useState(null);
 
     const [bookedSlots, setBookedSlots] = useState([]);
 
@@ -69,13 +71,18 @@ export default function SlotBooking() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!captchaToken) {
+            setError(language === 'hi' ? 'कृपया सत्यापित करें कि आप रोबोट नहीं हैं।' : 'Please verify that you are not a robot.');
+            return;
+        }
         setSubmitting(true);
         setError('');
         try {
+            const payload = { ...form, captchaToken };
             const res = await fetch(`${API_URL}/api/slot-bookings`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form),
+                body: JSON.stringify(payload),
             });
             if (res.ok) {
                 setSubmitted(true);
@@ -261,6 +268,14 @@ export default function SlotBooking() {
                                             placeholder={language === 'hi' ? 'कोई विशेष विषय जिन पर आप चर्चा करना चाहते हैं, उपस्थित लोगों की संख्या आदि...' : "Any specific topics you'd like to discuss, number of attendees, etc..."} />
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* CAPTCHA */}
+                            <div className="flex justify-center">
+                                <ReCAPTCHA
+                                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                                    onChange={(token) => setCaptchaToken(token)}
+                                />
                             </div>
 
                             {error && (

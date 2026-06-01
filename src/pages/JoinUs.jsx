@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { subPageTranslations } from '../translations/subPages';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -12,6 +13,7 @@ const JoinUs = () => {
     const navigate = useNavigate();
     const [purpose, setPurpose] = useState(searchParams.get('purpose') || 'Volunteer');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState(null);
 
     // Redirect to dedicated partner page
     useEffect(() => {
@@ -34,10 +36,14 @@ const JoinUs = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!captchaToken) {
+            alert(language === 'hi' ? 'कृपया सत्यापित करें कि आप रोबोट नहीं हैं।' : 'Please verify that you are not a robot.');
+            return;
+        }
         setIsSubmitting(true);
 
         try {
-            const payload = { ...formData, purpose };
+            const payload = { ...formData, purpose, captchaToken };
             const res = await fetch(`${API_URL}/api/joinees`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -50,7 +56,12 @@ const JoinUs = () => {
                 alert(language === 'hi' ? `${displayPurposeHi} बनने की इच्छा के लिए धन्यवाद! आपका अनुरोध जमा हो गया है। हम जल्द ही आपसे संपर्क करेंगे।` : `Thank you for wanting to become a ${displayPurpose}! Your request has been submitted. We will contact you soon.`);
                 setFormData({ name: '', email: '', phone: '', address: '', message: '' });
             } else {
-                alert(language === 'hi' ? 'जमा करना विफल रहा। कृपया पुनः प्रयास करें।' : 'Submission failed. Please try again.');
+                let errMsg = 'Unknown error';
+                try {
+                    const errData = await res.json();
+                    errMsg = errData.error || errMsg;
+                } catch (e) {}
+                alert('Submission failed: ' + errMsg);
             }
         } catch (err) {
             console.error('Join Us Error:', err);
@@ -131,6 +142,14 @@ const JoinUs = () => {
                                 rows="4"
                                 placeholder={language === 'hi' ? `हमें बताएं कि आप ${purpose === 'Member' ? 'MOP सदस्य' : (purpose === 'Volunteer' ? 'स्वयंसेवक' : purpose)} बनने के लिए क्यों प्रेरित हैं...` : `Tell us a little about your motivation to become a ${purpose === 'Member' ? 'MOP member' : purpose.toLowerCase()}...`}
                             ></textarea>
+                        </div>
+
+                        {/* CAPTCHA */}
+                        <div className="flex justify-center pt-2">
+                            <ReCAPTCHA
+                                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                                onChange={(token) => setCaptchaToken(token)}
+                            />
                         </div>
 
                         <div className="pt-4">

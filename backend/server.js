@@ -47,6 +47,32 @@ mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('MongoDB connection successful'))
 .catch((err) => console.error('MongoDB connection error:', err));
 
+// --- CAPTCHA Middleware ---
+const verifyCaptcha = async (req, res, next) => {
+    const { captchaToken } = req.body;
+    if (!captchaToken) {
+        return res.status(400).json({ error: 'CAPTCHA verification failed: missing token' });
+    }
+
+    try {
+        const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+        const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `secret=${secretKey}&response=${encodeURIComponent(captchaToken)}`
+        });
+        const data = await response.json();
+
+        if (!data.success) {
+            return res.status(400).json({ error: 'CAPTCHA verification failed: invalid token' });
+        }
+        next();
+    } catch (err) {
+        console.error('CAPTCHA verification error:', err);
+        res.status(500).json({ error: 'CAPTCHA verification process failed' });
+    }
+};
+
 // --- ROUTES ---
 
 // Get all donations
@@ -60,7 +86,7 @@ app.get('/api/donations', async (req, res) => {
 });
 
 // Create a new donation
-app.post('/api/donations', async (req, res) => {
+app.post('/api/donations', verifyCaptcha, async (req, res) => {
     try {
         const newDonation = new Donation(req.body);
         const savedDonation = await newDonation.save();
@@ -81,7 +107,7 @@ app.get('/api/admissions', async (req, res) => {
 });
 
 // Create a new admission
-app.post('/api/admissions', async (req, res) => {
+app.post('/api/admissions', verifyCaptcha, async (req, res) => {
     try {
         const newAdmission = new Admission(req.body);
         const savedAdmission = await newAdmission.save();
@@ -134,7 +160,7 @@ app.get('/api/joinees', async (req, res) => {
 });
 
 // Create a new joinee
-app.post('/api/joinees', async (req, res) => {
+app.post('/api/joinees', verifyCaptcha, async (req, res) => {
     try {
         const newJoinee = new Joinee(req.body);
         const savedJoinee = await newJoinee.save();
@@ -531,7 +557,7 @@ app.get('/api/job-applications', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.post('/api/job-applications', async (req, res) => {
+app.post('/api/job-applications', verifyCaptcha, async (req, res) => {
     try {
         const JobApplication = require('./models/JobApplication');
         const newApp = new JobApplication(req.body);
@@ -597,7 +623,7 @@ app.get('/api/partner-requests', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.post('/api/partner-requests', upload.single('pdfFile'), async (req, res) => {
+app.post('/api/partner-requests', upload.single('pdfFile'), verifyCaptcha, async (req, res) => {
     try {
         const PartnerRequest = require('./models/PartnerRequest');
         const data = { ...req.body };
@@ -653,7 +679,7 @@ app.get('/api/slot-bookings/booked', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.post('/api/slot-bookings', async (req, res) => {
+app.post('/api/slot-bookings', verifyCaptcha, async (req, res) => {
     try {
         const SlotBooking = require('./models/SlotBooking');
         const { date, timeSlot } = req.body;

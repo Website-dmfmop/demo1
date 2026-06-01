@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { subPageTranslations } from '../translations/subPages';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -37,6 +38,7 @@ export default function BecomePartner() {
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState('');
+    const [captchaToken, setCaptchaToken] = useState(null);
 
     const handleChange = (e) => {
         setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -44,12 +46,17 @@ export default function BecomePartner() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!captchaToken) {
+            setError(language === 'hi' ? 'कृपया सत्यापित करें कि आप रोबोट नहीं हैं।' : 'Please verify that you are not a robot.');
+            return;
+        }
         setSubmitting(true);
         setError('');
         try {
             const formData = new FormData();
             Object.entries(form).forEach(([key, val]) => formData.append(key, val));
             if (pdfFile) formData.append('pdfFile', pdfFile);
+            formData.append('captchaToken', captchaToken);
 
             const res = await fetch(`${API_URL}/api/partner-requests`, {
                 method: 'POST',
@@ -61,7 +68,7 @@ export default function BecomePartner() {
                 setPdfFile(null);
             } else {
                 const data = await res.json();
-                setError(data.error || 'Submission failed. Please try again.');
+                setError(data.error || 'Submission failed: ' + JSON.stringify(data));
             }
         } catch (err) {
             setError('Network error. Please check your connection and try again.');
@@ -301,6 +308,14 @@ export default function BecomePartner() {
                                     <p className="font-medium text-sm">{error}</p>
                                 </div>
                             )}
+
+                            {/* CAPTCHA */}
+                            <div className="flex justify-center">
+                                <ReCAPTCHA
+                                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                                    onChange={(token) => setCaptchaToken(token)}
+                                />
+                            </div>
 
                             <div className="pt-2">
                                 <button

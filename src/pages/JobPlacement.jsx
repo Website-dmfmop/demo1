@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { subPageTranslations } from '../translations/subPages';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -14,6 +15,7 @@ const JobPlacement = () => {
     const [showEnrollModal, setShowEnrollModal] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState(null);
     const [enrollForm, setEnrollForm] = useState({
         name: '',
         email: '',
@@ -41,6 +43,10 @@ const JobPlacement = () => {
 
     const handleEnrollSubmit = async (e) => {
         e.preventDefault();
+        if (!captchaToken) {
+            alert('Please verify that you are not a robot.');
+            return;
+        }
         setIsSubmitting(true);
         try {
             const payload = {
@@ -49,7 +55,8 @@ const JobPlacement = () => {
                 name: enrollForm.name,
                 email: enrollForm.email,
                 phone: enrollForm.phone,
-                message: enrollForm.message
+                message: enrollForm.message,
+                captchaToken
             };
 
             const res = await fetch(`${API_URL}/api/job-applications`, {
@@ -189,6 +196,15 @@ const JobPlacement = () => {
                                 <label className="block text-sm font-bold text-gray-700 mb-2">Message / Cover Letter (Optional)</label>
                                 <textarea value={enrollForm.message} onChange={e => setEnrollForm({...enrollForm, message: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all resize-none" rows="3" placeholder="Why are you a good fit?"></textarea>
                             </div>
+                            
+                            {/* CAPTCHA */}
+                            <div className="flex justify-center">
+                                <ReCAPTCHA
+                                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                                    onChange={(token) => setCaptchaToken(token)}
+                                />
+                            </div>
+
                             <div className="pt-2">
                                 <button disabled={isSubmitting} type="submit" className="w-full py-4 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl transition-all shadow-lg active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed">
                                     {isSubmitting ? 'Submitting Application...' : 'Submit Application'}
