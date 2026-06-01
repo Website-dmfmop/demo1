@@ -22,11 +22,11 @@ const MILESTONES = [
 ];
 
 const SOCIAL = [
-    { platform: 'Facebook', handle: '@dmfmop', icon: 'thumb_up', color: 'bg-[#1877F2]' },
-    { platform: 'Instagram', handle: '@dmfmop', icon: 'photo_camera', color: 'bg-[#E1306C]' },
-    { platform: 'Twitter/X', handle: '@dmfmop', icon: 'rss_feed', color: 'bg-[#1DA1F2]' },
-    { platform: 'YouTube', handle: 'DMF Foundation', icon: 'play_circle', color: 'bg-[#FF0000]' },
-    { platform: 'LinkedIn', handle: 'DMF India', icon: 'work', color: 'bg-[#0A66C2]' },
+    { platform: 'Facebook', handle: '@dmfmop', icon: 'thumb_up', color: 'bg-[#1877F2]', link: 'https://www.facebook.com/profile.php?id=61580411524775' },
+    { platform: 'Instagram', handle: '@dmf.mop', icon: 'photo_camera', color: 'bg-[#E1306C]', link: 'https://www.instagram.com/dmf.mop/' },
+    { platform: 'Twitter/X', handle: '@dmfmop', icon: 'rss_feed', color: 'bg-[#1DA1F2]', link: '#' },
+    { platform: 'YouTube', handle: 'DMF Foundation', icon: 'play_circle', color: 'bg-[#FF0000]', link: 'https://www.youtube.com/@dmfmop' },
+    { platform: 'LinkedIn', handle: 'DMF India', icon: 'work', color: 'bg-[#0A66C2]', link: 'https://www.linkedin.com/company/dr-dnyaneshwar-mulay-foundation/posts/?feedView=all' },
 ];
 
 const TABS = ['All', 'Events', 'Community', 'Programmes', 'Visitors', 'MoU'];
@@ -144,7 +144,7 @@ export default function Media() {
                                     <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-4 shadow-md">
                                         <img alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src={item.src && item.src.startsWith('/uploads') ? `${API_URL}${item.src}` : item.src} />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                        <div className="absolute top-4 left-4"><span className="bg-primary text-white font-label text-[10px] font-bold tracking-widest px-3 py-1 rounded-sm uppercase">{item.category}</span></div>
+                                        {item.category && <div className="absolute top-4 left-4"><span className="bg-primary text-white font-label text-[10px] font-bold tracking-widest px-3 py-1 rounded-sm uppercase">{item.category}</span></div>}
                                         <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"><p className="text-white font-headline font-bold text-sm">{item.title}</p></div>
                                     </div>
                                     <h3 className="font-headline text-base font-bold text-primary mb-1 leading-snug group-hover:text-secondary-container transition-colors">{item.title}</h3>
@@ -175,7 +175,7 @@ export default function Media() {
                                             </div>
                                         </div>
                                         <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs font-bold px-2 py-0.5 rounded">{v.duration}</div>
-                                        <div className="absolute top-3 left-3"><span className="bg-primary text-white font-label text-[10px] font-bold tracking-widest px-3 py-1 rounded-sm uppercase">{v.tag}</span></div>
+                                        {v.tag && <div className="absolute top-3 left-3"><span className="bg-primary text-white font-label text-[10px] font-bold tracking-widest px-3 py-1 rounded-sm uppercase">{v.tag}</span></div>}
                                     </div>
                                     <div className="p-6">
                                         <h4 className="font-headline font-bold text-primary text-base mb-2 leading-snug group-hover:text-secondary-container transition-colors">{v.title}</h4>
@@ -205,7 +205,7 @@ export default function Media() {
                                             <div className="font-headline font-black text-primary text-sm">{p.outlet}</div>
                                             <div className="text-on-surface-variant text-xs">{p.date}</div>
                                         </div>
-                                        <span className="ml-auto text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary px-3 py-1 rounded-full flex-shrink-0">{p.tag}</span>
+                                        {/* <span className="ml-auto text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary px-3 py-1 rounded-full flex-shrink-0">{p.tag}</span> */}
                                     </div>
                                     <p className="text-on-surface-variant leading-relaxed text-sm font-medium italic">"{p.headline}"</p>
                                     <div className="mt-4 flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest hover:text-secondary-container transition-colors">
@@ -290,11 +290,11 @@ export default function Media() {
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
                             {SOCIAL.map((s, i) => (
-                                <div key={i} className="bg-surface-container-lowest rounded-2xl p-6 flex flex-col items-center text-center hover:-translate-y-2 transition-all duration-300 shadow-sm cursor-pointer group">
+                                <a key={i} href={s.link || '#'} target={s.link && s.link !== '#' ? "_blank" : undefined} rel={s.link && s.link !== '#' ? "noopener noreferrer" : undefined} className="bg-surface-container-lowest rounded-2xl p-6 flex flex-col items-center text-center hover:-translate-y-2 transition-all duration-300 shadow-sm cursor-pointer group no-underline block">
                                     <div className={`w-14 h-14 rounded-full ${s.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}><span className="material-symbols-outlined text-white text-2xl">{s.icon}</span></div>
                                     <div className="font-headline font-bold text-primary text-sm mb-1">{s.platform}</div>
                                     <div className="text-on-surface-variant text-xs mb-2">{s.handle}</div>
-                                </div>
+                                </a>
                             ))}
                         </div>
                     </div>

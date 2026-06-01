@@ -1,7 +1,7 @@
 export const homeTranslations = {
     en: {
         heroTag: "DMF • Movement of Positivity",
-        heroTitle1: "ENABLING COMMUNITIES",
+        heroTitle1: "ENABLING \u00A0OUR COMMUNITY",
         heroTitle2: "PROMOTING",
         heroTitle3: "JUSTICE.",
 
