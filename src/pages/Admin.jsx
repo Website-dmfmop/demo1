@@ -23,6 +23,7 @@ const Admin = () => {
   const [jobApplications, setJobApplications] = useState([]);
   const [partnerRequests, setPartnerRequests] = useState([]);
   const [slotBookings, setSlotBookings] = useState([]);
+  const [projects, setProjects] = useState([]);
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -128,6 +129,10 @@ const Admin = () => {
         const res = await fetch(`${API_URL}/api/slot-bookings`);
         if (!res.ok) throw new Error('Failed to fetch slot bookings');
         setSlotBookings(await res.json());
+      } else if (activeTab === 'projects') {
+        const res = await fetch(`${API_URL}/api/projects`);
+        if (!res.ok) throw new Error('Failed to fetch projects');
+        setProjects(await res.json());
       }
     } catch (err) {
       setError(err.message);
@@ -196,6 +201,21 @@ const Admin = () => {
     }
   };
 
+  const updateProjectStatus = async (id, newStatus) => {
+    setActionMenuOpenId(null);
+    try {
+      const res = await fetch(`${API_URL}/api/projects/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) fetchData();
+      else alert('Failed to update status');
+    } catch (err) {
+      alert('Error updating status');
+    }
+  };
+
   const deleteRecord = (type, id) => {
     setActionMenuOpenId(null);
     setItemToDelete({ type, id });
@@ -212,6 +232,7 @@ const Admin = () => {
       if (type === 'partner-request') endpoint = `${API_URL}/api/partner-requests/${id}`;
       if (type === 'slot-booking') endpoint = `${API_URL}/api/slot-bookings/${id}`;
       if (type === 'competitive-exam') endpoint = `${API_URL}/api/competitive-exams/${id}`;
+      if (type === 'project') endpoint = `${API_URL}/api/projects/${id}`;
 
       const res = await fetch(endpoint, { method: 'DELETE' });
       if (res.ok) {
@@ -498,6 +519,7 @@ const Admin = () => {
       case 'job-applications': dataToExport = jobApplications; break;
       case 'partner-requests': dataToExport = partnerRequests; break;
       case 'slot-bookings': dataToExport = slotBookings; break;
+      case 'projects': dataToExport = projects; break;
       default: return alert("Export not supported for this section");
     }
 
@@ -656,6 +678,15 @@ const Admin = () => {
                 <span className="material-symbols-outlined text-[20px]">event_available</span> Slot Bookings
             </button>
 
+            <button
+                onClick={() => setActiveTab('projects')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'projects' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">architecture</span> Project Pitches
+            </button>
+
             <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4 mt-8">Manage System</p>
             <button
                 onClick={() => setActiveTab('courses')}
@@ -745,6 +776,7 @@ const Admin = () => {
                 {activeTab === 'job-applications' && 'Job Applications'}
                 {activeTab === 'partner-requests' && 'Partnership Requests'}
                 {activeTab === 'slot-bookings' && 'Slot Bookings'}
+                {activeTab === 'projects' && 'Project Pitches'}
             </h2>
           </div>
           <div className="flex items-center gap-6">
@@ -2107,6 +2139,83 @@ const Admin = () => {
                 )}
             </div>
             )}
+
+                {/* ---------- PROJECTS TAB ---------- */}
+                {activeTab === 'projects' && (
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-visible relative">
+                        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-white rounded-t-2xl">
+                            <h3 className="font-headline font-bold text-lg text-gray-800">Project Pitches</h3>
+                        </div>
+                        <div className="overflow-x-auto min-h-[300px]">
+                            <table className="w-full text-left text-sm">
+                                <thead className="bg-gray-50 text-gray-500 font-semibold text-xs uppercase tracking-wider">
+                                    <tr>
+                                        <th className="px-6 py-4 border-b border-gray-200">Project Info</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Sector & Zone</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Funding Goal</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Status</th>
+                                        <th className="px-6 py-4 border-b border-gray-200 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100 bg-white">
+                                    {projects.length === 0 ? (
+                                        <tr><td colSpan="5" className="py-12 text-center text-gray-400 font-medium">No projects found.</td></tr>
+                                    ) : (
+                                        projects.map(project => {
+                                            const status = project.status || 'Pending';
+                                            let statusColor = 'bg-yellow-100 text-yellow-700';
+                                            if (status === 'Approved') statusColor = 'bg-green-100 text-green-700';
+                                            if (status === 'Rejected') statusColor = 'bg-red-100 text-red-700';
+                                            return (
+                                                <tr key={project._id} className="hover:bg-gray-50 transition-colors">
+                                                    <td className="px-6 py-4">
+                                                        <div className="font-bold text-gray-800 mb-1">{project.title}</div>
+                                                        <div className="text-xs text-gray-500">{project.organization}</div>
+                                                        {project.pitchDeck && (
+                                                            <a href={`${API_URL}${project.pitchDeck}`} target="_blank" rel="noreferrer" className="text-[10px] text-primary hover:underline mt-1 inline-block font-bold uppercase tracking-wider">
+                                                                View Pitch Deck
+                                                            </a>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="text-sm font-medium text-gray-700">{project.category}</div>
+                                                        <div className="text-xs text-gray-500 mt-1">{project.zone || 'Various Zones'}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4 font-bold text-gray-800">
+                                                        ₹{project.fundingGoal?.toLocaleString()}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-widest ${statusColor}`}>
+                                                            {status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center relative pointer-events-auto">
+                                                        <button 
+                                                            onClick={(e) => { e.stopPropagation(); setActionMenuOpenId(actionMenuOpenId === project._id ? null : project._id); }}
+                                                            className={`p-1.5 rounded-lg transition-colors ${actionMenuOpenId === project._id ? 'bg-gray-100 text-primary' : 'text-gray-400 hover:text-primary hover:bg-gray-50'}`}
+                                                        >
+                                                            <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                                                        </button>
+                                                        {actionMenuOpenId === project._id && (
+                                                            <div className="absolute right-12 top-8 w-48 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 py-2 z-50 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+                                                                <button onClick={() => updateProjectStatus(project._id, 'Pending')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium">Pending</button>
+                                                                <button onClick={() => updateProjectStatus(project._id, 'Approved')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium">Approve</button>
+                                                                <button onClick={() => updateProjectStatus(project._id, 'Rejected')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 font-medium">Reject</button>
+                                                                <button onClick={() => deleteRecord('project', project._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 mt-1 font-bold">
+                                                                    <span className="material-symbols-outlined text-[16px]">delete</span> Delete Record
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
 
             {/* CUSTOM CONFIRMATION MODAL */}
             {itemToDelete && (

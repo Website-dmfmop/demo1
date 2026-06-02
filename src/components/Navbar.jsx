@@ -16,7 +16,7 @@ const Navbar = () => {
 
     const getLinkClass = (targetPath) => {
         const isActive = path === targetPath;
-        return `font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] ${isActive
+        return `font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] whitespace-nowrap ${isActive
             ? 'text-white border-b-2 border-[#fe9832] pb-1'
             : 'text-white/80 hover:text-white'
             }`;
@@ -24,8 +24,8 @@ const Navbar = () => {
 
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 bg-white/10 backdrop-blur-2xl border-b border-white/20">
-            <div className="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
-                <Link to="/" className="flex items-center gap-3">
+            <div className="flex w-full items-center justify-between px-6 lg:px-12 py-4">
+                <Link to="/" className="flex items-center gap-x-4 flex-shrink-0">
                     <img
                         src="/logo/DMF_LOGO_PNG_2.png"
                         alt="DMF - Movement of Positivity"
@@ -40,19 +40,20 @@ const Navbar = () => {
                         </span>
                     </div>
                 </Link>
-                <div className="flex items-center gap-4">
-                    <div className="hidden md:flex items-center gap-6">
+                <div className="flex items-center gap-x-8">
+                    <div className="hidden lg:flex flex-row items-center gap-x-8">
                         <Link className={getLinkClass('/')} to="/">{t.navHome}</Link>
                         <Link className={getLinkClass('/about')} to="/about">{t.navWhatWeAre}</Link>
                         <Link className={getLinkClass('/icoe')} to="/icoe">{t.navWhatWeDo}</Link>
                         <Link className={getLinkClass('/media')} to="/media">{t.navMedia}</Link>
                         <Link className={getLinkClass('/admission')} to="/admission">{t.navAdmission}</Link>
+                        {/* <Link className={getLinkClass('/csr')} to="/csr">{t.navCSR}</Link> */}
                         <Link className={getLinkClass('/job-placement')} to="/job-placement">{t.navJobPlacement}</Link>
                         <div className="relative group">
-                            <span className="font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] text-white/80 group-hover:text-white cursor-pointer flex items-center gap-1">
+                            <span className="font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] whitespace-nowrap text-white/80 group-hover:text-white cursor-pointer flex items-center gap-1">
                                 {t.navJoinUs} <span className="material-symbols-outlined text-[18px]">arrow_drop_down</span>
                             </span>
-                            <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 py-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top -translate-y-2 group-hover:translate-y-0">
+                            <div className="absolute top-full right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 py-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top -translate-y-2 group-hover:translate-y-0">
                                 <Link to="/join-us?purpose=Volunteer" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navVolunteer}</Link>
                                 <Link to="/join-us?purpose=Member" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navMember}</Link>
                                 <Link to="/join-us?purpose=Partner" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navPartner}</Link>
@@ -78,6 +79,7 @@ const Navbar = () => {
                     <Link className={getLinkClass('/icoe')} to="/icoe" onClick={() => setMenuOpen(false)}>{t.navWhatWeDo}</Link>
                     <Link className={getLinkClass('/media')} to="/media" onClick={() => setMenuOpen(false)}>{t.navMedia}</Link>
                     <Link className={getLinkClass('/admission')} to="/admission" onClick={() => setMenuOpen(false)}>{t.navAdmission}</Link>
+                    <Link className={getLinkClass('/csr')} to="/csr" onClick={() => setMenuOpen(false)}>{t.navCSR}</Link>
                     <Link className={getLinkClass('/job-placement')} to="/job-placement" onClick={() => setMenuOpen(false)}>{t.navJobPlacement}</Link>
 
                     <div className="flex flex-col gap-2 mt-2 pt-4 border-t border-white/10">

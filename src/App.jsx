@@ -14,6 +14,7 @@ import ICOE from './pages/ICOE';
 import Media from './pages/Media';
 import Admin from './pages/Admin';
 import Admission from './pages/Admission';
+import CSR from './pages/CSR';
 import JoinUs from './pages/JoinUs';
 
 import JobPlacement from './pages/JobPlacement';
@@ -48,6 +49,7 @@ function App() {
         <Route path="/media" element={<Media />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admission" element={<Admission />} />
+        <Route path="/csr" element={<CSR />} />
         <Route path="/join-us" element={<JoinUs />} />
         <Route path="/job-placement" element={<JobPlacement />} />
         <Route path="/movement-of-positivity" element={<MovementOfPositivity />} />

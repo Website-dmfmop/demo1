@@ -2,10 +2,11 @@ export const commonTranslations = {
     en: {
         // Navbar
         navHome: "Home",
-        navWhatWeAre: "What we are",
+        navWhatWeAre: "Who we are",
         navWhatWeDo: "What we do",
         navMedia: "Media",
         navAdmission: "Admission",
+        navCSR: "CSR Ecosystem",
         navJobPlacement: "Job Placement",
         navJoinUs: "Join Us",
         navVolunteer: "Become a Volunteer",
@@ -53,6 +54,7 @@ export const commonTranslations = {
         navWhatWeDo: "हम क्या करते हैं",
         navMedia: "मीडिया",
         navAdmission: "प्रवेश",
+        navCSR: "सीएसआर (CSR)",
         navJobPlacement: "नौकरी",
         navJoinUs: "हमसे जुड़ें",
         navVolunteer: "स्वयंसेवक बनें",
