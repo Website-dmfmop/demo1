@@ -49,7 +49,7 @@ function App() {
         <Route path="/media" element={<Media />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admission" element={<Admission />} />
-        <Route path="/csr" element={<CSR />} />
+        {import.meta.env.DEV && <Route path="/csr" element={<CSR />} />}
         <Route path="/join-us" element={<JoinUs />} />
         <Route path="/job-placement" element={<JobPlacement />} />
         <Route path="/movement-of-positivity" element={<MovementOfPositivity />} />
