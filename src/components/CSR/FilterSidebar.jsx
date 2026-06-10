@@ -60,8 +60,25 @@ const FilterSidebar = ({ filters, setFilters, isOpen, onClose }) => {
     const demographicsList = ['General', 'Women & Children', 'Marginalized Farmers', 'Scheduled Tribes/Castes', 'Youth', 'Senior Citizens', 'Specially-Abled'];
     const auditLayers = ['Self-Certified', 'Government Audited', 'Independent Third-Party Audited'];
     
-    // Simple 1-17 array for SDG numbers
-    const sdgNumbers = Array.from({length: 17}, (_, i) => i + 1);
+    const sdgData = [
+        { id: 1, name: 'No Poverty' },
+        { id: 2, name: 'Zero Hunger' },
+        { id: 3, name: 'Good Health' },
+        { id: 4, name: 'Quality Education' },
+        { id: 5, name: 'Gender Equality' },
+        { id: 6, name: 'Clean Water' },
+        { id: 7, name: 'Clean Energy' },
+        { id: 8, name: 'Economic Growth' },
+        { id: 9, name: 'Industry & Innovation' },
+        { id: 10, name: 'Reduced Inequalities' },
+        { id: 11, name: 'Sustainable Cities' },
+        { id: 12, name: 'Responsible Consumption' },
+        { id: 13, name: 'Climate Action' },
+        { id: 14, name: 'Life Below Water' },
+        { id: 15, name: 'Life on Land' },
+        { id: 16, name: 'Peace & Justice' },
+        { id: 17, name: 'Partnerships' }
+    ];
 
     const sidebarContent = (
         <div className="bg-[#F8F9FA] rounded-3xl p-6 border border-gray-200 h-full overflow-y-auto w-full max-w-sm flex flex-col shadow-xl shadow-gray-100 hide-scrollbar">
@@ -244,21 +261,24 @@ const FilterSidebar = ({ filters, setFilters, isOpen, onClose }) => {
 
                 {/* 4. ESG/SDG Alignment */}
                 <FilterAccordion title="ESG / SDG ALIGNMENT">
-                    <div className="grid grid-cols-4 gap-2">
-                        {sdgNumbers.map(sdg => {
-                            const isActive = filters.sdgGoals.includes(sdg);
+                    <div className="grid grid-cols-3 gap-2">
+                        {sdgData.map(sdg => {
+                            const isActive = filters.sdgGoals.includes(sdg.id);
                             return (
                                 <button
-                                    key={sdg}
-                                    onClick={() => toggleArrayItem('sdgGoals', sdg)}
-                                    className={`aspect-square rounded-xl border flex flex-col items-center justify-center transition-all ${
-                                        isActive ? 'bg-[#FF9933]/10 border-[#FF9933] shadow-[0_0_10px_rgba(255,153,51,0.2)]' : 'bg-white border-gray-200 hover:border-[#FF9933]/50'
+                                    key={sdg.id} type="button" onClick={() => toggleArrayItem('sdgGoals', sdg.id)}
+                                    className={`p-1.5 rounded-xl border flex flex-col items-center text-center transition-all ${
+                                        isActive ? 'bg-[#FF9933]/10 border-[#FF9933] shadow-[0_0_10px_rgba(255,153,51,0.2)]' : 'bg-white border-gray-200 hover:border-[#FF9933]/50 hover:bg-orange-50'
                                     }`}
                                 >
-                                    <span style={{ fontFamily: 'Manrope, sans-serif' }} className={`font-extrabold text-lg leading-none ${isActive ? 'text-[#FF9933]' : 'text-gray-400'}`}>
-                                        {sdg}
+                                    <img 
+                                        src={`/goals/${sdg.id}.png`} 
+                                        alt={sdg.name} 
+                                        className={`w-10 h-10 object-contain mb-1.5 transition-all duration-300 ${isActive ? 'scale-110 drop-shadow-md' : 'hover:scale-105'}`} 
+                                    />
+                                    <span style={{ fontFamily: 'Inter, sans-serif' }} className={`text-[9px] font-bold leading-tight ${isActive ? 'text-[#FF9933]' : 'text-gray-500'}`}>
+                                        {sdg.name}
                                     </span>
-                                    <span className={`text-[8px] font-bold mt-1 ${isActive ? 'text-[#FF9933]' : 'text-gray-400'}`}>SDG</span>
                                 </button>
                             );
                         })}

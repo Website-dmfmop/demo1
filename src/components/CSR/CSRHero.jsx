@@ -17,7 +17,7 @@ const CSRHero = () => {
             </div>
             
             {/* Thematic Gradient Overlay (Navy to Transparent) */}
-            <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#000080]/60 via-[#000080]/30 to-transparent"></div>
+            <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#000080]/30 via-[#000080]/10 to-transparent"></div>
 
             {/* Phase 2: Content Container & Alignment */}
             <div className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 text-left">

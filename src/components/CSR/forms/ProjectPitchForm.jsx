@@ -146,7 +146,25 @@ const ProjectPitchForm = () => {
 
     const sectorsList = ['Gardens and Parks', 'Education', 'Health', 'Environment', 'Infrastructural Support', 'Social Inclusion', 'SWM'];
     const demographicsList = ['General', 'Women & Children', 'Marginalized Farmers', 'Scheduled Tribes/Castes', 'Youth', 'Senior Citizens', 'Specially-Abled'];
-    const sdgNumbers = Array.from({length: 17}, (_, i) => i + 1);
+    const sdgData = [
+        { id: 1, name: 'No Poverty' },
+        { id: 2, name: 'Zero Hunger' },
+        { id: 3, name: 'Good Health' },
+        { id: 4, name: 'Quality Education' },
+        { id: 5, name: 'Gender Equality' },
+        { id: 6, name: 'Clean Water' },
+        { id: 7, name: 'Clean Energy' },
+        { id: 8, name: 'Economic Growth' },
+        { id: 9, name: 'Industry & Innovation' },
+        { id: 10, name: 'Reduced Inequalities' },
+        { id: 11, name: 'Sustainable Cities' },
+        { id: 12, name: 'Responsible Consumption' },
+        { id: 13, name: 'Climate Action' },
+        { id: 14, name: 'Life Below Water' },
+        { id: 15, name: 'Life on Land' },
+        { id: 16, name: 'Peace & Justice' },
+        { id: 17, name: 'Partnerships' }
+    ];
 
     if (isSubmitted) {
         return (
@@ -284,17 +302,24 @@ const ProjectPitchForm = () => {
                             {errorText('targetDemographics')}
 
                             <label style={{ fontFamily: 'Inter, sans-serif' }} className="text-sm font-semibold text-gray-700 mb-2 mt-4">SDG Alignment</label>
-                            <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 mb-4">
-                                {sdgNumbers.map(sdg => {
-                                    const isActive = formData.sdgGoals.includes(sdg);
+                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 mb-4">
+                                {sdgData.map(sdg => {
+                                    const isActive = formData.sdgGoals.includes(sdg.id);
                                     return (
                                         <button
-                                            key={sdg} onClick={() => toggleArrayItem('sdgGoals', sdg)}
-                                            className={`aspect-square rounded-lg border flex flex-col items-center justify-center transition-all ${
-                                                isActive ? 'bg-[#FF9933] border-[#FF9933]' : 'bg-white border-gray-200 hover:border-[#FF9933]/50'
+                                            key={sdg.id} type="button" onClick={() => toggleArrayItem('sdgGoals', sdg.id)}
+                                            className={`p-2 rounded-xl border flex flex-col items-center text-center transition-all ${
+                                                isActive ? 'bg-[#FF9933]/10 border-[#FF9933] shadow-sm' : 'bg-white border-gray-200 hover:border-[#FF9933]/50 hover:bg-orange-50'
                                             }`}
                                         >
-                                            <span style={{ fontFamily: 'Manrope, sans-serif' }} className={`font-bold text-sm leading-none ${isActive ? 'text-white' : 'text-gray-400'}`}>{sdg}</span>
+                                            <img 
+                                                src={`/goals/${sdg.id}.png`} 
+                                                alt={sdg.name} 
+                                                className={`w-14 h-14 object-contain mb-2 transition-all duration-300 ${isActive ? 'scale-110 drop-shadow-md' : 'hover:scale-105'}`} 
+                                            />
+                                            <span style={{ fontFamily: 'Inter, sans-serif' }} className={`text-[10px] font-semibold leading-tight ${isActive ? 'text-[#FF9933]' : 'text-gray-500'}`}>
+                                                {sdg.name}
+                                            </span>
                                         </button>
                                     );
                                 })}
