@@ -88,7 +88,7 @@ export default function Media() {
                         </div>
                         <div className="md:col-span-5 relative">
                             <div className="aspect-[4/5] rounded-xl overflow-hidden shadow-2xl">
-                                <img alt="DMF Media" className="w-full h-full object-cover" src="/Images/media_page_start_photo.jpeg" />
+                                <img alt="DMF Media" className="w-full h-full object-cover" src="/Images/media_page_stating_image.jpg" />
                             </div>
                             <div className="absolute -bottom-6 -left-6 bg-surface-container-lowest p-6 rounded-lg shadow-xl max-w-xs hidden md:block">
                                 <p className="text-secondary font-bold text-3xl font-headline">50+</p>

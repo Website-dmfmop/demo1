@@ -61,10 +61,8 @@ export default function Home() {
         "/Images/home_page_slide_image_1.jpeg",
         "/Images/home_page_slide_image_3.jpeg",
         "/Images/Job_fair.jpeg",
-        "/Images/MoU_COEP.jpeg",
         "/Images/WhatsApp Image 2026-04-10 at 10.32.25.jpeg",
-        "/Images/WhatsApp Image 2026-04-16 at 5.31.42 PM.jpeg",
-
+        "/Images/home_page_silder.jpg",
     ];
 
     useEffect(() => {
@@ -318,13 +316,13 @@ export default function Home() {
                             <h2 className="text-xs font-headline font-black text-secondary tracking-[0.3em] uppercase mb-4">{t.sdgTag}</h2>
                             <p className="font-headline text-4xl md:text-5xl font-extrabold text-primary leading-tight">{t.sdgTitle}</p>
                         </div>
-                        
+
                         {/* Goals Marquee */}
                         <div className="overflow-hidden relative w-full rounded-xl">
                             {/* Gradient overlays for smooth edges */}
                             <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-surface to-transparent z-10 pointer-events-none"></div>
                             <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-surface to-transparent z-10 pointer-events-none"></div>
-                            
+
                             <div className="animate-marquee gap-8 items-center py-4">
                                 {/* First set of images */}
                                 {Array.from({ length: 17 }, (_, i) => (
