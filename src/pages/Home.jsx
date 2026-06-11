@@ -63,6 +63,8 @@ export default function Home() {
         "/Images/Job_fair.jpeg",
         "/Images/WhatsApp Image 2026-04-10 at 10.32.25.jpeg",
         "/Images/home_page_silder.jpg",
+        "/Images/home_page_image_slider1.jpeg",
+        "/Images/home_page_image_slider2.jpg",
     ];
 
     useEffect(() => {
