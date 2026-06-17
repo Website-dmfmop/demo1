@@ -14,6 +14,7 @@ import ICOE from './pages/ICOE';
 import Media from './pages/Media';
 import Admin from './pages/Admin';
 import Admission from './pages/Admission';
+import CompetitiveExamsHub from './pages/CompetitiveExamsHub';
 import CSR from './pages/CSR';
 import JoinUs from './pages/JoinUs';
 
@@ -30,6 +31,11 @@ import DTNTLivesMatter from './pages/DTNTLivesMatter';
 import JobFair from './pages/JobFair';
 import BecomePartner from './pages/BecomePartner';
 import SlotBooking from './pages/SlotBooking';
+
+import GnmAdmission from './pages/GnmAdmission';
+import LanguageCourseAdmission from './pages/LanguageCourseAdmission';
+import TechnicalCourseAdmission from './pages/TechnicalCourseAdmission';
+import OtherCourseAdmission from './pages/OtherCourseAdmission';
 
 function App() {
   return (
@@ -49,6 +55,11 @@ function App() {
         <Route path="/media" element={<Media />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admission" element={<Admission />} />
+        <Route path="/admission/gnm" element={<GnmAdmission />} />
+        <Route path="/admission/language-course" element={<LanguageCourseAdmission />} />
+        <Route path="/admission/technical-course" element={<TechnicalCourseAdmission />} />
+        <Route path="/admission/other-course" element={<OtherCourseAdmission />} />
+        <Route path="/competitive-exams-hub" element={<CompetitiveExamsHub />} />
         {import.meta.env.DEV && <Route path="/csr" element={<CSR />} />}
         <Route path="/join-us" element={<JoinUs />} />
         <Route path="/job-placement" element={<JobPlacement />} />

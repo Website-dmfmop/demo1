@@ -3,11 +3,17 @@ import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, 
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
+import TasksTab from '../components/TasksTab';
+import TeamTab from '../components/TeamTab';
+import ProfileTab from '../components/ProfileTab';
+import AttendanceTab from '../components/AttendanceTab';
+import NotificationBell from '../components/NotificationBell';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState('admissions');
+  const [activeTab, setActiveTab] = useState('tasks');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [admissions, setAdmissions] = useState([]);
   const [donations, setDonations] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -24,11 +30,13 @@ const Admin = () => {
   const [partnerRequests, setPartnerRequests] = useState([]);
   const [slotBookings, setSlotBookings] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [csrPartners, setCsrPartners] = useState([]);
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionMenuOpenId, setActionMenuOpenId] = useState(null);
   const [selectedPartnerDetails, setSelectedPartnerDetails] = useState(null);
+  const [selectedCsrPartnerDetails, setSelectedCsrPartnerDetails] = useState(null);
   
   const [itemToDelete, setItemToDelete] = useState(null);
   
@@ -37,8 +45,38 @@ const Admin = () => {
   const [mediaSubTab, setMediaSubTab] = useState('photos'); // photos, videos, publications, press
 
   const [editingId, setEditingId] = useState(null);
+  const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(sessionStorage.getItem('adminAuth') === 'true');
+  const [isAuthenticated, setIsAuthenticated] = useState(sessionStorage.getItem('adminToken') ? true : false);
+  const [currentUser, setCurrentUser] = useState(() => {
+      const stored = sessionStorage.getItem('adminUser');
+      return stored ? JSON.parse(stored) : null;
+  });
+  const [permissions, setPermissions] = useState([]);
+  const [isSuperDelegate, setIsSuperDelegate] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && currentUser) {
+      const fetchPerms = async () => {
+        try {
+          const res = await fetch(`${API_URL}/api/permissions`, {
+            headers: { 'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setPermissions(data);
+            if (currentUser.role === 'SUPER_ADMIN') {
+              setIsSuperDelegate(true);
+            } else {
+              const perm = data.find(p => p.role === currentUser.role);
+              setIsSuperDelegate(perm ? perm.canViewAllTasks : false);
+            }
+          }
+        } catch (err) { }
+      };
+      fetchPerms();
+    }
+  }, [isAuthenticated, currentUser]);
 
   // Forms State
   const [courseForm, setCourseForm] = useState({ courseName: '', description: '', category: 'General', brochure: null });
@@ -64,9 +102,11 @@ const Admin = () => {
   
   const [showJobForm, setShowJobForm] = useState(false);
   const [jobForm, setJobForm] = useState({ jobRole: '', companyName: '', country: '', openings: 1, description: '', jobLink: '' });
+
   useEffect(() => {
     setActionMenuOpenId(null);
     setShowAnalytics(false);
+    setIsMobileMenuOpen(false);
     fetchData();
   }, [activeTab]);
 
@@ -121,6 +161,10 @@ const Admin = () => {
         const res = await fetch(`${API_URL}/api/job-applications`);
         if (!res.ok) throw new Error('Failed to fetch job applications');
         setJobApplications(await res.json());
+      } else if (activeTab === 'csr_partners') {
+        const res = await fetch(`${API_URL}/api/csr-partners`);
+        if (!res.ok) throw new Error('Failed to fetch CSR partners');
+        setCsrPartners(await res.json());
       } else if (activeTab === 'partner-requests') {
         const res = await fetch(`${API_URL}/api/partner-requests`);
         if (!res.ok) throw new Error('Failed to fetch partner requests');
@@ -138,6 +182,36 @@ const Admin = () => {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateSlotBookingStatus = async (id, newStatus) => {
+    setActionMenuOpenId(null);
+    try {
+      const res = await fetch(`${API_URL}/api/slot-bookings/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) fetchData();
+      else alert('Failed to update slot booking status');
+    } catch (err) {
+      alert('Error updating slot booking status');
+    }
+  };
+
+  const handleUpdateStatus = async (id, status, type) => {
+    try {
+      const endpoint = type === 'csr_partner' ? 'csr-partners' : 'partner-requests';
+      const res = await fetch(`${API_URL}/api/${endpoint}/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      if (res.ok) fetchData();
+      else alert('Failed to update status');
+    } catch (err) {
+      alert('Error updating status');
     }
   };
 
@@ -326,20 +400,35 @@ const Admin = () => {
       }
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
       e.preventDefault();
-      if (password === 'Dmfmop@123') {
-          setIsAuthenticated(true);
-          sessionStorage.setItem('adminAuth', 'true');
-      } else {
-          alert('Incorrect password');
+      try {
+          const res = await fetch(`${API_URL}/api/login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ loginId, password })
+          });
+          const data = await res.json();
+          if (res.ok) {
+              sessionStorage.setItem('adminToken', data.token);
+              sessionStorage.setItem('adminUser', JSON.stringify(data.user));
+              setCurrentUser(data.user);
+              setIsAuthenticated(true);
+          } else {
+              alert(data.error || 'Invalid credentials');
+          }
+      } catch (err) {
+          alert('Login failed');
       }
   };
 
   const handleLogout = () => {
       setIsAuthenticated(false);
-      sessionStorage.removeItem('adminAuth');
+      sessionStorage.removeItem('adminToken');
+      sessionStorage.removeItem('adminUser');
+      setCurrentUser(null);
       setPassword('');
+      setLoginId('');
   };
 
   const createMedia = async (e) => {
@@ -589,16 +678,26 @@ const Admin = () => {
               <span className="material-symbols-outlined text-4xl">lock</span>
             </div>
             <h1 className="text-3xl font-headline font-bold text-gray-800">Admin Login</h1>
-            <p className="text-gray-500 font-medium font-body">Please enter password to continue</p>
+            <p className="text-gray-500 font-medium font-body">Please enter credentials to continue</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Login ID</label>
+              <input 
+                type="text" 
+                value={loginId}
+                onChange={(e) => setLoginId(e.target.value)}
+                autoFocus
+                className="w-full px-6 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-bold tracking-widest"
+                placeholder="admin"
+              />
+            </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Password</label>
               <input 
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                autoFocus
                 className="w-full px-6 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-bold tracking-widest"
                 placeholder="••••••••"
               />
@@ -614,8 +713,16 @@ const Admin = () => {
 
   return (
     <div className="flex h-screen font-body text-slate-800" style={{ background: 'linear-gradient(135deg, rgba(255, 153, 51, 0.20) 0%, rgba(255, 255, 255, 1) 50%, rgba(18, 136, 7, 0.20) 100%)' }} onClick={() => setActionMenuOpenId(null)}>
+      {/* SIDEBAR OVERLAY FOR MOBILE */}
+      {isMobileMenuOpen && (
+        <div 
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 md:hidden animate-in fade-in duration-200"
+            onClick={() => setIsMobileMenuOpen(false)}
+        ></div>
+      )}
+      
       {/* SIDEBAR */}
-      <aside className="w-64 bg-primary text-white flex flex-col shadow-2xl z-20 shrink-0" onClick={e => e.stopPropagation()}>
+      <aside className={`fixed inset-y-0 left-0 w-64 bg-primary text-white flex flex-col shadow-2xl z-50 transform transition-transform duration-300 md:relative md:translate-x-0 shrink-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`} onClick={e => e.stopPropagation()}>
         <div className="h-20 flex items-center justify-center border-b border-white/10 px-6">
             <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-3xl">dashboard_customize</span>
@@ -623,126 +730,169 @@ const Admin = () => {
             </div>
         </div>
         <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-2 mt-2">
-            <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4">Dashboards</p>
+            <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4">Workspace</p>
             
             <button
-                onClick={() => setActiveTab('admissions')}
+                onClick={() => setActiveTab('tasks')}
                 className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'admissions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                activeTab === 'tasks' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
                 }`}
             >
-                <span className="material-symbols-outlined text-[20px]">school</span> Admissions
+                <span className="material-symbols-outlined text-[20px]">task_alt</span> Tasks
             </button>
 
             <button
-                onClick={() => setActiveTab('donations')}
+                onClick={() => setActiveTab('attendance')}
                 className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'donations' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                activeTab === 'attendance' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
                 }`}
             >
-                <span className="material-symbols-outlined text-[20px]">volunteer_activism</span> Donations
+                <span className="material-symbols-outlined text-[20px]">co_present</span> Attendance
             </button>
 
-            <button
-                onClick={() => setActiveTab('joinees')}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'joinees' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`}
-            >
-                <span className="material-symbols-outlined text-[20px]">group_add</span> Join Requests
-            </button>
+            {currentUser?.role === 'SUPER_ADMIN' && (
+                <button
+                    onClick={() => setActiveTab('team')}
+                    className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                    activeTab === 'team' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                    }`}
+                >
+                    <span className="material-symbols-outlined text-[20px]">group</span> Team Management
+                </button>
+            )}
 
-            <button
-                onClick={() => setActiveTab('job-applications')}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'job-applications' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`}
-            >
-                <span className="material-symbols-outlined text-[20px]">assignment_ind</span> Job Applications
-            </button>
+            {(['SUPER_ADMIN', 'DIRECTOR'].includes(currentUser?.role) || isSuperDelegate) && (
+                <>
+                    <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4 mt-8">Dashboards</p>
+                    <button
+                        onClick={() => setActiveTab('admissions')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'admissions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">school</span> Admissions
+                    </button>
+                </>
+            )}
 
-            <button
-                onClick={() => setActiveTab('partner-requests')}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'partner-requests' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`}
-            >
-                <span className="material-symbols-outlined text-[20px]">handshake</span> Partner Requests
-            </button>
-            <button
-                onClick={() => setActiveTab('slot-bookings')}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'slot-bookings' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`}
-            >
-                <span className="material-symbols-outlined text-[20px]">event_available</span> Slot Bookings
-            </button>
+            {(['SUPER_ADMIN', 'DIRECTOR'].includes(currentUser?.role) || isSuperDelegate) && (
+                <>
+                    <button
+                        onClick={() => setActiveTab('donations')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'donations' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">volunteer_activism</span> Donations
+                    </button>
 
-            <button
-                onClick={() => setActiveTab('projects')}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'projects' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`}
-            >
-                <span className="material-symbols-outlined text-[20px]">architecture</span> Project Pitches
-            </button>
+                    <button
+                        onClick={() => setActiveTab('joinees')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'joinees' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">group_add</span> Join Requests
+                    </button>
 
-            <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4 mt-8">Manage System</p>
-            <button
-                onClick={() => setActiveTab('courses')}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'courses' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`}
-            >
-                <span className="material-symbols-outlined text-[20px]">menu_book</span> Certificate Courses
-            </button>
-            <button
-                onClick={() => setActiveTab('diploma_courses')}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'diploma_courses' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`}
-            >
-                <span className="material-symbols-outlined text-[20px]">workspace_premium</span> Diploma/Degree Courses
-            </button>
-            <button
-                onClick={() => setActiveTab('competitive_exams')}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'competitive_exams' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`}
-            >
-                <span className="material-symbols-outlined text-[20px]">assignment</span> Competitive Exams
-            </button>
-            <button
-                onClick={() => setActiveTab('media')}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'media' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`}
-            >
-                <span className="material-symbols-outlined text-[20px]">perm_media</span> Media Gallery
-            </button>
-            <button
-                onClick={() => setActiveTab('live_sessions')}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'live_sessions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`}
-            >
-                <span className="material-symbols-outlined text-[20px]">live_tv</span> Live Sessions
-            </button>
-            <button
-                onClick={() => setActiveTab('jobs')}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                activeTab === 'jobs' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`}
-            >
-                <span className="material-symbols-outlined text-[20px]">work</span> Job Placements
-            </button>
+                    <button
+                        onClick={() => setActiveTab('job-applications')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'job-applications' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">assignment_ind</span> Job Applications
+                    </button>
+
+                    <button
+                        onClick={() => setActiveTab('partner-requests')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'partner-requests' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">handshake</span> Partner Requests
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('slot-bookings')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'slot-bookings' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">event_available</span> Slot Bookings
+                    </button>
+
+                    <button
+                        onClick={() => setActiveTab('projects')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'projects' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">architecture</span> Project Pitches
+                    </button>
+
+                    <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4 mt-8">Manage System</p>
+                    <button
+                        onClick={() => setActiveTab('courses')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'courses' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">menu_book</span> Certificate Courses
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('diploma_courses')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'diploma_courses' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">workspace_premium</span> Diploma/Degree Courses
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('competitive_exams')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'competitive_exams' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">assignment</span> Competitive Exams
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('media')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'media' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">perm_media</span> Media Gallery
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('live_sessions')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'live_sessions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">live_tv</span> Live Sessions
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('jobs')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'jobs' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">work</span> Job Placements
+                    </button>
+                </>
+            )}
         </nav>
         <div className="p-6 border-t border-white/10 space-y-4">
             <div className="bg-white/10 p-4 rounded-xl">
                 <p className="text-xs text-white/70 mb-2">Logged in as</p>
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-white text-primary flex items-center justify-center font-bold">A</div>
-                    <span className="font-headline font-bold text-sm">Super Admin</span>
+                    <div className="w-8 h-8 rounded-full bg-white text-primary flex items-center justify-center font-bold">
+                        {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'A'}
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="font-headline font-bold text-sm">{currentUser?.name || 'Super Admin'}</span>
+                        <span className="text-[10px] text-white/60 font-bold tracking-wider">{currentUser?.role?.replace('_', ' ')}</span>
+                    </div>
                 </div>
             </div>
             <button 
@@ -777,9 +927,15 @@ const Admin = () => {
                 {activeTab === 'partner-requests' && 'Partnership Requests'}
                 {activeTab === 'slot-bookings' && 'Slot Bookings'}
                 {activeTab === 'projects' && 'Project Pitches'}
+                {activeTab === 'csr_partners' && 'CSR Partners'}
+                {activeTab === 'tasks' && 'Workspace Tasks'}
+                {activeTab === 'attendance' && 'Attendance Records'}
+                {activeTab === 'team' && 'Team Management'}
+                {activeTab === 'profile' && 'My Profile'}
             </h2>
           </div>
           <div className="flex items-center gap-6">
+            <NotificationBell currentUser={currentUser} />
             <button onClick={handleExportCSV} className="flex items-center gap-2 px-4 py-2 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg text-green-700 hover:text-green-800 transition-all text-sm font-semibold shadow-sm">
                 <span className="material-symbols-outlined text-[18px]">download</span>
                 Export CSV
@@ -807,6 +963,12 @@ const Admin = () => {
             </div>
             ) : (
             <div className="max-w-7xl mx-auto space-y-6">
+
+                {/* ---------- WORKSPACE TABS ---------- */}
+                {activeTab === 'tasks' && <TasksTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} />}
+                {activeTab === 'attendance' && <AttendanceTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} />}
+                {activeTab === 'team' && <TeamTab currentUser={currentUser} />}
+                {activeTab === 'profile' && <ProfileTab currentUser={currentUser} />}
                 
                 {/* ---------- ADMISSIONS TAB ---------- */}
                 {activeTab === 'admissions' && (
@@ -2141,7 +2303,58 @@ const Admin = () => {
             )}
 
                 {/* ---------- PROJECTS TAB ---------- */}
-                {activeTab === 'projects' && (
+                
+      {activeTab === 'csr_partners' && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50/80 border-b border-gray-100">
+                    <th className="p-4 font-semibold text-gray-600 text-sm">Partner Type</th>
+                    <th className="p-4 font-semibold text-gray-600 text-sm">Name</th>
+                    <th className="p-4 font-semibold text-gray-600 text-sm">Email</th>
+                    <th className="p-4 font-semibold text-gray-600 text-sm">Status</th>
+                    <th className="p-4 font-semibold text-gray-600 text-sm">Submitted</th>
+                    <th className="p-4 font-semibold text-gray-600 text-sm">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {csrPartners.map((partner) => (
+                    <tr key={partner._id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="p-4 text-sm font-medium text-gray-800 capitalize">{partner.type}</td>
+                      <td className="p-4 text-sm text-gray-600">{partner.type === 'corporate' ? partner.companyName : partner.ngoName}</td>
+                      <td className="p-4 text-sm text-gray-600">{partner.type === 'corporate' ? partner.contactEmail : partner.email}</td>
+                      <td className="p-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${partner.status === 'approved' ? 'bg-green-100 text-green-700' : partner.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
+                          {partner.status || 'pending'}
+                        </span>
+                      </td>
+                      <td className="p-4 text-sm text-gray-500">{new Date(partner.createdAt).toLocaleDateString()}</td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => setSelectedCsrPartnerDetails(partner)} className="p-1.5 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors" title="View Details">
+                            <span className="material-symbols-outlined text-[20px]">visibility</span>
+                          </button>
+                          <button onClick={() => handleUpdateStatus(partner._id, 'approved', 'csr_partner')} className="p-1.5 hover:bg-green-50 text-green-600 rounded-lg transition-colors" title="Approve">
+                            <span className="material-symbols-outlined text-[20px]">check_circle</span>
+                          </button>
+                          <button onClick={() => handleUpdateStatus(partner._id, 'rejected', 'csr_partner')} className="p-1.5 hover:bg-red-50 text-red-600 rounded-lg transition-colors" title="Reject">
+                            <span className="material-symbols-outlined text-[20px]">cancel</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {csrPartners.length === 0 && !loading && (
+                    <tr><td colSpan="6" className="p-8 text-center text-gray-500">No CSR partners found.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+      {activeTab === 'projects' && (
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-visible relative">
                         <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-white rounded-t-2xl">
                             <h3 className="font-headline font-bold text-lg text-gray-800">Project Pitches</h3>
@@ -2305,6 +2518,103 @@ const Admin = () => {
                     </div>
                 </div>
             )}
+        
+            {/* CSR PARTNER DETAILS MODAL */}
+            {selectedCsrPartnerDetails && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white rounded-t-2xl z-10">
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-800">
+                                    {selectedCsrPartnerDetails.type === 'corporate' ? selectedCsrPartnerDetails.companyName : selectedCsrPartnerDetails.ngoName}
+                                </h2>
+                                <p className="text-sm text-gray-500 mt-1 capitalize">{selectedCsrPartnerDetails.type} Partner Details</p>
+                            </div>
+                            <button onClick={() => setSelectedCsrPartnerDetails(null)} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div className="p-6 overflow-y-auto">
+                            <div className="space-y-6">
+                                {selectedCsrPartnerDetails.type === 'corporate' ? (
+                                    <>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Contact Name</p>
+                                                <p className="text-gray-800 font-medium">{selectedCsrPartnerDetails.contactName}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Contact Email</p>
+                                                <p className="text-gray-800 font-medium">{selectedCsrPartnerDetails.contactEmail}</p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Budget Range</p>
+                                            <p className="text-gray-800 font-medium">{selectedCsrPartnerDetails.budgetRange}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Focus Sectors</p>
+                                            <p className="text-gray-700 text-sm whitespace-pre-wrap leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">{selectedCsrPartnerDetails.focusSectors?.join(', ')}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Target Geographies</p>
+                                            <p className="text-gray-700 text-sm whitespace-pre-wrap leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">{selectedCsrPartnerDetails.geographies}</p>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Contact Person</p>
+                                                <p className="text-gray-800 font-medium">{selectedCsrPartnerDetails.contactPerson}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Registration Number</p>
+                                                <p className="text-gray-800 font-medium">{selectedCsrPartnerDetails.registrationNumber}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Years of Operation</p>
+                                                <p className="text-gray-800 font-medium">{selectedCsrPartnerDetails.yearsOfOperation}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Regions</p>
+                                                <p className="text-gray-800 font-medium">{selectedCsrPartnerDetails.regions}</p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Core Sectors</p>
+                                            <p className="text-gray-700 text-sm whitespace-pre-wrap leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">{selectedCsrPartnerDetails.coreSectors}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Past Impact</p>
+                                            <p className="text-gray-700 text-sm whitespace-pre-wrap leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">{selectedCsrPartnerDetails.pastImpact}</p>
+                                        </div>
+                                    </>
+                                )}
+                                {selectedCsrPartnerDetails.supportingDocument && (
+                                    <div className="pt-2">
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Supporting Document</p>
+                                        <a 
+                                            href={`${API_URL}${selectedCsrPartnerDetails.supportingDocument}`} 
+                                            target="_blank" rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-2 px-4 py-2 bg-[#000080]/5 text-[#000080] rounded-xl font-medium hover:bg-[#000080]/10 transition-colors"
+                                        >
+                                            <span className="material-symbols-outlined text-[20px]">description</span>
+                                            View Document
+                                        </a>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <div className="p-6 border-t border-gray-100 bg-gray-50 rounded-b-2xl flex justify-end gap-3 shrink-0">
+                            <button onClick={() => setSelectedCsrPartnerDetails(null)} className="px-5 py-2.5 rounded-xl font-bold text-gray-600 hover:bg-gray-200 transition-colors">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </main>
       </div>
     </div>

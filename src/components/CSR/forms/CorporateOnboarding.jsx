@@ -14,7 +14,8 @@ const CorporateOnboarding = () => {
         focusSectors: [],
         geographies: '',
         contactName: '',
-        contactEmail: ''
+        contactEmail: '',
+        supportingDocumentFile: null
     });
 
     const handleChange = (e) => {
@@ -30,15 +31,51 @@ const CorporateOnboarding = () => {
         if (step > 0) setStep(step - 1);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const payload = {
-            ...formData,
-            status: "pending_approval",
-            type: "funder"
-        };
-        console.log("Submitting Corporate Onboarding Payload:", payload);
-        alert("Application submitted! Pending approval.");
+        
+        const data = new FormData();
+        data.append('type', 'corporate');
+        data.append('companyName', formData.companyName);
+        data.append('budgetRange', formData.budgetRange);
+        data.append('geographies', formData.geographies);
+        data.append('contactName', formData.contactName);
+        data.append('contactEmail', formData.contactEmail);
+        
+        if (Array.isArray(formData.focusSectors)) {
+            data.append('focusSectors', formData.focusSectors.join(','));
+        } else {
+            data.append('focusSectors', formData.focusSectors);
+        }
+        
+        if (formData.supportingDocumentFile) {
+            data.append('supportingDocument', formData.supportingDocumentFile);
+        }
+        
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const res = await fetch(`${API_URL}/api/csr-partners`, {
+                method: 'POST',
+                body: data
+            });
+            if (res.ok) {
+                alert("Application submitted! Pending approval.");
+                setFormData({
+                    companyName: '',
+                    budgetRange: '',
+                    focusSectors: [],
+                    geographies: '',
+                    contactName: '',
+                    contactEmail: ''
+                });
+                setStep(0);
+            } else {
+                alert("Failed to submit application.");
+            }
+        } catch (err) {
+            console.error("Submission error:", err);
+            alert("An error occurred during submission.");
+        }
     };
 
     const inputClasses = "w-full p-3 border border-gray-200 rounded-xl focus:outline-none transition-shadow bg-gray-50 mb-4";
@@ -148,6 +185,22 @@ const CorporateOnboarding = () => {
                                     placeholder="jane.doe@company.com"
                                     required 
                                 />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1">Upload your CSR policy or related compliance documents (.pdf)</label>
+                                <div className="relative">
+                                    <input 
+                                        type="file" 
+                                        name="supportingDocumentFile" 
+                                        accept=".pdf" 
+                                        onChange={(e) => setFormData(prev => ({ ...prev, supportingDocumentFile: e.target.files[0] }))} 
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                                    />
+                                    <div className="w-full p-4 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 flex items-center justify-center text-gray-500 font-medium hover:bg-gray-100 transition-colors pointer-events-none">
+                                        <span className="material-symbols-outlined mr-2">upload_file</span>
+                                        {formData.supportingDocumentFile ? formData.supportingDocumentFile.name : "Select PDF Document"}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}

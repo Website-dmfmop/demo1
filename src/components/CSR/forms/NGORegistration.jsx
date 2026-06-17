@@ -15,7 +15,8 @@ const NGORegistration = () => {
         regions: '',
         yearsOfOperation: '',
         pastImpact: '',
-        contactPerson: ''
+        contactPerson: '',
+        supportingDocumentFile: null
     });
 
     const handleChange = (e) => {
@@ -31,15 +32,48 @@ const NGORegistration = () => {
         if (step > 0) setStep(step - 1);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const payload = {
-            ...formData,
-            status: "pending_approval",
-            type: "ngo"
-        };
-        console.log("Submitting NGO Registration Payload:", payload);
-        alert("Registration submitted! Pending verification.");
+        
+        const data = new FormData();
+        data.append('type', 'ngo');
+        data.append('ngoName', formData.ngoName);
+        data.append('registrationNumber', formData.registrationNumber);
+        data.append('coreSectors', formData.coreSectors);
+        data.append('regions', formData.regions);
+        data.append('yearsOfOperation', formData.yearsOfOperation);
+        data.append('pastImpact', formData.pastImpact);
+        data.append('contactPerson', formData.contactPerson);
+        
+        if (formData.supportingDocumentFile) {
+            data.append('supportingDocument', formData.supportingDocumentFile);
+        }
+        
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const res = await fetch(`${API_URL}/api/csr-partners`, {
+                method: 'POST',
+                body: data
+            });
+            if (res.ok) {
+                alert("Registration submitted! Pending verification.");
+                setFormData({
+                    ngoName: '',
+                    registrationNumber: '',
+                    coreSectors: '',
+                    regions: '',
+                    yearsOfOperation: '',
+                    pastImpact: '',
+                    contactPerson: ''
+                });
+                setStep(0);
+            } else {
+                alert("Failed to submit registration.");
+            }
+        } catch (err) {
+            console.error("Submission error:", err);
+            alert("An error occurred during submission.");
+        }
     };
 
     const inputClasses = "w-full p-3 border border-gray-200 rounded-xl focus:outline-none transition-shadow bg-gray-50 mb-4";
@@ -155,6 +189,22 @@ const NGORegistration = () => {
                                     placeholder="John Doe, +91 9876543210"
                                     required 
                                 />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1">Upload a supporting document (e.g., Annual Report, 80G/12A Certificate, or NGO Profile) (.pdf)</label>
+                                <div className="relative">
+                                    <input 
+                                        type="file" 
+                                        name="supportingDocumentFile" 
+                                        accept=".pdf" 
+                                        onChange={(e) => setFormData(prev => ({ ...prev, supportingDocumentFile: e.target.files[0] }))} 
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                                    />
+                                    <div className="w-full p-4 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 flex items-center justify-center text-gray-500 font-medium hover:bg-gray-100 transition-colors pointer-events-none">
+                                        <span className="material-symbols-outlined mr-2">upload_file</span>
+                                        {formData.supportingDocumentFile ? formData.supportingDocumentFile.name : "Select PDF Document"}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}

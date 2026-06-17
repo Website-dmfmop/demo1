@@ -5,21 +5,30 @@ const CSRContext = createContext();
 export const CSRProvider = ({ children }) => {
     const [currentView, setCurrentView] = useState('home'); // 'home' | 'directory'
     const [projects, setProjects] = useState([]);
+    const [csrPartners, setCsrPartners] = useState([]);
 
     React.useEffect(() => {
-        const fetchProjects = async () => {
+        const fetchData = async () => {
             try {
                 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-                const res = await fetch(`${API_URL}/api/projects`);
-                if (res.ok) {
-                    const data = await res.json();
+                const [projRes, partRes] = await Promise.all([
+                    fetch(`${API_URL}/api/projects`),
+                    fetch(`${API_URL}/api/csr-partners`)
+                ]);
+                if (projRes.ok) {
+                    const data = await projRes.json();
                     setProjects(data);
                 }
+                if (partRes.ok) {
+                    const data = await partRes.json();
+                    // only store approved partners for the public directory
+                    setCsrPartners(data.filter(p => p.status === 'Approved'));
+                }
             } catch (error) {
-                console.error("Failed to fetch projects:", error);
+                console.error("Failed to fetch CSR data:", error);
             }
         };
-        fetchProjects();
+        fetchData();
     }, []);
 
     const addProject = (project) => {
@@ -27,7 +36,7 @@ export const CSRProvider = ({ children }) => {
     };
 
     return (
-        <CSRContext.Provider value={{ currentView, setCurrentView, projects, setProjects, addProject }}>
+        <CSRContext.Provider value={{ currentView, setCurrentView, projects, setProjects, addProject, csrPartners, setCsrPartners }}>
             {children}
         </CSRContext.Provider>
     );

@@ -370,7 +370,7 @@ const ProjectPitchForm = () => {
                                 <input type="file" name="pitchDeckFile" accept=".pdf" onChange={handleInputChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                                 <span className="material-symbols-outlined text-4xl text-gray-400 mb-2">upload_file</span>
                                 <p style={{ fontFamily: 'Manrope, sans-serif' }} className="font-bold text-gray-700">
-                                    {formData.pitchDeckFile ? formData.pitchDeckFile.name : "Upload Pitch Deck & Budget (.pdf)"}
+                                    {formData.pitchDeckFile ? formData.pitchDeckFile.name : "Upload supporting project documents (e.g., Detailed Project Report, Pitch Deck, or Budget Breakdown) (.pdf)"}
                                 </p>
                                 <p className="text-xs text-gray-500 mt-1">Maximum file size: 10MB</p>
                             </label>

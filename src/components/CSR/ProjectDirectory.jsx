@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useCSRContext } from '../../context/CSRContext';
 import Button from '../ui/Button';
 import ProjectGrid from './ProjectGrid';
+import PartnerGrid from './PartnerGrid';
 import DirectoryControls from './DirectoryControls';
 import FilterSidebar from './FilterSidebar';
 import ActiveFiltersBar from './ActiveFiltersBar';
@@ -9,7 +10,8 @@ import ProjectDetailModal from './ProjectDetailModal';
 import useProjectFilter from '../../hooks/useProjectFilter';
 
 const ProjectDirectory = () => {
-    const { setCurrentView, projects } = useCSRContext();
+    const { setCurrentView, projects, csrPartners } = useCSRContext();
+    const [activeDirectoryTab, setActiveDirectoryTab] = useState('projects'); // 'projects', 'corporate', 'ngo'
     const [searchQuery, setSearchQuery] = useState('');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedProject, setSelectedProject] = useState(null);
@@ -72,47 +74,86 @@ const ProjectDirectory = () => {
                     Back to Ecosystem
                 </Button>
                 
-                <div className="flex justify-between items-end mb-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
                     <h1 style={{ fontFamily: 'Manrope, sans-serif' }} className="text-4xl font-bold text-gray-900">
-                        Explore Projects
+                        CSR Ecosystem Directory
                     </h1>
+                    {/* Directory Tabs */}
+                    <div className="flex bg-white rounded-xl shadow-sm border border-gray-200 p-1">
+                        <button 
+                            onClick={() => setActiveDirectoryTab('projects')}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeDirectoryTab === 'projects' ? 'bg-[#000080] text-white' : 'text-gray-500 hover:text-gray-700'}`}
+                        >
+                            Projects
+                        </button>
+                        <button 
+                            onClick={() => setActiveDirectoryTab('corporate')}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeDirectoryTab === 'corporate' ? 'bg-[#000080] text-white' : 'text-gray-500 hover:text-gray-700'}`}
+                        >
+                            Funding Companies
+                        </button>
+                        <button 
+                            onClick={() => setActiveDirectoryTab('ngo')}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeDirectoryTab === 'ngo' ? 'bg-[#000080] text-white' : 'text-gray-500 hover:text-gray-700'}`}
+                        >
+                            Implementation Partners
+                        </button>
+                    </div>
                     {/* Mobile filter button */}
-                    <button 
-                        className="md:hidden flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl font-medium text-gray-700 shadow-sm"
-                        onClick={() => setIsSidebarOpen(true)}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">tune</span>
-                        Filters
-                    </button>
+                    {activeDirectoryTab === 'projects' && (
+                        <button 
+                            className="md:hidden flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl font-medium text-gray-700 shadow-sm"
+                            onClick={() => setIsSidebarOpen(true)}
+                        >
+                            <span className="material-symbols-outlined text-[20px]">tune</span>
+                            Filters
+                        </button>
+                    )}
                 </div>
 
-                <DirectoryControls 
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    activeFilters={filters.sectors}
-                    toggleFilter={(sector) => {
-                        setFilters(prev => ({
-                            ...prev,
-                            sectors: prev.sectors.includes(sector) 
-                                ? prev.sectors.filter(s => s !== sector) 
-                                : [...prev.sectors, sector]
-                        }))
-                    }}
-                />
-                
-                <div className="flex flex-col md:flex-row gap-8">
-                    <FilterSidebar 
-                        filters={filters} 
-                        setFilters={setFilters} 
-                        isOpen={isSidebarOpen} 
-                        onClose={() => setIsSidebarOpen(false)} 
-                    />
-                    
-                    <div className="flex-1 overflow-hidden min-w-0">
-                        <ActiveFiltersBar filters={filters} clearFilter={clearFilter} />
-                        <ProjectGrid projects={filteredProjects} onProjectClick={setSelectedProject} />
+                {activeDirectoryTab === 'projects' && (
+                    <>
+                        <DirectoryControls 
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                            activeFilters={filters.sectors}
+                            toggleFilter={(sector) => {
+                                setFilters(prev => ({
+                                    ...prev,
+                                    sectors: prev.sectors.includes(sector) 
+                                        ? prev.sectors.filter(s => s !== sector) 
+                                        : [...prev.sectors, sector]
+                                }))
+                            }}
+                        />
+                        
+                        <div className="flex flex-col md:flex-row gap-8">
+                            <FilterSidebar 
+                                filters={filters} 
+                                setFilters={setFilters} 
+                                isOpen={isSidebarOpen} 
+                                onClose={() => setIsSidebarOpen(false)} 
+                            />
+                            
+                            <div className="flex-1 overflow-hidden min-w-0">
+                                <ActiveFiltersBar filters={filters} clearFilter={clearFilter} />
+                                <ProjectGrid projects={filteredProjects} onProjectClick={setSelectedProject} />
+                            </div>
+                        </div>
+                    </>
+                )}
+
+                {activeDirectoryTab === 'corporate' && (
+                    <div className="pt-4">
+                        <PartnerGrid partners={(csrPartners || []).filter(p => p.type === 'corporate')} />
                     </div>
-                </div>
+                )}
+
+                {activeDirectoryTab === 'ngo' && (
+                    <div className="pt-4">
+                        <PartnerGrid partners={(csrPartners || []).filter(p => p.type === 'ngo')} />
+                    </div>
+                )}
             </div>
 
             {selectedProject && (

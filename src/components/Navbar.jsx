@@ -46,7 +46,18 @@ const Navbar = () => {
                         <Link className={getLinkClass('/about')} to="/about">{t.navWhatWeAre}</Link>
                         <Link className={getLinkClass('/icoe')} to="/icoe">{t.navWhatWeDo}</Link>
                         <Link className={getLinkClass('/media')} to="/media">{t.navMedia}</Link>
-                        <Link className={getLinkClass('/admission')} to="/admission">{t.navAdmission}</Link>
+                        <div className="relative group">
+                            <span className={`font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] whitespace-nowrap cursor-pointer flex items-center gap-1 ${path.startsWith('/admission') || path.startsWith('/competitive-exams-hub') ? 'text-white border-b-2 border-[#fe9832] pb-1' : 'text-white/80 group-hover:text-white'}`}>
+                                {t.navAdmission} <span className="material-symbols-outlined text-[18px]">arrow_drop_down</span>
+                            </span>
+                            <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 py-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top -translate-y-2 group-hover:translate-y-0">
+                                <Link to="/admission/gnm" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navGnmAdmission}</Link>
+                                <Link to="/competitive-exams-hub" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navCompetitiveExams}</Link>
+                                <Link to="/admission/language-course" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navLanguageCourse}</Link>
+                                <Link to="/admission/technical-course" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navTechnicalCourse}</Link>
+                                <Link to="/admission/other-course" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navOtherCourse}</Link>
+                            </div>
+                        </div>
                         {/* <Link className={getLinkClass('/csr')} to="/csr">{t.navCSR}</Link> */}
                         <Link className={getLinkClass('/job-placement')} to="/job-placement">{t.navJobPlacement}</Link>
                         <div className="relative group">
@@ -78,7 +89,18 @@ const Navbar = () => {
                     <Link className={getLinkClass('/about')} to="/about" onClick={() => setMenuOpen(false)}>{t.navWhatWeAre}</Link>
                     <Link className={getLinkClass('/icoe')} to="/icoe" onClick={() => setMenuOpen(false)}>{t.navWhatWeDo}</Link>
                     <Link className={getLinkClass('/media')} to="/media" onClick={() => setMenuOpen(false)}>{t.navMedia}</Link>
-                    <Link className={getLinkClass('/admission')} to="/admission" onClick={() => setMenuOpen(false)}>{t.navAdmission}</Link>
+                    
+                    <div className="flex flex-col gap-2 mt-2 pt-2 border-t border-white/10">
+                        <span className="font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] text-white/50 px-2">{t.navAdmission}</span>
+                        <div className="flex flex-col gap-3 pl-4">
+                            <Link to="/admission/gnm" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navGnmAdmission}</Link>
+                            <Link to="/competitive-exams-hub" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navCompetitiveExams}</Link>
+                            <Link to="/admission/language-course" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navLanguageCourse}</Link>
+                            <Link to="/admission/technical-course" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navTechnicalCourse}</Link>
+                            <Link to="/admission/other-course" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navOtherCourse}</Link>
+                        </div>
+                    </div>
+
                     <Link className={getLinkClass('/csr')} to="/csr" onClick={() => setMenuOpen(false)}>{t.navCSR}</Link>
                     <Link className={getLinkClass('/job-placement')} to="/job-placement" onClick={() => setMenuOpen(false)}>{t.navJobPlacement}</Link>
 
