@@ -31,11 +31,11 @@ const Navbar = () => {
                         alt="DMF - Movement of Positivity"
                         className="h-14 md:h-16 w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
                     />
-                    <div className="hidden sm:flex flex-col max-w-[200px] md:max-w-none">
-                        <span className="text-white font-headline font-bold text-xl leading-tight tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    <div className="flex flex-col max-w-[200px] sm:max-w-[200px] md:max-w-none">
+                        <span className="text-white font-headline font-bold text-sm sm:text-xl leading-tight tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                             {t.brandName}
                         </span>
-                        <span className="text-[#fe9832] font-headline font-bold text-xs uppercase tracking-[0.2em] mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                        <span className="hidden sm:block text-[#fe9832] font-headline font-bold text-xs uppercase tracking-[0.2em] mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                             {t.brandTagline}
                         </span>
                     </div>
@@ -74,7 +74,7 @@ const Navbar = () => {
                         </div>
                     </div>
                     <button
-                        className="md:hidden text-white p-2"
+                        className="lg:hidden text-white p-2"
                         onClick={() => setMenuOpen(!menuOpen)}
                     >
                         <span className="material-symbols-outlined">{menuOpen ? 'close' : 'menu'}</span>
@@ -84,7 +84,7 @@ const Navbar = () => {
 
             {/* Mobile Menu */}
             {menuOpen && (
-                <div className="md:hidden bg-primary/95 backdrop-blur-xl border-t border-white/10 px-6 py-6 flex flex-col gap-4">
+                <div className="lg:hidden bg-primary/95 backdrop-blur-xl border-t border-white/10 px-6 py-6 flex flex-col gap-4">
                     <Link className={getLinkClass('/')} to="/" onClick={() => setMenuOpen(false)}>{t.navHome}</Link>
                     <Link className={getLinkClass('/about')} to="/about" onClick={() => setMenuOpen(false)}>{t.navWhatWeAre}</Link>
                     <Link className={getLinkClass('/icoe')} to="/icoe" onClick={() => setMenuOpen(false)}>{t.navWhatWeDo}</Link>

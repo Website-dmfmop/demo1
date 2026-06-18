@@ -7,7 +7,7 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [formOpen, setFormOpen] = useState(false);
-    const [form, setForm] = useState({ title: '', description: '', assignedTo: '', deadline: '' });
+    const [form, setForm] = useState({ title: '', description: '', assignedTo: [], deadline: '' });
     const [editingTaskId, setEditingTaskId] = useState(null);
     const [editTaskForm, setEditTaskForm] = useState({ title: '', description: '', assignedTo: '', deadline: '' });
     const [error, setError] = useState(null);
@@ -50,21 +50,38 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
     const createTask = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`${API_URL}/api/tasks`, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
-                },
-                body: JSON.stringify(form)
-            });
-            if (res.ok) {
-                setForm({ title: '', description: '', assignedTo: '', deadline: '' });
+            if (!form.assignedTo || form.assignedTo.length === 0) {
+                alert('Please select at least one user');
+                return;
+            }
+
+            let targets = [];
+            if (form.assignedTo.includes('ALL')) {
+                targets = users.filter(u => u.role !== 'SUPER_ADMIN').map(u => u._id);
+            } else {
+                targets = form.assignedTo;
+            }
+
+            const promises = targets.map(userId => 
+                fetch(`${API_URL}/api/tasks`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
+                    },
+                    body: JSON.stringify({ ...form, assignedTo: userId })
+                })
+            );
+            
+            const results = await Promise.all(promises);
+            const failed = results.filter(res => !res.ok);
+            
+            if (failed.length > 0) {
+                alert(`Failed to create task for ${failed.length} user(s).`);
+            } else {
+                setForm({ title: '', description: '', assignedTo: [], deadline: '' });
                 setFormOpen(false);
                 fetchData();
-            } else {
-                const data = await res.json();
-                alert(data.error || 'Failed to create task');
             }
         } catch (err) {
             alert('Error creating task');
@@ -231,12 +248,47 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-1">Assign To</label>
-                            <select required value={form.assignedTo} onChange={e => setForm({...form, assignedTo: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary">
-                                <option value="" disabled>Select User</option>
-                                {users.filter(u => u.role !== 'SUPER_ADMIN').map(u => (
-                                    <option key={u._id} value={u._id}>{u.name || u.loginId} ({u.role.replace(/_/g, ' ')})</option>
-                                ))}
-                            </select>
+                            <div className="w-full border border-gray-300 rounded-lg overflow-hidden bg-white">
+                                <div className="max-h-[160px] overflow-y-auto p-2 space-y-1">
+                                    <label className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer transition-colors border border-transparent hover:border-gray-100">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={form.assignedTo.includes('ALL')}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setForm({...form, assignedTo: ['ALL']});
+                                                } else {
+                                                    setForm({...form, assignedTo: []});
+                                                }
+                                            }}
+                                            className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary focus:ring-2 cursor-pointer"
+                                        />
+                                        <span className="text-sm font-bold text-gray-800">Select All Users</span>
+                                    </label>
+                                    <div className="h-px bg-gray-100 my-1"></div>
+                                    {users.filter(u => u.role !== 'SUPER_ADMIN').map(u => (
+                                        <label key={u._id} className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors border border-transparent ${form.assignedTo.includes('ALL') ? 'opacity-50' : 'hover:bg-gray-50 hover:border-gray-100'}`}>
+                                            <input 
+                                                type="checkbox" 
+                                                checked={form.assignedTo.includes(u._id) || form.assignedTo.includes('ALL')}
+                                                onChange={(e) => {
+                                                    if (form.assignedTo.includes('ALL')) return;
+                                                    let newAssignedTo = [...form.assignedTo];
+                                                    if (e.target.checked) {
+                                                        newAssignedTo.push(u._id);
+                                                    } else {
+                                                        newAssignedTo = newAssignedTo.filter(id => id !== u._id);
+                                                    }
+                                                    setForm({...form, assignedTo: newAssignedTo});
+                                                }}
+                                                disabled={form.assignedTo.includes('ALL')}
+                                                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary focus:ring-2 cursor-pointer disabled:cursor-not-allowed"
+                                            />
+                                            <span className="text-sm text-gray-700">{u.name || u.loginId} <span className="text-xs text-gray-400 ml-1">({u.role.replace(/_/g, ' ')})</span></span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-1">Deadline (Optional)</label>
