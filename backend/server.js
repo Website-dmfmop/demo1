@@ -370,6 +370,10 @@ app.post('/api/competitive-exams', upload.single('brochure'), async (req, res) =
         const data = { ...req.body };
         if (req.file) data.brochure = '/uploads/' + req.file.filename;
 
+        if (typeof data.pattern === 'string') {
+            try { data.pattern = JSON.parse(data.pattern); } catch(e) {}
+        }
+
         const newExam = new CompetitiveExam(data);
         const savedExam = await newExam.save();
         res.status(201).json(savedExam);
@@ -383,6 +387,10 @@ app.put('/api/competitive-exams/:id', upload.single('brochure'), async (req, res
         const CompetitiveExam = require('./models/CompetitiveExam');
         const data = { ...req.body };
         if (req.file) data.brochure = '/uploads/' + req.file.filename;
+
+        if (typeof data.pattern === 'string') {
+            try { data.pattern = JSON.parse(data.pattern); } catch(e) {}
+        }
 
         const updatedExam = await CompetitiveExam.findByIdAndUpdate(req.params.id, data, { new: true });
         res.json(updatedExam);

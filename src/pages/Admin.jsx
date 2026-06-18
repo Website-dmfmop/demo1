@@ -83,7 +83,7 @@ const Admin = () => {
   const [showCourseForm, setShowCourseForm] = useState(false);
   const [diplomaCourseForm, setDiplomaCourseForm] = useState({ courseName: '', description: '', category: 'General' });
   const [showDiplomaCourseForm, setShowDiplomaCourseForm] = useState(false);
-  const [competitiveExamForm, setCompetitiveExamForm] = useState({ examName: '', description: '', category: 'General', brochure: null });
+  const [competitiveExamForm, setCompetitiveExamForm] = useState({ examName: '', overview: '', eligibility: '', level: 'State Level', category: 'General', pattern: [{stage: '', desc: ''}], brochure: null });
   const [showCompetitiveExamForm, setShowCompetitiveExamForm] = useState(false);
   
   const [showMediaForm, setShowMediaForm] = useState(false);
@@ -376,8 +376,11 @@ const Admin = () => {
       e.preventDefault();
       const formData = new FormData();
       formData.append('examName', competitiveExamForm.examName);
-      formData.append('description', competitiveExamForm.description);
+      formData.append('overview', competitiveExamForm.overview);
+      formData.append('eligibility', competitiveExamForm.eligibility);
+      formData.append('level', competitiveExamForm.level);
       formData.append('category', competitiveExamForm.category);
+      formData.append('pattern', JSON.stringify(competitiveExamForm.pattern));
       if (competitiveExamForm.brochure) formData.append('brochure', competitiveExamForm.brochure);
 
       try {
@@ -388,7 +391,7 @@ const Admin = () => {
               body: formData
           });
           if (res.ok) {
-              setCompetitiveExamForm({ examName: '', description: '', category: 'General', brochure: null });
+              setCompetitiveExamForm({ examName: '', overview: '', eligibility: '', level: 'State Level', category: 'General', pattern: [{stage: '', desc: ''}], brochure: null });
               setShowCompetitiveExamForm(false);
               setEditingId(null);
               fetchData();
@@ -569,7 +572,7 @@ const Admin = () => {
           setDiplomaCourseForm({ courseName: item.courseName, description: item.description, category: item.category || 'General' });
           setShowDiplomaCourseForm(true);
       } else if (type === 'competitive-exam') {
-          setCompetitiveExamForm({ examName: item.examName, description: item.description, category: item.category || 'General', brochure: null });
+          setCompetitiveExamForm({ examName: item.examName, overview: item.overview || '', eligibility: item.eligibility || '', level: item.level || 'State Level', category: item.category || 'General', pattern: item.pattern || [{stage: '', desc: ''}], brochure: null });
           setShowCompetitiveExamForm(true);
       } else if (type === 'media') {
           setMediaForm({ title: item.title, category: item.category, isCustomCategory: false, customCategory: '', date: item.date || '', file: null });
@@ -1374,14 +1377,50 @@ const Admin = () => {
                                             <option>General</option>
                                             <option>Civil Services</option>
                                             <option>Banking</option>
+                                            <option>Technical/Staff</option>
                                             <option>Railways</option>
                                             <option>Defense</option>
                                             <option>Others</option>
                                         </select>
                                     </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Level</label>
+                                        <select value={competitiveExamForm.level} onChange={e => setCompetitiveExamForm({...competitiveExamForm, level: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                                            <option>State Level</option>
+                                            <option>Central Level</option>
+                                        </select>
+                                    </div>
                                     <div className="md:col-span-2">
-                                        <label className="block text-sm font-bold text-gray-700 mb-2">Description</label>
-                                        <textarea required value={competitiveExamForm.description} onChange={e => setCompetitiveExamForm({...competitiveExamForm, description: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" rows="6"></textarea>
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Overview</label>
+                                        <textarea required value={competitiveExamForm.overview} onChange={e => setCompetitiveExamForm({...competitiveExamForm, overview: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" rows="3"></textarea>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Eligibility</label>
+                                        <textarea required value={competitiveExamForm.eligibility} onChange={e => setCompetitiveExamForm({...competitiveExamForm, eligibility: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" rows="3"></textarea>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-bold text-gray-700 mb-2">Exam Pattern</label>
+                                        {competitiveExamForm.pattern.map((p, index) => (
+                                            <div key={index} className="flex gap-4 mb-2 items-center">
+                                                <input type="text" placeholder="Stage (e.g. Prelims)" required value={p.stage} onChange={e => {
+                                                    const newPattern = [...competitiveExamForm.pattern];
+                                                    newPattern[index].stage = e.target.value;
+                                                    setCompetitiveExamForm({...competitiveExamForm, pattern: newPattern});
+                                                }} className="w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                                <input type="text" placeholder="Description" required value={p.desc} onChange={e => {
+                                                    const newPattern = [...competitiveExamForm.pattern];
+                                                    newPattern[index].desc = e.target.value;
+                                                    setCompetitiveExamForm({...competitiveExamForm, pattern: newPattern});
+                                                }} className="w-2/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                                <button type="button" onClick={() => {
+                                                    const newPattern = competitiveExamForm.pattern.filter((_, i) => i !== index);
+                                                    setCompetitiveExamForm({...competitiveExamForm, pattern: newPattern});
+                                                }} className="text-red-500 material-symbols-outlined hover:bg-red-50 p-2 rounded-full">delete</button>
+                                            </div>
+                                        ))}
+                                        <button type="button" onClick={() => {
+                                            setCompetitiveExamForm({...competitiveExamForm, pattern: [...competitiveExamForm.pattern, {stage: '', desc: ''}]});
+                                        }} className="mt-2 text-sm text-primary font-bold hover:underline">+ Add Stage</button>
                                     </div>
                                     <div className="md:col-span-2">
                                         <label className="block text-sm font-bold text-gray-700 mb-2">Upload Supportive Document (Image/PDF)</label>
@@ -1410,7 +1449,7 @@ const Admin = () => {
                                                 </div>
                                             </div>
                                             <h4 className="font-headline font-bold text-xl text-gray-800 mb-2">{exam.examName}</h4>
-                                            <p className="text-sm text-gray-500 mb-4 line-clamp-3 whitespace-pre-wrap">{exam.description}</p>
+                                            <p className="text-sm text-gray-500 mb-4 line-clamp-3 whitespace-pre-wrap">{exam.overview}</p>
                                             {exam.brochure && (
                                                 <div className="flex items-center gap-1 text-xs font-bold text-green-600">
                                                     <span className="material-symbols-outlined text-[16px]">check_circle</span>
