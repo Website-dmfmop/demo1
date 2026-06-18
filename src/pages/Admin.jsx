@@ -912,11 +912,11 @@ const Admin = () => {
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         
         {/* TOPBAR */}
-        <header className="h-20 bg-white shadow-sm border-b border-gray-200 flex items-center justify-between px-8 z-10 shrink-0">
-          <div className="flex items-center gap-4">
-            <span className="material-symbols-outlined text-gray-400 cursor-pointer hover:text-primary transition-colors">menu</span>
-            <div className="h-6 w-px bg-gray-200 mx-2"></div>
-            <h2 className="text-xl font-headline font-bold text-gray-800 uppercase tracking-wide">
+        <header className="h-20 bg-white shadow-sm border-b border-gray-200 flex items-center justify-between px-4 md:px-8 z-10 shrink-0 gap-2">
+          <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
+            <span onClick={() => setIsMobileMenuOpen(true)} className="material-symbols-outlined text-gray-400 cursor-pointer hover:text-primary transition-colors shrink-0">menu</span>
+            <div className="h-6 w-px bg-gray-200 mx-1 md:mx-2 shrink-0"></div>
+            <h2 className="text-sm sm:text-base md:text-xl font-headline font-bold text-gray-800 uppercase tracking-wide truncate">
                 {activeTab === 'admissions' && 'Admissions Data'}
                 {activeTab === 'donations' && 'Donations Tracker'}
                 {activeTab === 'courses' && 'Course Management'}
@@ -937,15 +937,15 @@ const Admin = () => {
                 {activeTab === 'profile' && 'My Profile'}
             </h2>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 md:gap-6 shrink-0">
             <NotificationBell currentUser={currentUser} />
-            <button onClick={handleExportCSV} className="flex items-center gap-2 px-4 py-2 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg text-green-700 hover:text-green-800 transition-all text-sm font-semibold shadow-sm">
+            <button onClick={handleExportCSV} className="flex items-center gap-2 px-2 md:px-4 py-2 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg text-green-700 hover:text-green-800 transition-all text-sm font-semibold shadow-sm">
                 <span className="material-symbols-outlined text-[18px]">download</span>
-                Export CSV
+                <span className="hidden md:inline">Export CSV</span>
             </button>
-            <button onClick={fetchData} className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-gray-600 hover:text-primary transition-all text-sm font-semibold shadow-sm">
+            <button onClick={fetchData} className="flex items-center gap-2 px-2 md:px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-gray-600 hover:text-primary transition-all text-sm font-semibold shadow-sm">
                 <span className={`material-symbols-outlined text-[18px] ${loading ? 'animate-spin' : ''}`}>refresh</span>
-                Refresh Data
+                <span className="hidden md:inline">Refresh Data</span>
             </button>
           </div>
         </header>

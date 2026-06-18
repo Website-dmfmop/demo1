@@ -17,15 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    required: true,
-    enum: [
-      'SUPER_ADMIN', 
-      'DIRECTOR', 
-      'OPERATION_HEAD', 
-      'TECHNICAL_COORDINATOR', 
-      'TECHNICAL_ASSOCIATE', 
-      'TRAINER'
-    ]
+    required: true
   }
 }, { timestamps: true });
 
