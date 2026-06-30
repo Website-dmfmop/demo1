@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import ExamsHero from '../components/CompetitiveExams/ExamsHero';
 import ExamGrid from '../components/CompetitiveExams/ExamGrid';
-import ExamTimeline from '../components/CompetitiveExams/ExamTimeline';
 import ResourceTable from '../components/CompetitiveExams/ResourceTable';
 import OfficerMentorship from '../components/CompetitiveExams/OfficerMentorship';
 import { useLanguage } from '../context/LanguageContext';
@@ -19,7 +18,6 @@ const CompetitiveExamsHub = () => {
         <div className="min-h-screen bg-[#F8F9FA]">
             <ExamsHero />
             <ExamGrid />
-            <ExamTimeline />
             <ResourceTable />
             <OfficerMentorship />
         </div>

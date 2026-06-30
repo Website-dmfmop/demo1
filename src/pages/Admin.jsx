@@ -15,6 +15,7 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('tasks');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [admissions, setAdmissions] = useState([]);
+  const [compExamAdmissions, setCompExamAdmissions] = useState([]);
   const [donations, setDonations] = useState([]);
   const [courses, setCourses] = useState([]);
   const [diplomaCourses, setDiplomaCourses] = useState([]);
@@ -117,6 +118,10 @@ const Admin = () => {
         const res = await fetch(`${API_URL}/api/admissions`);
         if (!res.ok) throw new Error('Failed to fetch admissions');
         setAdmissions(await res.json());
+      } else if (activeTab === 'competitive_exam_admissions') {
+        const res = await fetch(`${API_URL}/api/competitive-exam-admissions`);
+        if (!res.ok) throw new Error('Failed to fetch competitive exam admissions');
+        setCompExamAdmissions(await res.json());
       } else if (activeTab === 'donations') {
         const res = await fetch(`${API_URL}/api/donations`);
         if (!res.ok) throw new Error('Failed to fetch donations');
@@ -230,6 +235,21 @@ const Admin = () => {
     }
   };
 
+  const updateCompExamAdmissionStatus = async (id, newStatus) => {
+    setActionMenuOpenId(null);
+    try {
+      const res = await fetch(`${API_URL}/api/competitive-exam-admissions/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) fetchData();
+      else alert('Failed to update status');
+    } catch (err) {
+      alert('Error updating status');
+    }
+  };
+
   const updateJoineeStatus = async (id, newStatus) => {
     setActionMenuOpenId(null);
     try {
@@ -306,6 +326,7 @@ const Admin = () => {
       if (type === 'partner-request') endpoint = `${API_URL}/api/partner-requests/${id}`;
       if (type === 'slot-booking') endpoint = `${API_URL}/api/slot-bookings/${id}`;
       if (type === 'competitive-exam') endpoint = `${API_URL}/api/competitive-exams/${id}`;
+      if (type === 'competitive-exam-admission') endpoint = `${API_URL}/api/competitive-exam-admissions/${id}`;
       if (type === 'project') endpoint = `${API_URL}/api/projects/${id}`;
 
       const res = await fetch(endpoint, { method: 'DELETE' });
@@ -601,6 +622,7 @@ const Admin = () => {
 
     switch (activeTab) {
       case 'admissions': dataToExport = admissions; break;
+      case 'competitive_exam_admissions': dataToExport = compExamAdmissions; break;
       case 'donations': dataToExport = donations; break;
       case 'courses': dataToExport = courses; break;
       case 'diploma_courses': dataToExport = diplomaCourses; break;
@@ -775,6 +797,14 @@ const Admin = () => {
                     >
                         <span className="material-symbols-outlined text-[20px]">school</span> Admissions
                     </button>
+                    <button
+                        onClick={() => setActiveTab('competitive_exam_admissions')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'competitive_exam_admissions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">how_to_reg</span> Comp. Exam Admissions
+                    </button>
                 </>
             )}
 
@@ -918,6 +948,7 @@ const Admin = () => {
             <div className="h-6 w-px bg-gray-200 mx-1 md:mx-2 shrink-0"></div>
             <h2 className="text-sm sm:text-base md:text-xl font-headline font-bold text-gray-800 uppercase tracking-wide truncate">
                 {activeTab === 'admissions' && 'Admissions Data'}
+                {activeTab === 'competitive_exam_admissions' && 'Competitive Exam Admissions'}
                 {activeTab === 'donations' && 'Donations Tracker'}
                 {activeTab === 'courses' && 'Course Management'}
                 {activeTab === 'diploma_courses' && 'Diploma/Degree Course Management'}
@@ -1143,6 +1174,91 @@ const Admin = () => {
                             </div>
                         )}
                     </>
+                )}
+
+                {/* ---------- COMP EXAM ADMISSIONS TAB ---------- */}
+                {activeTab === 'competitive_exam_admissions' && (
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-visible relative">
+                        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-white rounded-t-2xl">
+                            <h3 className="font-headline font-bold text-lg text-gray-800">Competitive Exam Registrations</h3>
+                        </div>
+                        <div className="overflow-x-auto min-h-[300px]">
+                            <table className="w-full text-left text-sm">
+                                <thead className="bg-gray-50 text-gray-500 font-semibold text-xs uppercase tracking-wider">
+                                    <tr>
+                                        <th className="px-6 py-4 border-b border-gray-200">Applicant Details</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Target Streams</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Background</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Status</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Date</th>
+                                        <th className="px-6 py-4 border-b border-gray-200 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100 bg-white">
+                                    {compExamAdmissions.length === 0 ? (
+                                        <tr><td colSpan="6" className="py-12 text-center text-gray-400 font-medium">No records found.</td></tr>
+                                    ) : (
+                                        compExamAdmissions.map(adm => {
+                                            const admStatus = adm.status || 'Pending';
+                                            let statusColor = 'bg-yellow-100 text-yellow-700'; let dotColor = 'bg-yellow-500';
+                                            if (admStatus === 'Approved') { statusColor = 'bg-green-100 text-green-700'; dotColor = 'bg-green-500'; }
+                                            if (admStatus === 'Rejected') { statusColor = 'bg-red-100 text-red-700'; dotColor = 'bg-red-500'; }
+                                            if (admStatus === 'Under Review') { statusColor = 'bg-blue-100 text-blue-700'; dotColor = 'bg-blue-500'; }
+
+                                            return (
+                                                <tr key={adm._id} className="hover:bg-blue-50/30 transition-colors">
+                                                    <td className="px-6 py-4">
+                                                        <div className="font-bold text-gray-800">{adm.fullName}</div>
+                                                        <div className="text-xs text-gray-500">{adm.email}</div>
+                                                        <div className="text-[10px] text-gray-400 font-medium uppercase">{adm.mobileNumber}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex flex-wrap gap-1">
+                                                            {adm.targetStream && adm.targetStream.map(stream => (
+                                                                <span key={stream} className="bg-primary/10 text-primary text-[10px] font-bold uppercase px-2 py-0.5 rounded-md">{stream}</span>
+                                                            ))}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="font-bold text-xs text-gray-600">{adm.highestQualification} ({adm.yearOfPassing})</div>
+                                                        <div className="text-xs text-gray-500">{adm.currentCity} • {adm.preferredMedium}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-widest ${statusColor}`}>
+                                                            <div className={`w-1 h-1 rounded-full ${dotColor}`}></div>
+                                                            {admStatus}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-gray-500 text-xs">{new Date(adm.createdAt).toLocaleDateString()}</td>
+                                                    <td className="px-6 py-4 text-center relative pointer-events-auto">
+                                                        <button 
+                                                            onClick={(e) => { e.stopPropagation(); setActionMenuOpenId(actionMenuOpenId === adm._id ? null : adm._id); }}
+                                                            className={`p-1.5 rounded-lg transition-colors ${actionMenuOpenId === adm._id ? 'bg-gray-100 text-primary' : 'text-gray-400 hover:text-primary hover:bg-gray-50'}`}
+                                                        >
+                                                            <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                                                        </button>
+                                                        
+                                                        {actionMenuOpenId === adm._id && (
+                                                            <div className="absolute right-12 top-8 w-48 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 py-2 z-50 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+                                                                <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 border-b border-gray-50 text-left">Set Status</div>
+                                                                <button onClick={() => updateCompExamAdmissionStatus(adm._id, 'Pending')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-yellow-500"></div> Pending</button>
+                                                                <button onClick={() => updateCompExamAdmissionStatus(adm._id, 'Under Review')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-blue-500"></div> Under Review</button>
+                                                                <button onClick={() => updateCompExamAdmissionStatus(adm._id, 'Approved')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-green-500"></div> Approve</button>
+                                                                <button onClick={() => updateCompExamAdmissionStatus(adm._id, 'Rejected')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 font-medium"><div className="w-2 h-2 rounded-full bg-red-500"></div> Reject</button>
+                                                                <button onClick={() => deleteRecord('competitive-exam-admission', adm._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 mt-1 font-bold">
+                                                                    <span className="material-symbols-outlined text-[16px]">delete</span> Delete Record
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 )}
 
                 {/* ---------- DONATIONS TAB ---------- */}
