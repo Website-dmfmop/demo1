@@ -200,6 +200,43 @@ app.delete('/api/admissions/:id', async (req, res) => {
     }
 });
 
+// --- COMPETITIVE EXAM ADMISSIONS ---
+app.get('/api/competitive-exam-admissions', async (req, res) => {
+    try {
+        const CompetitiveExamAdmission = require('./models/CompetitiveExamAdmission');
+        const admissions = await CompetitiveExamAdmission.find().sort({ createdAt: -1 });
+        res.json(admissions);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/competitive-exam-admissions', async (req, res) => {
+    try {
+        const CompetitiveExamAdmission = require('./models/CompetitiveExamAdmission');
+        const newAdmission = new CompetitiveExamAdmission(req.body);
+        res.status(201).json(await newAdmission.save());
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+app.put('/api/competitive-exam-admissions/:id/status', async (req, res) => {
+    try {
+        const CompetitiveExamAdmission = require('./models/CompetitiveExamAdmission');
+        const { status } = req.body;
+        if (!['Pending', 'Under Review', 'Approved', 'Rejected'].includes(status)) {
+            return res.status(400).json({ error: 'Invalid status' });
+        }
+        const updated = await CompetitiveExamAdmission.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        res.json(updated);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.delete('/api/competitive-exam-admissions/:id', async (req, res) => {
+    try {
+        const CompetitiveExamAdmission = require('./models/CompetitiveExamAdmission');
+        await CompetitiveExamAdmission.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Deleted successfully' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // --- JOINEE ROUTES ---
 
 // Get all joinees

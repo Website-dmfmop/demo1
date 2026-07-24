@@ -35,10 +35,6 @@ const ExamsHero = () => {
                         <a href="#resources" className="px-8 py-4 rounded-xl bg-[#FF9933] text-[#000080] font-bold text-lg hover:bg-white hover:text-[#000080] transition-all duration-300 shadow-[0_8px_30px_rgba(255,153,51,0.3)] hover:shadow-[0_8px_30px_rgba(255,255,255,0.4)] transform hover:-translate-y-1 w-full sm:w-auto text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
                             Explore Resources
                         </a>
-                        <a href="#timeline" className="px-8 py-4 rounded-xl bg-transparent text-white border-2 border-white/30 font-bold text-lg hover:border-white hover:bg-white/5 transition-all duration-300 w-full sm:w-auto text-center flex items-center justify-center gap-2" style={{ fontFamily: 'Inter, sans-serif' }}>
-                            <span className="material-symbols-outlined">calendar_month</span>
-                            View Exam Calendar
-                        </a>
                     </div>
                 </div>
 

@@ -100,7 +100,19 @@ const ExamGrid = () => {
                                             {expandedCard === exam._id ? 'expand_less' : 'expand_more'}
                                         </span>
                                     </span>
-                                    <button className="px-6 py-2 rounded-lg border-2 border-[#000080] text-[#000080] font-semibold text-sm hover:bg-[#000080] hover:text-white transition-colors duration-300" style={{ fontFamily: 'Inter, sans-serif' }} onClick={(e) => e.stopPropagation()}>
+                                    <button 
+                                        className={`px-6 py-2 rounded-lg border-2 border-[#000080] font-semibold text-sm transition-colors duration-300 ${exam.brochure ? 'text-[#000080] hover:bg-[#000080] hover:text-white' : 'text-gray-400 border-gray-400 cursor-not-allowed opacity-50'}`} 
+                                        style={{ fontFamily: 'Inter, sans-serif' }} 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (exam.brochure) {
+                                                const url = exam.brochure.startsWith('http') ? exam.brochure : `${API_URL}${exam.brochure}`;
+                                                window.open(url, '_blank', 'noopener,noreferrer');
+                                            }
+                                        }}
+                                        disabled={!exam.brochure}
+                                        title={!exam.brochure ? "Syllabus not available" : "Click to view syllabus"}
+                                    >
                                         Access Syllabus
                                     </button>
                                 </div>

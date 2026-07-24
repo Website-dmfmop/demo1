@@ -36,6 +36,9 @@ import GnmAdmission from './pages/GnmAdmission';
 import LanguageCourseAdmission from './pages/LanguageCourseAdmission';
 import TechnicalCourseAdmission from './pages/TechnicalCourseAdmission';
 import OtherCourseAdmission from './pages/OtherCourseAdmission';
+import ExamRegistration from './pages/ExamRegistration';
+import CourseTeaserToast from './components/Admissions/CourseTeaserToast';
+import RegisterNowFloater from './components/Admissions/RegisterNowFloater';
 
 function App() {
   return (
@@ -44,6 +47,8 @@ function App() {
       <ScrollToTop />
       <Navbar />
       <FloatingLangToggle />
+      <CourseTeaserToast />
+      <RegisterNowFloater />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -60,6 +65,7 @@ function App() {
         <Route path="/admission/technical-course" element={<TechnicalCourseAdmission />} />
         <Route path="/admission/other-course" element={<OtherCourseAdmission />} />
         <Route path="/competitive-exams-hub" element={<CompetitiveExamsHub />} />
+        <Route path="/competitive-exams-hub/register" element={<ExamRegistration />} />
         {import.meta.env.DEV && <Route path="/csr" element={<CSR />} />}
         <Route path="/join-us" element={<JoinUs />} />
         <Route path="/job-placement" element={<JobPlacement />} />
