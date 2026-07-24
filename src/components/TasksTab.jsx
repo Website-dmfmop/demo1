@@ -7,11 +7,14 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [formOpen, setFormOpen] = useState(false);
-    const [form, setForm] = useState({ title: '', description: '', assignedTo: [], deadline: '' });
+    const [form, setForm] = useState({ title: '', description: '', assignedTo: [], deadline: '', priority: 'Medium' });
     const [editingTaskId, setEditingTaskId] = useState(null);
-    const [editTaskForm, setEditTaskForm] = useState({ title: '', description: '', assignedTo: '', deadline: '' });
+    const [editTaskForm, setEditTaskForm] = useState({ title: '', description: '', assignedTo: '', deadline: '', priority: 'Medium' });
     const [error, setError] = useState(null);
     const [viewMode, setViewMode] = useState('list');
+    const [filterPriority, setFilterPriority] = useState('All');
+    const [sortBy, setSortBy] = useState('date');
+    const [selectedDateTasks, setSelectedDateTasks] = useState(null);
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const isCreatorOrAdmin = (task) => currentUser?.role === 'SUPER_ADMIN' || isSuperDelegate || currentUser?.id === task.assignedBy?._id || currentUser?._id === task.assignedBy?._id;
@@ -79,7 +82,7 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
             if (failed.length > 0) {
                 alert(`Failed to create task for ${failed.length} user(s).`);
             } else {
-                setForm({ title: '', description: '', assignedTo: [], deadline: '' });
+                setForm({ title: '', description: '', assignedTo: [], deadline: '', priority: 'Medium' });
                 setFormOpen(false);
                 fetchData();
             }
@@ -147,7 +150,7 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
             const date = new Date(d);
             return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
         };
-        setEditTaskForm({ title: task.title, description: task.description, assignedTo: task.assignedTo?._id || '', deadline: formatDateTimeLocal(task.deadline) });
+        setEditTaskForm({ title: task.title, description: task.description, assignedTo: task.assignedTo?._id || '', deadline: formatDateTimeLocal(task.deadline), priority: task.priority || 'Medium' });
     };
 
     const statusColors = {
@@ -157,6 +160,44 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
         'REQUIRES_REVIEW': 'bg-purple-100 text-purple-700',
         'COMPLETED': 'bg-green-100 text-green-700'
     };
+
+    const priorityColors = {
+        'Critical': 'bg-red-100 text-red-700 border border-red-200',
+        'High': 'bg-orange-100 text-orange-700 border border-orange-200',
+        'Medium': 'bg-blue-100 text-blue-700 border border-blue-200',
+        'Low': 'bg-green-100 text-green-700 border border-green-200'
+    };
+
+    const priorityDots = {
+        'Critical': 'bg-red-500',
+        'High': 'bg-orange-500',
+        'Medium': 'bg-blue-500',
+        'Low': 'bg-green-500'
+    };
+
+    const renderModalTask = (task) => (
+        <div key={task._id} onClick={() => { setSelectedDateTasks(null); setViewMode('list'); setEditingTaskId(task._id); }} className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 cursor-pointer hover:border-primary transition-colors flex flex-col gap-3">
+            <div className="flex justify-between items-start gap-4">
+                <h5 className="font-bold text-gray-800 text-base leading-tight">{task.title}</h5>
+                <div className="flex items-center gap-2 shrink-0">
+                    <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider ${priorityColors[task.priority || 'Medium']}`}>{task.priority || 'Medium'}</span>
+                    <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${statusColors[task.status]}`}>{task.status.replace(/_/g, ' ')}</span>
+                </div>
+            </div>
+            <div className="flex justify-between items-center text-xs text-gray-500">
+                <div className="flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px]">person</span>
+                    <span>{task.assignedTo?.name || task.assignedTo?.loginId}</span>
+                </div>
+                {task.deadline && (
+                    <div className="flex items-center gap-1 font-medium text-gray-600">
+                        <span className="material-symbols-outlined text-[14px]">event</span>
+                        <span>{new Date(task.deadline).toLocaleDateString()}</span>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 
     const getDaysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
     const getFirstDayOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
@@ -174,22 +215,79 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
         }
 
         for (let i = 1; i <= daysInMonth; i++) {
-            const dayTasks = tasks.filter(t => {
-                if (!t.deadline) return false;
-                const dDate = new Date(t.deadline);
-                return dDate.getDate() === i && dDate.getMonth() === currentMonth.getMonth() && dDate.getFullYear() === currentMonth.getFullYear();
+            const currentDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), i);
+            
+            const assignedHere = [];
+            const dueHere = [];
+            const bothHere = [];
+
+            tasks.forEach(t => {
+                let isAssigned = false;
+                let isDue = false;
+
+                if (t.createdAt) {
+                    const cDate = new Date(t.createdAt);
+                    if (cDate.getDate() === i && cDate.getMonth() === currentMonth.getMonth() && cDate.getFullYear() === currentMonth.getFullYear()) {
+                        isAssigned = true;
+                    }
+                }
+                
+                if (t.deadline) {
+                    const dDate = new Date(t.deadline);
+                    if (dDate.getDate() === i && dDate.getMonth() === currentMonth.getMonth() && dDate.getFullYear() === currentMonth.getFullYear()) {
+                        isDue = true;
+                    }
+                }
+
+                if (isAssigned && isDue) {
+                    bothHere.push(t);
+                } else if (isAssigned) {
+                    assignedHere.push(t);
+                } else if (isDue) {
+                    dueHere.push(t);
+                }
             });
 
+            const displayTasks = [...bothHere, ...dueHere, ...assignedHere];
+            const visibleTasks = displayTasks.slice(0, 3);
+            const hiddenCount = displayTasks.length - 3;
+
             days.push(
-                <div key={i} className="bg-white p-2 min-h-[120px] hover:bg-gray-50 transition-colors">
+                <div 
+                    key={i} 
+                    className="bg-white p-2 min-h-[120px] hover:bg-gray-50 transition-colors cursor-pointer border border-transparent hover:border-gray-200"
+                    onClick={() => setSelectedDateTasks({ date: currentDate, assigned: assignedHere, due: dueHere, both: bothHere })}
+                >
                     <div className="font-bold text-gray-500 mb-2">{i}</div>
                     <div className="space-y-1">
-                        {dayTasks.map(t => (
-                            <div key={t._id} onClick={() => { setViewMode('list'); setEditingTaskId(t._id); }} className={`text-[10px] p-1.5 rounded cursor-pointer leading-tight font-medium shadow-sm ${statusColors[t.status] || 'bg-gray-100 text-gray-700'}`}>
-                                <div className="font-bold truncate">{t.title}</div>
-                                <div className="truncate opacity-80">{t.assignedTo?.name || t.assignedTo?.loginId}</div>
+                        {visibleTasks.map(t => {
+                            const isBoth = bothHere.includes(t);
+                            const isAssignedOnly = assignedHere.includes(t);
+                            const bgClass = isAssignedOnly ? 'bg-blue-50 text-blue-700 border border-blue-200' : (statusColors[t.status] || 'bg-gray-100 text-gray-700');
+                            
+                            return (
+                                <div key={t._id} className={`text-[10px] p-1.5 rounded leading-tight font-medium shadow-sm flex items-start gap-1 ${bgClass}`}>
+                                    {isAssignedOnly ? (
+                                        <span className="w-1.5 h-1.5 mt-0.5 rounded-full shrink-0 bg-blue-500"></span>
+                                    ) : (
+                                        <span className={`w-1.5 h-1.5 mt-0.5 rounded-full shrink-0 ${priorityDots[t.priority || 'Medium']}`}></span>
+                                    )}
+                                    <div className="overflow-hidden flex-1">
+                                        <div className="font-bold truncate">{t.title}</div>
+                                        <div className="truncate opacity-80 flex items-center justify-between gap-1">
+                                            <span className="truncate">{t.assignedTo?.name || t.assignedTo?.loginId}</span>
+                                            {isBoth && <span className="text-[8px] uppercase tracking-wider bg-black/10 px-1 rounded">Both</span>}
+                                            {isAssignedOnly && !isBoth && <span className="text-[8px] uppercase tracking-wider bg-blue-200/50 px-1 rounded">New</span>}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                        {hiddenCount > 0 && (
+                            <div className="text-xs text-gray-400 font-bold text-center mt-1 pt-1 border-t border-gray-100">
+                                +{hiddenCount} more
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             );
@@ -234,6 +332,29 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
                     </button>
                 )}
             </div>
+
+            {viewMode === 'list' && (
+                <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <span className="material-symbols-outlined text-gray-400 text-[20px]">filter_list</span>
+                        <select value={filterPriority} onChange={e => setFilterPriority(e.target.value)} className="flex-1 sm:flex-none text-sm border border-gray-200 bg-gray-50 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary/50 font-medium text-gray-700 transition-colors hover:bg-gray-100 cursor-pointer">
+                            <option value="All">All Priorities</option>
+                            <option value="Critical">Critical</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                    <div className="hidden sm:block w-px h-8 bg-gray-200"></div>
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <span className="material-symbols-outlined text-gray-400 text-[20px]">sort</span>
+                        <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="flex-1 sm:flex-none text-sm border border-gray-200 bg-gray-50 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary/50 font-medium text-gray-700 transition-colors hover:bg-gray-100 cursor-pointer">
+                            <option value="date">Sort by Date</option>
+                            <option value="priority">Sort by Priority</option>
+                        </select>
+                    </div>
+                </div>
+            )}
 
             {formOpen && canCreateTask && (
                 <form onSubmit={createTask} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
@@ -294,6 +415,15 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
                             <label className="block text-sm font-bold text-gray-700 mb-1">Deadline (Optional)</label>
                             <input type="datetime-local" value={form.deadline} onChange={e => setForm({...form, deadline: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary" />
                         </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Priority</label>
+                            <select value={form.priority} onChange={e => setForm({...form, priority: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary">
+                                <option value="Critical">Critical</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
                     </div>
                     <div className="mt-6 text-right">
                         <button type="submit" className="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700">Assign Task</button>
@@ -307,23 +437,43 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
                 renderCalendar()
             ) : (
                 <div className="grid grid-cols-1 gap-4">
-                    {tasks.length === 0 ? (
-                        <p className="text-gray-500 text-center py-8">No tasks found.</p>
-                    ) : (
-                        tasks.map(task => (
+                    {(() => {
+                        const processedTasks = [...tasks]
+                            .filter(t => filterPriority === 'All' || (t.priority || 'Medium') === filterPriority)
+                            .sort((a, b) => {
+                                if (sortBy === 'priority') {
+                                    const pWeight = { 'Critical': 4, 'High': 3, 'Medium': 2, 'Low': 1 };
+                                    const aP = pWeight[a.priority || 'Medium'] || 2;
+                                    const bP = pWeight[b.priority || 'Medium'] || 2;
+                                    if (aP !== bP) return bP - aP;
+                                }
+                                return new Date(b.createdAt || Date.now()) - new Date(a.createdAt || Date.now());
+                            });
+
+                        if (processedTasks.length === 0) {
+                            return <p className="text-gray-500 text-center py-8">No tasks found.</p>;
+                        }
+
+                        return processedTasks.map(task => (
                             <div key={task._id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
                                 <div className="flex justify-between items-start mb-4">
                                     {editingTaskId === task._id ? (
                                         <div className="w-full space-y-4 pr-4">
                                             <input type="text" value={editTaskForm.title} onChange={e => setEditTaskForm({...editTaskForm, title: e.target.value})} className="w-full text-xl font-bold px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary" />
                                             <textarea value={editTaskForm.description} onChange={e => setEditTaskForm({...editTaskForm, description: e.target.value})} rows="2" className="w-full text-sm px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary"></textarea>
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                                 <select value={editTaskForm.assignedTo} onChange={e => setEditTaskForm({...editTaskForm, assignedTo: e.target.value})} className="w-full text-sm px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary">
                                                     {users.filter(u => u.role !== 'SUPER_ADMIN').map(u => (
                                                         <option key={u._id} value={u._id}>{u.name || u.loginId} ({u.role.replace(/_/g, ' ')})</option>
                                                     ))}
                                                 </select>
                                                 <input type="datetime-local" value={editTaskForm.deadline} onChange={e => setEditTaskForm({...editTaskForm, deadline: e.target.value})} className="w-full text-sm px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary" title="Deadline" />
+                                                <select value={editTaskForm.priority} onChange={e => setEditTaskForm({...editTaskForm, priority: e.target.value})} className="w-full text-sm px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary">
+                                                    <option value="Critical">Critical</option>
+                                                    <option value="High">High</option>
+                                                    <option value="Medium">Medium</option>
+                                                    <option value="Low">Low</option>
+                                                </select>
                                             </div>
                                             <div className="flex gap-2">
                                                 <button onClick={() => submitEditTask(task._id)} className="px-4 py-1.5 bg-primary text-white text-sm font-bold rounded hover:bg-primary-hover">Save</button>
@@ -342,6 +492,7 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
                                     
                                     {editingTaskId !== task._id && (
                                         <div className="flex items-center gap-3">
+                                            <span className={`px-2 py-1 text-[10px] font-bold rounded uppercase tracking-wider ${priorityColors[task.priority || 'Medium']}`}>{task.priority || 'Medium'}</span>
                                             <span className={`px-3 py-1 text-xs font-bold rounded-full ${statusColors[task.status]}`}>{task.status.replace(/_/g, ' ')}</span>
                                             <select 
                                                 value={task.status}
@@ -397,15 +548,73 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
                                         {task.history.map((h, i) => (
                                             <div key={i} className="text-xs text-gray-500 flex items-center gap-2">
                                                 <span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-                                                <span className="font-bold text-gray-700">{h.changedBy?.name || h.changedBy?.loginId}</span> changed status to <span className="font-bold">{h.newStatus.replace(/_/g, ' ')}</span>
+                                                <span className="font-bold text-gray-700">{h.changedBy?.name || h.changedBy?.loginId}</span> 
+                                                {h.newStatus && h.newPriority ? (
+                                                    <span>changed status to <span className="font-bold">{h.newStatus.replace(/_/g, ' ')}</span> and priority to <span className="font-bold">{h.newPriority}</span></span>
+                                                ) : h.newPriority && !h.newStatus ? (
+                                                    <span>changed priority to <span className="font-bold">{h.newPriority}</span></span>
+                                                ) : (
+                                                    <span>changed status to <span className="font-bold">{h.newStatus ? h.newStatus.replace(/_/g, ' ') : ''}</span></span>
+                                                )}
                                                 <span className="text-gray-400 ml-auto">{new Date(h.timestamp).toLocaleString()}</span>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                             </div>
-                        ))
-                    )}
+                        ));
+                    })()}
+                </div>
+            )}
+
+            {selectedDateTasks && (
+                <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+                        <div className="flex justify-between items-center p-6 border-b border-gray-100">
+                            <h3 className="font-headline font-bold text-xl text-gray-800">
+                                Tasks for {selectedDateTasks.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                            </h3>
+                            <button onClick={() => setSelectedDateTasks(null)} className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center">
+                                <span className="material-symbols-outlined text-[20px]">close</span>
+                            </button>
+                        </div>
+                        <div className="overflow-y-auto p-6 flex-1 space-y-8 bg-gray-50/50">
+                            
+                            {selectedDateTasks.both.length > 0 && (
+                                <div>
+                                    <h4 className="font-bold text-gray-700 flex items-center gap-2 mb-4"><span className="material-symbols-outlined text-[20px] text-purple-500">event_available</span> Assigned & Due Today</h4>
+                                    <div className="space-y-3">
+                                        {selectedDateTasks.both.map(t => renderModalTask(t))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {selectedDateTasks.due.length > 0 && (
+                                <div>
+                                    <h4 className="font-bold text-gray-700 flex items-center gap-2 mb-4"><span className="material-symbols-outlined text-[20px] text-red-500">schedule</span> Due Today</h4>
+                                    <div className="space-y-3">
+                                        {selectedDateTasks.due.map(t => renderModalTask(t))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {selectedDateTasks.assigned.length > 0 && (
+                                <div>
+                                    <h4 className="font-bold text-gray-700 flex items-center gap-2 mb-4"><span className="material-symbols-outlined text-[20px] text-blue-500">assignment</span> Assigned Today</h4>
+                                    <div className="space-y-3">
+                                        {selectedDateTasks.assigned.map(t => renderModalTask(t))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {selectedDateTasks.both.length === 0 && selectedDateTasks.due.length === 0 && selectedDateTasks.assigned.length === 0 && (
+                                <div className="text-center py-12 text-gray-400">
+                                    <span className="material-symbols-outlined text-4xl mb-2 opacity-50">event_busy</span>
+                                    <p className="font-medium">No tasks associated with this date.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

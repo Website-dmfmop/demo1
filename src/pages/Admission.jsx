@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { admissionTranslations } from '../translations/pages';
-import ReCAPTCHA from "react-google-recaptcha";
+import RegisterInterestModal from '../components/RegisterInterestModal';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -32,14 +32,6 @@ const Admission = () => {
   // Enrollment States
   const [showEnrollModal, setShowEnrollModal] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [isEnrolling, setIsEnrolling] = useState(false);
-  const [enrollForm, setEnrollForm] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: ''
-  });
-  const [captchaToken, setCaptchaToken] = useState(null);
 
   useEffect(() => {
     Promise.all([
@@ -61,44 +53,7 @@ const Admission = () => {
     window.open(session.meetingLink, '_blank');
   };
 
-  const handleEnrollSubmit = async (e) => {
-    e.preventDefault();
-    if (!captchaToken) {
-        alert('Please verify that you are not a robot.');
-        return;
-    }
-    setIsEnrolling(true);
-    try {
-      const payload = {
-        firstName: enrollForm.firstName,
-        lastName: enrollForm.lastName,
-        email: enrollForm.email,
-        contactNumber: enrollForm.phone,
-        courseCategory: selectedCourse.category,
-        subCourse: selectedCourse.courseName,
-        captchaToken,
-      };
 
-      const res = await fetch(`${API_URL}/api/admissions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (res.ok) {
-        alert(`Registration Successful!\n\nYour interest in ${selectedCourse.courseName} has been recorded. Our team will contact you shortly.`);
-        setShowEnrollModal(false);
-        setEnrollForm({ firstName: '', lastName: '', email: '', phone: '' });
-      } else {
-        alert('Registration failed. Please try again.');
-      }
-    } catch (err) {
-      console.error('Registration error:', err);
-      alert('An error occurred. Please try again.');
-    } finally {
-      setIsEnrolling(false);
-    }
-  };
 
   // Standard categories to show even if empty
   const standardCategories = ["General", "Language", "Technical Skills", "Soft Skills"];
@@ -424,101 +379,12 @@ const Admission = () => {
       </div>
 
       {/* REGISTRATION MODAL */}
-      {showEnrollModal && selectedCourse && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isEnrolling && setShowEnrollModal(false)}></div>
-
-          <div className="relative bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            {/* Modal Header */}
-            <div className="bg-primary p-6 text-white text-center relative">
-              <h3 className="text-2xl font-display font-bold">{t.registerTitle}</h3>
-              <p className="text-primary-container/80 text-sm mt-1">{selectedCourse.courseName}</p>
-              {!isEnrolling && (
-                <button onClick={() => setShowEnrollModal(false)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                  <span className="material-symbols-outlined text-[20px]">close</span>
-                </button>
-              )}
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-8">
-              <p className="text-sm text-gray-500 mb-6 text-center">{t.fillDetails}</p>
-              <form onSubmit={handleEnrollSubmit} className="space-y-5">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t.firstName}</label>
-                    <input
-                      type="text" required
-                      value={enrollForm.firstName}
-                      onChange={e => setEnrollForm({ ...enrollForm, firstName: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
-                      placeholder="John"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t.lastName}</label>
-                    <input
-                      type="text" required
-                      value={enrollForm.lastName}
-                      onChange={e => setEnrollForm({ ...enrollForm, lastName: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
-                      placeholder="Doe"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t.emailAddress}</label>
-                  <input
-                    type="email" required
-                    value={enrollForm.email}
-                    onChange={e => setEnrollForm({ ...enrollForm, email: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
-                    placeholder="john@example.com"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t.phoneNumber}</label>
-                  <input
-                    type="tel" required
-                    value={enrollForm.phone}
-                    onChange={e => setEnrollForm({ ...enrollForm, phone: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
-                    placeholder="+91 98765 43210"
-                  />
-                </div>
-
-                {/* CAPTCHA */}
-                <div className="flex justify-center pt-2">
-                  <ReCAPTCHA
-                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'}
-                    onChange={(token) => setCaptchaToken(token)}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isEnrolling}
-                  className="w-full py-4 bg-primary hover:bg-primary-hover text-white font-headline font-extrabold text-lg rounded-2xl shadow-lg transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-                >
-                  {isEnrolling ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      Submitting...
-                    </>
-                  ) : (
-                    <>
-                      {t.submitRegistration}
-                      <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-                    </>
-                  )}
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+      <RegisterInterestModal
+        show={showEnrollModal}
+        onClose={() => setShowEnrollModal(false)}
+        selectedCourse={selectedCourse}
+        t={t}
+      />
     </div>
   );
 };

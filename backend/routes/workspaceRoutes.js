@@ -145,8 +145,11 @@ router.put('/permissions/:role', verifyToken, restrictTo('SUPER_ADMIN_STRICT'), 
 // Create a task
 router.post('/tasks', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'), async (req, res) => {
     try {
-        const { title, description, assignedTo, deadline } = req.body;
+        const { title, description, assignedTo, deadline, priority } = req.body;
         
+        const validPriorities = ['Critical', 'High', 'Medium', 'Low'];
+        const taskPriority = validPriorities.includes(priority) ? priority : 'Medium';
+
         const newTask = new Task({
             title,
             description,
@@ -154,10 +157,13 @@ router.post('/tasks', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 'OPERAT
             assignedTo,
             deadline,
             status: 'PENDING',
+            priority: taskPriority,
             history: [{
                 changedBy: req.user.id,
                 previousStatus: null,
-                newStatus: 'PENDING'
+                newStatus: 'PENDING',
+                previousPriority: null,
+                newPriority: taskPriority
             }]
         });
         
@@ -196,7 +202,13 @@ router.get('/tasks', verifyToken, async (req, res) => {
             .populate('history.changedBy', 'name loginId')
             .sort({ createdAt: -1 });
             
-        res.json(tasks);
+        const tasksWithPriority = tasks.map(task => {
+            const taskObj = task.toObject();
+            taskObj.priority = taskObj.priority || 'Medium';
+            return taskObj;
+        });
+            
+        res.json(tasksWithPriority);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -276,7 +288,7 @@ router.put('/users/profile', verifyToken, async (req, res) => {
 // Edit Task
 router.put('/tasks/:id', verifyToken, async (req, res) => {
     try {
-        const { title, description, assignedTo, deadline } = req.body;
+        const { title, description, assignedTo, deadline, priority } = req.body;
         const task = await Task.findById(req.params.id);
         if (!task) return res.status(404).json({ error: 'Task not found' });
 
@@ -289,11 +301,29 @@ router.put('/tasks/:id', verifyToken, async (req, res) => {
         if (assignedTo) task.assignedTo = assignedTo;
         if (deadline !== undefined) task.deadline = deadline;
 
+        const validPriorities = ['Critical', 'High', 'Medium', 'Low'];
+        if (priority && validPriorities.includes(priority) && priority !== task.priority) {
+            const previousPriority = task.priority || 'Medium';
+            task.priority = priority;
+            task.history.push({
+                changedBy: req.user.id,
+                previousPriority,
+                newPriority: priority
+            });
+        }
+
         const updatedTask = await task.save();
         const populatedTask = await Task.findById(updatedTask._id)
             .populate('assignedBy', 'name loginId role')
             .populate('assignedTo', 'name loginId role')
             .populate('history.changedBy', 'name loginId');
+
+        // Emit Socket Event
+        const io = req.app.get('io');
+        if (io) {
+            if (task.assignedTo) io.to(task.assignedTo.toString()).emit('STATUS_UPDATED', populatedTask);
+            if (task.assignedBy) io.to(task.assignedBy.toString()).emit('STATUS_UPDATED', populatedTask);
+        }
 
         res.json(populatedTask);
     } catch (err) {

@@ -1081,7 +1081,7 @@ const Admin = () => {
                                                 if (admStatus === 'Rejected') { statusColor = 'bg-red-100 text-red-700'; dotColor = 'bg-red-500'; }
                                                 if (admStatus === 'Under Review') { statusColor = 'bg-blue-100 text-blue-700'; dotColor = 'bg-blue-500'; }
 
-                                                const fullName = adm.firstName ? `${adm.firstName} ${adm.lastName}` : (adm.studentName || 'Unknown');
+                                                const fullName = adm.fullName || (adm.firstName ? `${adm.firstName} ${adm.lastName}` : (adm.studentName || 'Unknown'));
 
                                                 return (
                                                 <tr key={adm._id} className="hover:bg-blue-50/30 transition-colors">

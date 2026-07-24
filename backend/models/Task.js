@@ -12,8 +12,15 @@ const historySchema = new mongoose.Schema({
   },
   newStatus: {
     type: String,
-    enum: ['PENDING', 'IN_PROGRESS', 'REQUIRES_INPUT', 'REQUIRES_REVIEW', 'COMPLETED'],
-    required: true
+    enum: ['PENDING', 'IN_PROGRESS', 'REQUIRES_INPUT', 'REQUIRES_REVIEW', 'COMPLETED']
+  },
+  previousPriority: {
+    type: String,
+    enum: ['Critical', 'High', 'Medium', 'Low', null]
+  },
+  newPriority: {
+    type: String,
+    enum: ['Critical', 'High', 'Medium', 'Low']
   },
   timestamp: {
     type: Date,
@@ -46,6 +53,11 @@ const taskSchema = new mongoose.Schema({
     required: true,
     enum: ['PENDING', 'IN_PROGRESS', 'REQUIRES_INPUT', 'REQUIRES_REVIEW', 'COMPLETED'],
     default: 'PENDING'
+  },
+  priority: {
+    type: String,
+    enum: ['Critical', 'High', 'Medium', 'Low'],
+    default: 'Medium'
   },
   documentUrl: {
     type: String,
