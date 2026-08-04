@@ -410,18 +410,17 @@ export default function About() {
                     `}</style>
                 </section>
 
-
                 {/* Team Cards */}
-                <section className="py-24 bg-surface-container-high">
+                {/*<section className="py-24 bg-surface-container-high">
                     <div className="max-w-7xl mx-auto px-8">
                         <div className="text-center mb-16">
                             <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-4 block">{t.icoeLeadership}</span>
                             <h2 className="font-headline text-4xl font-extrabold text-primary">{t.meetTeam}</h2>
                         </div>
                         {/* Team Row — 3 members in one line */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                {/*<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                             {/* Dr. Bharati Patil */}
-                            <div className="flip-card aspect-[3/4] w-full max-w-[360px] mx-auto rounded-xl editorial-shadow cursor-pointer">
+                {/*<div className="flip-card aspect-[3/4] w-full max-w-[360px] mx-auto rounded-xl editorial-shadow cursor-pointer">
                                 <div className="flip-card-inner rounded-xl">
                                     <div className="flip-card-front bg-surface-container-lowest flex flex-col rounded-xl overflow-hidden shadow-sm">
                                         <div className="flex-1 bg-gradient-to-br from-primary to-primary-container relative overflow-hidden">
@@ -442,7 +441,7 @@ export default function About() {
                                 </div>
                             </div>
                             {/* Mr. Ujjwal Sathe */}
-                            <div className="flip-card aspect-[3/4] w-full max-w-[360px] mx-auto rounded-xl editorial-shadow cursor-pointer">
+                {/*<div className="flip-card aspect-[3/4] w-full max-w-[360px] mx-auto rounded-xl editorial-shadow cursor-pointer">
                                 <div className="flip-card-inner rounded-xl">
                                     <div className="flip-card-front bg-surface-container-lowest flex flex-col rounded-xl overflow-hidden shadow-sm">
                                         <div className="flex-1 bg-gradient-to-br from-primary to-primary-container relative overflow-hidden">
@@ -463,7 +462,7 @@ export default function About() {
                                 </div>
                             </div>
                             {/* Mr. Riyaj Pirjade */}
-                            <div className="flip-card aspect-[3/4] w-full max-w-[360px] mx-auto rounded-xl editorial-shadow cursor-pointer">
+                {/*<div className="flip-card aspect-[3/4] w-full max-w-[360px] mx-auto rounded-xl editorial-shadow cursor-pointer">
                                 <div className="flip-card-inner rounded-xl">
                                     <div className="flip-card-front bg-surface-container-lowest flex flex-col rounded-xl overflow-hidden shadow-sm">
                                         <div className="flex-1 bg-gradient-to-br from-primary to-primary-container relative overflow-hidden">
@@ -486,6 +485,8 @@ export default function About() {
                         </div>
                     </div>
                 </section>
+                
+                
 
                 {/* Call to Action */}
                 <section className="relative py-24 overflow-hidden bg-primary">

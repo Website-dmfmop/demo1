@@ -43,13 +43,43 @@ io.use((socket, next) => {
     }
 });
 
+let onlineUsers = new Map();
+
 io.on('connection', (socket) => {
     console.log(`Socket connected: ${socket.user.loginId} (ID: ${socket.user.id})`);
-    // Join a room matching the user's ID for targeted emissions
-    socket.join(socket.user.id);
     
+    // Join targeted room and workspace chat
+    socket.join(socket.user.id);
+    if (!socket.user.isSystemAccount) {
+        socket.join('workspace_chat');
+    }
+
+    // Track online presence
+    onlineUsers.set(socket.user.id, {
+        id: socket.user.id,
+        name: socket.user.name || socket.user.loginId,
+        loginId: socket.user.loginId,
+        lastSeen: new Date()
+    });
+    io.emit('workspace:presence', Array.from(onlineUsers.values()));
+
+    socket.on('TYPING_START', () => {
+        socket.to('workspace_chat').emit('workspace:typing', {
+            id: socket.user.id,
+            name: socket.user.name || socket.user.loginId
+        });
+    });
+
+    socket.on('TYPING_END', () => {
+        socket.to('workspace_chat').emit('workspace:stopped_typing', {
+            id: socket.user.id
+        });
+    });
+
     socket.on('disconnect', () => {
         console.log(`Socket disconnected: ${socket.user.loginId}`);
+        onlineUsers.delete(socket.user.id);
+        io.emit('workspace:presence', Array.from(onlineUsers.values()));
     });
 });
 

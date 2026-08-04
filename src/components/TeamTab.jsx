@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { exportToCSV } from '../utils/exportUtils';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-const TeamTab = () => {
+const TeamTab = ({ currentUser, setExportHandler }) => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [form, setForm] = useState({ name: '', loginId: '', password: '', role: 'TRAINER', customRole: '' });
@@ -44,6 +45,22 @@ const TeamTab = () => {
         fetchUsers();
         fetchPermissions();
     }, []);
+
+    useEffect(() => {
+        if (!setExportHandler) return;
+
+        const handleExport = () => {
+            if (!users || users.length === 0) {
+                alert('No users available to export.');
+                return;
+            }
+            exportToCSV(users, 'Team_Export.csv');
+        };
+
+        setExportHandler(() => handleExport);
+
+        return () => setExportHandler(null);
+    }, [users, setExportHandler]);
 
     const togglePermission = async (role, currentVal) => {
         try {

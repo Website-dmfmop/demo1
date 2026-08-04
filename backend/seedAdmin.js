@@ -20,7 +20,8 @@ mongoose.connect(MONGO_URI)
     const superAdmin = new User({
         loginId: 'admin',
         password: hashedPassword,
-        role: 'SUPER_ADMIN'
+        role: 'SUPER_ADMIN',
+        isSystemAccount: true
     });
 
     await superAdmin.save();

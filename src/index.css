@@ -137,11 +137,4 @@ a:active, button:active {
 .animate-marquee:hover {
     animation-play-state: paused;
 }
-
-.goal-image {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.goal-image:hover {
-    transform: scale(1.1) rotate(3deg);
-}
+

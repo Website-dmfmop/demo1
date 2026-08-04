@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { FilterToolbar, FilterSelect, FilterSeparator } from './FilterToolbar';
+import { exportToCSV } from '../utils/exportUtils';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-const TasksTab = ({ currentUser, isSuperDelegate }) => {
+const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavigateTaskId }) => {
     const [tasks, setTasks] = useState([]);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -12,10 +14,201 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
     const [editTaskForm, setEditTaskForm] = useState({ title: '', description: '', assignedTo: '', deadline: '', priority: 'Medium' });
     const [error, setError] = useState(null);
     const [viewMode, setViewMode] = useState('list');
-    const [filterPriority, setFilterPriority] = useState('All');
-    const [sortBy, setSortBy] = useState('date');
+    const [filterPriority, setFilterPriority] = useState(() => localStorage.getItem('tasks_filterPriority') || 'All');
+    const [sortBy, setSortBy] = useState(() => localStorage.getItem('tasks_sortBy') || 'date');
     const [selectedDateTasks, setSelectedDateTasks] = useState(null);
     const [currentMonth, setCurrentMonth] = useState(new Date());
+    const [attendanceRecords, setAttendanceRecords] = useState([]);
+    const [fetchingAttendance, setFetchingAttendance] = useState(false);
+
+    const [searchQuery, setSearchQuery] = useState(() => localStorage.getItem('tasks_searchQuery') || '');
+    const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
+    const [filterEmployee, setFilterEmployee] = useState(() => localStorage.getItem('tasks_filterEmployee') || 'All');
+    const [filterStatus, setFilterStatus] = useState(() => localStorage.getItem('tasks_filterStatus') || 'All');
+    
+    const [highlightedTaskId, setHighlightedTaskId] = useState(null);
+    const [bypassedFilterTaskId, setBypassedFilterTaskId] = useState(null);
+
+    useEffect(() => {
+        localStorage.setItem('tasks_searchQuery', searchQuery);
+        localStorage.setItem('tasks_filterEmployee', filterEmployee);
+        localStorage.setItem('tasks_filterStatus', filterStatus);
+        localStorage.setItem('tasks_filterPriority', filterPriority);
+        localStorage.setItem('tasks_sortBy', sortBy);
+    }, [searchQuery, filterEmployee, filterStatus, filterPriority, sortBy]);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+        }, 300);
+        return () => clearTimeout(handler);
+    }, [searchQuery]);
+
+    useEffect(() => {
+        if (externalNavigateTaskId) {
+            setViewMode('list');
+            setBypassedFilterTaskId(externalNavigateTaskId);
+            setHighlightedTaskId(externalNavigateTaskId);
+            
+            setTimeout(() => {
+                const el = document.getElementById(`task-${externalNavigateTaskId}`);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    el.focus();
+                }
+            }, 300); // Slight delay to allow tab switch rendering
+        }
+    }, [externalNavigateTaskId]);
+
+    const uniqueEmployees = React.useMemo(() => {
+        const counts = {};
+        tasks.forEach(t => {
+            const id = t.assignedTo?._id;
+            const name = t.assignedTo?.name || t.assignedTo?.loginId || 'Unknown';
+            if (id) {
+                if (!counts[id]) counts[id] = { id, name, count: 0 };
+                counts[id].count++;
+            }
+        });
+        return Object.values(counts).sort((a, b) => a.name.localeCompare(b.name));
+    }, [tasks]);
+
+    const clearFilters = () => {
+        setSearchQuery('');
+        setFilterEmployee('All');
+        setFilterStatus('All');
+        setFilterPriority('All');
+        setBypassedFilterTaskId(null);
+    };
+
+    const activeFilters = [];
+    if (searchQuery) activeFilters.push({ label: `Search: ${searchQuery}`, clear: () => setSearchQuery('') });
+    if (filterEmployee !== 'All') {
+        const emp = uniqueEmployees.find(e => e.id === filterEmployee);
+        activeFilters.push({ label: `Employee: ${emp ? emp.name : 'Unknown'}`, clear: () => setFilterEmployee('All') });
+    }
+    if (filterStatus !== 'All') activeFilters.push({ label: `Status: ${filterStatus.replace(/_/g, ' ')}`, clear: () => setFilterStatus('All') });
+    if (filterPriority !== 'All') activeFilters.push({ label: `Priority: ${filterPriority}`, clear: () => setFilterPriority('All') });
+
+    const processedTasks = React.useMemo(() => {
+        let filtered = tasks.filter(t => {
+            if (t._id === bypassedFilterTaskId) return true;
+            
+            if (filterPriority !== 'All' && (t.priority || 'Medium') !== filterPriority) return false;
+            if (filterStatus !== 'All' && t.status !== filterStatus) return false;
+            if (filterEmployee !== 'All' && t.assignedTo?._id !== filterEmployee) return false;
+            
+            if (debouncedSearch) {
+                const term = debouncedSearch.toLowerCase();
+                const titleMatch = (t.title || '').toLowerCase().includes(term);
+                const descMatch = (t.description || '').toLowerCase().includes(term);
+                const assigneeMatch = (t.assignedTo?.name || t.assignedTo?.loginId || '').toLowerCase().includes(term);
+                const creatorMatch = (t.assignedBy?.name || t.assignedBy?.loginId || '').toLowerCase().includes(term);
+                if (!titleMatch && !descMatch && !assigneeMatch && !creatorMatch) return false;
+            }
+            return true;
+        });
+
+        return filtered.sort((a, b) => {
+            if (sortBy === 'priority') {
+                const pWeight = { 'Critical': 4, 'High': 3, 'Medium': 2, 'Low': 1 };
+                const aP = pWeight[a.priority || 'Medium'] || 2;
+                const bP = pWeight[b.priority || 'Medium'] || 2;
+                if (aP !== bP) return bP - aP;
+            }
+            return new Date(b.createdAt || Date.now()) - new Date(a.createdAt || Date.now());
+        });
+    }, [tasks, debouncedSearch, filterEmployee, filterStatus, filterPriority, sortBy, bypassedFilterTaskId]);
+
+    const exportAttendanceForCalendar = () => {
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth();
+        const monthStart = new Date(year, month, 1);
+        const monthEnd = new Date(year, month + 1, 0);
+
+        // Filter attendance for the current month
+        const monthlyRecords = attendanceRecords.filter(r => {
+            const rDate = new Date(r.date);
+            return rDate >= monthStart && rDate <= monthEnd;
+        }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        const exportData = monthlyRecords.map(r => {
+            const dateObj = new Date(r.date);
+            const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-');
+            const dayStr = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+
+            const formatTime = (timeStr) => {
+                if (!timeStr) return '';
+                const t = new Date(timeStr);
+                if (isNaN(t.getTime())) return '';
+                return t.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true });
+            };
+
+            const calculateWorkingHours = (checkIn, checkOut) => {
+                if (!checkIn || !checkOut) return '';
+                const start = new Date(checkIn);
+                const end = new Date(checkOut);
+                if (isNaN(start) || isNaN(end)) return '';
+                const diffMs = end - start;
+                const hrs = Math.floor(diffMs / 3600000);
+                const mins = Math.floor((diffMs % 3600000) / 60000);
+                return `${String(hrs).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m`;
+            };
+
+            return {
+                'Date': dateStr,
+                'Day': dayStr,
+                'Status': r.status || 'Present', // Derived from DB or default to Present
+                'Check In': formatTime(r.checkIn),
+                'Check Out': formatTime(r.logoutTime), // logoutTime is used in the model
+                'Working Hours': calculateWorkingHours(r.checkIn, r.logoutTime)
+            };
+        });
+
+        if (exportData.length === 0) {
+            alert('No attendance data available for the displayed month.');
+            return;
+        }
+
+        exportToCSV(exportData, `Attendance_Export_${currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}.csv`);
+    };
+
+    useEffect(() => {
+        if (!setExportHandler) return;
+
+        const handleExport = () => {
+            if (viewMode === 'list') {
+                exportToCSV(processedTasks, 'Tasks_Export.csv');
+            } else if (viewMode === 'calendar') {
+                exportAttendanceForCalendar();
+            }
+        };
+
+        setExportHandler(() => handleExport);
+
+        return () => {
+            setExportHandler(null);
+        };
+    }, [processedTasks, viewMode, setExportHandler, attendanceRecords, currentMonth]);
+
+    const handleCalendarTaskClick = (taskId) => {
+        setSelectedDateTasks(null);
+        setViewMode('list');
+        setBypassedFilterTaskId(taskId);
+        setHighlightedTaskId(taskId);
+        
+        setTimeout(() => {
+            const el = document.getElementById(`task-${taskId}`);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                el.focus();
+            }
+        }, 100);
+
+        setTimeout(() => {
+            setHighlightedTaskId(null);
+        }, 3000);
+    };
 
     const isCreatorOrAdmin = (task) => currentUser?.role === 'SUPER_ADMIN' || isSuperDelegate || currentUser?.id === task.assignedBy?._id || currentUser?._id === task.assignedBy?._id;
 
@@ -45,6 +238,33 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
             setLoading(false);
         }
     };
+
+    const fetchAttendanceForCalendar = async () => {
+        if (!currentUser || currentUser.isSystemAccount) return;
+        try {
+            setFetchingAttendance(true);
+            const token = sessionStorage.getItem('adminToken');
+            // We just fetch the current user's attendance. The backend API handles the query if we pass userId.
+            const userId = currentUser._id || currentUser.id;
+            const res = await fetch(`${API_URL}/api/attendance?userId=${userId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setAttendanceRecords(data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch attendance for calendar', err);
+        } finally {
+            setFetchingAttendance(false);
+        }
+    };
+
+    useEffect(() => {
+        if (viewMode === 'calendar') {
+            fetchAttendanceForCalendar();
+        }
+    }, [viewMode, currentMonth, currentUser]);
 
     useEffect(() => {
         fetchData();
@@ -176,7 +396,7 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
     };
 
     const renderModalTask = (task) => (
-        <div key={task._id} onClick={() => { setSelectedDateTasks(null); setViewMode('list'); setEditingTaskId(task._id); }} className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 cursor-pointer hover:border-primary transition-colors flex flex-col gap-3">
+        <div key={task._id} onClick={() => handleCalendarTaskClick(task._id)} className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 cursor-pointer hover:border-primary transition-colors flex flex-col gap-3">
             <div className="flex justify-between items-start gap-4">
                 <h5 className="font-bold text-gray-800 text-base leading-tight">{task.title}</h5>
                 <div className="flex items-center gap-2 shrink-0">
@@ -293,9 +513,72 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
             );
         }
 
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth();
+
+        const getWorkingDaysInMonth = (y, m) => {
+            let daysInMonth = new Date(y, m + 1, 0).getDate();
+            let sundays = 0;
+            for (let i = 1; i <= daysInMonth; i++) {
+                if (new Date(y, m, i).getDay() === 0) {
+                    sundays++;
+                }
+            }
+            return daysInMonth - sundays;
+        };
+
+        const totalWorkingDays = getWorkingDaysInMonth(year, month);
+        
+        let presentDays = 0;
+        let absentExplicit = 0;
+        
+        if (!currentUser?.isSystemAccount && attendanceRecords) {
+            const recordsInMonth = attendanceRecords.filter(r => {
+                if (!r.date) return false;
+                const d = new Date(r.date);
+                return d.getMonth() === month && d.getFullYear() === year && d.getDay() !== 0; // Exclude Sundays
+            });
+            
+            const distinctPresentDays = new Set(recordsInMonth.filter(r => !r.status || r.status === 'Present' || r.status === 'Half Day').map(r => r.date));
+            const distinctAbsentDays = new Set(recordsInMonth.filter(r => r.status === 'Absent').map(r => r.date));
+            
+            presentDays = distinctPresentDays.size;
+            absentExplicit = distinctAbsentDays.size;
+        }
+        
+        // Use explicit absent days if recorded, otherwise it's just working days - present days (but only up to today if we want to be perfectly accurate, but the prompt says: "derive attendance metrics using the existing attendance records and business rules so future statuses are handled correctly... Do not calculate Absent Days as Working Days - Present Days"). So we will use `absentExplicit`.
+        
+        const attendancePercentage = totalWorkingDays > 0 ? ((presentDays / totalWorkingDays) * 100).toFixed(1) : 0;
+
         return (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                <div className="flex justify-between items-center mb-6">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col gap-6">
+                {currentUser?.isSystemAccount ? (
+                    <div className="bg-blue-50 text-blue-800 p-4 rounded-xl border border-blue-100 flex items-center gap-3">
+                        <span className="material-symbols-outlined text-blue-500 text-xl">info</span>
+                        <span className="font-bold text-sm">Attendance is not applicable for System Accounts.</span>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+                            <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Total Working Days</div>
+                            <div className="text-2xl font-black text-gray-800">{totalWorkingDays}</div>
+                        </div>
+                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+                            <div className="text-xs font-bold text-green-600 uppercase tracking-wider mb-1">Present</div>
+                            <div className="text-2xl font-black text-green-700">{presentDays}</div>
+                        </div>
+                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+                            <div className="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Absent</div>
+                            <div className="text-2xl font-black text-red-700">{absentExplicit}</div>
+                        </div>
+                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+                            <div className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Percentage</div>
+                            <div className="text-2xl font-black text-blue-700">{attendancePercentage}%</div>
+                        </div>
+                    </div>
+                )}
+                
+                <div className="flex justify-between items-center">
                     <h4 className="text-xl font-bold text-gray-800">{monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}</h4>
                     <div className="flex gap-2">
                         <button onClick={prevMonth} className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 flex items-center justify-center"><span className="material-symbols-outlined text-[20px]">chevron_left</span></button>
@@ -334,25 +617,74 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
             </div>
 
             {viewMode === 'list' && (
-                <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
-                        <span className="material-symbols-outlined text-gray-400 text-[20px]">filter_list</span>
-                        <select value={filterPriority} onChange={e => setFilterPriority(e.target.value)} className="flex-1 sm:flex-none text-sm border border-gray-200 bg-gray-50 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary/50 font-medium text-gray-700 transition-colors hover:bg-gray-100 cursor-pointer">
-                            <option value="All">All Priorities</option>
-                            <option value="Critical">Critical</option>
-                            <option value="High">High</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Low">Low</option>
-                        </select>
-                    </div>
-                    <div className="hidden sm:block w-px h-8 bg-gray-200"></div>
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
-                        <span className="material-symbols-outlined text-gray-400 text-[20px]">sort</span>
-                        <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="flex-1 sm:flex-none text-sm border border-gray-200 bg-gray-50 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary/50 font-medium text-gray-700 transition-colors hover:bg-gray-100 cursor-pointer">
-                            <option value="date">Sort by Date</option>
-                            <option value="priority">Sort by Priority</option>
-                        </select>
-                    </div>
+                <div className="space-y-4 mb-6 animate-in fade-in">
+                        {/* Toolbar Component */}
+                        <FilterToolbar 
+                            searchQuery={searchQuery} 
+                            setSearchQuery={setSearchQuery}
+                            searchPlaceholder="Search tasks by title, description, or names..."
+                        >
+                            <FilterSelect 
+                                value={filterEmployee}
+                                onChange={setFilterEmployee}
+                                title={filterEmployee === 'All' ? 'All Employees' : uniqueEmployees.find(e => e.id === filterEmployee)?.name || ''}
+                                defaultLabel="All Employees"
+                                options={uniqueEmployees.map(emp => ({ value: emp.id, label: `${emp.name} (${emp.count})` }))}
+                            />
+                            
+                            <FilterSelect 
+                                value={filterStatus}
+                                onChange={setFilterStatus}
+                                title={filterStatus === 'All' ? 'All Statuses' : filterStatus.replace(/_/g, ' ')}
+                                defaultLabel="All Statuses"
+                                options={[
+                                    { value: 'PENDING', label: 'Pending' },
+                                    { value: 'IN_PROGRESS', label: 'In Progress' },
+                                    { value: 'REQUIRES_INPUT', label: 'Requires Input' },
+                                    { value: 'REQUIRES_REVIEW', label: 'Requires Review' },
+                                    { value: 'COMPLETED', label: 'Completed' }
+                                ]}
+                            />
+
+                            <FilterSelect 
+                                value={filterPriority}
+                                onChange={setFilterPriority}
+                                title={filterPriority === 'All' ? 'All Priorities' : filterPriority}
+                                defaultLabel="All Priorities"
+                                options={[
+                                    { value: 'Critical', label: 'Critical' },
+                                    { value: 'High', label: 'High' },
+                                    { value: 'Medium', label: 'Medium' },
+                                    { value: 'Low', label: 'Low' }
+                                ]}
+                            />
+                            
+                            <FilterSeparator />
+
+                            <FilterSelect 
+                                value={sortBy}
+                                onChange={setSortBy}
+                                title={sortBy === 'date' ? 'Sort by Date' : 'Sort by Priority'}
+                                options={[
+                                    { value: 'date', label: 'Sort by Date' },
+                                    { value: 'priority', label: 'Sort by Priority' }
+                                ]}
+                            />
+                        </FilterToolbar>
+
+                    {/* Active Filters */}
+                    {activeFilters.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-sm font-bold text-gray-500 mr-2">Active Filters:</span>
+                            {activeFilters.map((af, idx) => (
+                                <span key={idx} className="flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full border border-primary/20">
+                                    {af.label}
+                                    <button onClick={af.clear} className="hover:bg-primary/20 rounded-full p-0.5 ml-1 transition-colors"><span className="material-symbols-outlined text-[14px]">close</span></button>
+                                </span>
+                            ))}
+                            <button onClick={clearFilters} className="text-xs font-bold text-gray-500 hover:text-gray-800 underline transition-colors ml-2">Clear All</button>
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -438,24 +770,37 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {(() => {
-                        const processedTasks = [...tasks]
-                            .filter(t => filterPriority === 'All' || (t.priority || 'Medium') === filterPriority)
-                            .sort((a, b) => {
-                                if (sortBy === 'priority') {
-                                    const pWeight = { 'Critical': 4, 'High': 3, 'Medium': 2, 'Low': 1 };
-                                    const aP = pWeight[a.priority || 'Medium'] || 2;
-                                    const bP = pWeight[b.priority || 'Medium'] || 2;
-                                    if (aP !== bP) return bP - aP;
-                                }
-                                return new Date(b.createdAt || Date.now()) - new Date(a.createdAt || Date.now());
-                            });
-
                         if (processedTasks.length === 0) {
-                            return <p className="text-gray-500 text-center py-8">No tasks found.</p>;
+                            return (
+                                <div className="bg-white p-12 rounded-2xl border border-gray-200 text-center shadow-sm">
+                                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <span className="material-symbols-outlined text-[32px] text-gray-400">search_off</span>
+                                    </div>
+                                    <h4 className="text-lg font-bold text-gray-800 mb-2">No tasks found</h4>
+                                    <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">We couldn't find any tasks matching your current filters. Try adjusting your search or clear the filters to see all tasks.</p>
+                                    {activeFilters.length > 0 && (
+                                        <button onClick={clearFilters} className="px-5 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors border border-gray-200">
+                                            Clear All Filters
+                                        </button>
+                                    )}
+                                </div>
+                            );
                         }
 
-                        return processedTasks.map(task => (
-                            <div key={task._id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                        return (
+                            <>
+                                <div className="text-sm font-bold text-gray-500 mb-2">
+                                    Showing {processedTasks.length} of {tasks.length} task{tasks.length !== 1 ? 's' : ''}
+                                </div>
+                                {processedTasks.map(task => (
+                                    <div 
+                                        key={task._id} 
+                                        id={`task-${task._id}`}
+                                        tabIndex={-1}
+                                        className={`bg-white p-6 rounded-2xl shadow-sm border transition-all duration-700 outline-none
+                                            ${highlightedTaskId === task._id ? 'border-primary ring-4 ring-primary/20 bg-primary/5 scale-[1.01]' : 'border-gray-200'}
+                                        `}
+                                    >
                                 <div className="flex justify-between items-start mb-4">
                                     {editingTaskId === task._id ? (
                                         <div className="w-full space-y-4 pr-4">
@@ -562,7 +907,9 @@ const TasksTab = ({ currentUser, isSuperDelegate }) => {
                                     </div>
                                 </div>
                             </div>
-                        ));
+                        ))}
+                        </>
+                    );
                     })()}
                 </div>
             )}

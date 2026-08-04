@@ -8,11 +8,18 @@ import TeamTab from '../components/TeamTab';
 import ProfileTab from '../components/ProfileTab';
 import AttendanceTab from '../components/AttendanceTab';
 import NotificationBell from '../components/NotificationBell';
+import { exportToCSV } from '../utils/exportUtils';
+import { SocketProvider } from '../context/SocketContext';
+import WorkspaceChat from '../components/WorkspaceChat';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('tasks');
+  const [highlightedTaskId, setHighlightedTaskId] = useState(null);
+  const [currentExportData, setCurrentExportData] = useState([]);
+  const [exportHandler, setExportHandler] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [admissions, setAdmissions] = useState([]);
   const [compExamAdmissions, setCompExamAdmissions] = useState([]);
@@ -108,6 +115,7 @@ const Admin = () => {
     setActionMenuOpenId(null);
     setShowAnalytics(false);
     setIsMobileMenuOpen(false);
+    setExportHandler(null); // Reset on tab change
     fetchData();
   }, [activeTab]);
 
@@ -117,27 +125,39 @@ const Admin = () => {
       if (activeTab === 'admissions') {
         const res = await fetch(`${API_URL}/api/admissions`);
         if (!res.ok) throw new Error('Failed to fetch admissions');
-        setAdmissions(await res.json());
+        const data = await res.json();
+        setAdmissions(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'competitive_exam_admissions') {
         const res = await fetch(`${API_URL}/api/competitive-exam-admissions`);
         if (!res.ok) throw new Error('Failed to fetch competitive exam admissions');
-        setCompExamAdmissions(await res.json());
+        const data = await res.json();
+        setCompExamAdmissions(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'donations') {
         const res = await fetch(`${API_URL}/api/donations`);
         if (!res.ok) throw new Error('Failed to fetch donations');
-        setDonations(await res.json());
+        const data = await res.json();
+        setDonations(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'courses') {
         const res = await fetch(`${API_URL}/api/courses`);
         if (!res.ok) throw new Error('Failed to fetch courses');
-        setCourses(await res.json());
+        const data = await res.json();
+        setCourses(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'diploma_courses') {
         const res = await fetch(`${API_URL}/api/diploma-courses`);
         if (!res.ok) throw new Error('Failed to fetch diploma courses');
-        setDiplomaCourses(await res.json());
+        const data = await res.json();
+        setDiplomaCourses(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'competitive_exams') {
         const res = await fetch(`${API_URL}/api/competitive-exams`);
         if (!res.ok) throw new Error('Failed to fetch competitive exams');
-        setCompetitiveExams(await res.json());
+        const data = await res.json();
+        setCompetitiveExams(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'media') {
         const [resMedia, resVid, resPub, resPress] = await Promise.all([
           fetch(`${API_URL}/api/media`),
@@ -153,41 +173,73 @@ const Admin = () => {
       } else if (activeTab === 'live_sessions') {
         const res = await fetch(`${API_URL}/api/live-sessions`);
         if (!res.ok) throw new Error('Failed to fetch live sessions');
-        setLiveSessions(await res.json());
+        const data = await res.json();
+        setLiveSessions(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'joinees') {
         const res = await fetch(`${API_URL}/api/joinees`);
         if (!res.ok) throw new Error('Failed to fetch joinees');
-        setJoinees(await res.json());
+        const data = await res.json();
+        setJoinees(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'jobs') {
         const res = await fetch(`${API_URL}/api/jobs`);
         if (!res.ok) throw new Error('Failed to fetch jobs');
-        setJobs(await res.json());
+        const data = await res.json();
+        setJobs(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'job-applications') {
         const res = await fetch(`${API_URL}/api/job-applications`);
         if (!res.ok) throw new Error('Failed to fetch job applications');
-        setJobApplications(await res.json());
+        const data = await res.json();
+        setJobApplications(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'csr_partners') {
         const res = await fetch(`${API_URL}/api/csr-partners`);
         if (!res.ok) throw new Error('Failed to fetch CSR partners');
-        setCsrPartners(await res.json());
+        const data = await res.json();
+        setCsrPartners(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'partner-requests') {
         const res = await fetch(`${API_URL}/api/partner-requests`);
         if (!res.ok) throw new Error('Failed to fetch partner requests');
-        setPartnerRequests(await res.json());
+        const data = await res.json();
+        setPartnerRequests(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'slot-bookings') {
         const res = await fetch(`${API_URL}/api/slot-bookings`);
         if (!res.ok) throw new Error('Failed to fetch slot bookings');
-        setSlotBookings(await res.json());
+        const data = await res.json();
+        setSlotBookings(data);
+        setCurrentExportData(data);
       } else if (activeTab === 'projects') {
         const res = await fetch(`${API_URL}/api/projects`);
         if (!res.ok) throw new Error('Failed to fetch projects');
-        setProjects(await res.json());
+        const data = await res.json();
+        setProjects(data);
+        setCurrentExportData(data);
       }
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleExportCSV = () => {
+    if (exportHandler) {
+      exportHandler();
+      return;
+    }
+    
+    const filename = `${activeTab}_export.csv`;
+    let dataToExport = currentExportData;
+
+    if (!dataToExport || dataToExport.length === 0) {
+      return alert("No data available to export.");
+    }
+
+    exportToCSV(dataToExport, filename);
   };
 
   const updateSlotBookingStatus = async (id, newStatus) => {
@@ -616,59 +668,6 @@ const Admin = () => {
       }
   };
 
-  const handleExportCSV = () => {
-    let dataToExport = [];
-    let filename = `${activeTab}_export.csv`;
-
-    switch (activeTab) {
-      case 'admissions': dataToExport = admissions; break;
-      case 'competitive_exam_admissions': dataToExport = compExamAdmissions; break;
-      case 'donations': dataToExport = donations; break;
-      case 'courses': dataToExport = courses; break;
-      case 'diploma_courses': dataToExport = diplomaCourses; break;
-      case 'competitive_exams': dataToExport = competitiveExams; break;
-      case 'live_sessions': dataToExport = liveSessions; break;
-      case 'joinees': dataToExport = joinees; break;
-      case 'jobs': dataToExport = jobs; break;
-      case 'job-applications': dataToExport = jobApplications; break;
-      case 'partner-requests': dataToExport = partnerRequests; break;
-      case 'slot-bookings': dataToExport = slotBookings; break;
-      case 'projects': dataToExport = projects; break;
-      default: return alert("Export not supported for this section");
-    }
-
-    if (!dataToExport || dataToExport.length === 0) {
-      return alert("No data available to export.");
-    }
-
-    const allKeys = new Set();
-    dataToExport.forEach(item => Object.keys(item).forEach(key => allKeys.add(key)));
-    const headers = Array.from(allKeys);
-
-    const csvContent = [
-      headers.join(','),
-      ...dataToExport.map(row => 
-        headers.map(header => {
-          let cell = row[header];
-          if (cell === null || cell === undefined) cell = '';
-          else if (typeof cell === 'object') cell = JSON.stringify(cell);
-          else cell = String(cell);
-          return `"${cell.replace(/"/g, '""')}"`;
-        }).join(',')
-      )
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", filename);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   // Helper counters & sorted arrays
   const sortedAdmissions = [...admissions].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
   const sortedDonations = [...donations].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -736,8 +735,18 @@ const Admin = () => {
     );
   }
 
+  const canExportCurrentView = ['admissions', 'competitive_exam_admissions', 'donations', 'courses', 'diploma_courses', 'competitive_exams', 'live_sessions', 'joinees', 'jobs', 'job-applications', 'partner-requests', 'slot-bookings', 'projects', 'tasks', 'attendance', 'team'].includes(activeTab);
+
+  const navigateToTask = (taskId) => {
+      setActiveTab('tasks');
+      setHighlightedTaskId(taskId);
+  };
+
   return (
+    <ErrorBoundary>
+    <SocketProvider>
     <div className="flex h-screen font-body text-slate-800" style={{ background: 'linear-gradient(135deg, rgba(255, 153, 51, 0.20) 0%, rgba(255, 255, 255, 1) 50%, rgba(18, 136, 7, 0.20) 100%)' }} onClick={() => setActionMenuOpenId(null)}>
+      
       {/* SIDEBAR OVERLAY FOR MOBILE */}
       {isMobileMenuOpen && (
         <div 
@@ -970,10 +979,12 @@ const Admin = () => {
           </div>
           <div className="flex items-center gap-3 md:gap-6 shrink-0">
             <NotificationBell currentUser={currentUser} />
-            <button onClick={handleExportCSV} className="flex items-center gap-2 px-2 md:px-4 py-2 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg text-green-700 hover:text-green-800 transition-all text-sm font-semibold shadow-sm">
-                <span className="material-symbols-outlined text-[18px]">download</span>
-                <span className="hidden md:inline">Export CSV</span>
-            </button>
+            {canExportCurrentView && (
+                <button onClick={handleExportCSV} className="flex items-center gap-2 px-2 md:px-4 py-2 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg text-green-700 hover:text-green-800 transition-all text-sm font-semibold shadow-sm">
+                    <span className="material-symbols-outlined text-[18px]">download</span>
+                    <span className="hidden md:inline">Export CSV</span>
+                </button>
+            )}
             <button onClick={fetchData} className="flex items-center gap-2 px-2 md:px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-gray-600 hover:text-primary transition-all text-sm font-semibold shadow-sm">
                 <span className={`material-symbols-outlined text-[18px] ${loading ? 'animate-spin' : ''}`}>refresh</span>
                 <span className="hidden md:inline">Refresh Data</span>
@@ -999,9 +1010,9 @@ const Admin = () => {
             <div className="max-w-7xl mx-auto space-y-6">
 
                 {/* ---------- WORKSPACE TABS ---------- */}
-                {activeTab === 'tasks' && <TasksTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} />}
-                {activeTab === 'attendance' && <AttendanceTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} />}
-                {activeTab === 'team' && <TeamTab currentUser={currentUser} />}
+                {activeTab === 'tasks' && <TasksTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} setExportHandler={setExportHandler} externalNavigateTaskId={highlightedTaskId} />}
+                {activeTab === 'attendance' && <AttendanceTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} setExportHandler={setExportHandler} />}
+                {activeTab === 'team' && <TeamTab currentUser={currentUser} setExportHandler={setExportHandler} />}
                 {activeTab === 'profile' && <ProfileTab currentUser={currentUser} />}
                 
                 {/* ---------- ADMISSIONS TAB ---------- */}
@@ -2772,7 +2783,10 @@ const Admin = () => {
 
         </main>
       </div>
+      <WorkspaceChat currentUser={currentUser} navigateToTask={navigateToTask} />
     </div>
+    </SocketProvider>
+    </ErrorBoundary>
   );
 };
 

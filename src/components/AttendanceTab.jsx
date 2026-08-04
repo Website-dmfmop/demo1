@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { exportToCSV } from '../utils/exportUtils';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-const AttendanceTab = ({ currentUser, isSuperDelegate }) => {
+const AttendanceTab = ({ currentUser, isSuperDelegate, setExportHandler }) => {
     const [attendanceRecords, setAttendanceRecords] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -49,6 +50,57 @@ const AttendanceTab = ({ currentUser, isSuperDelegate }) => {
     useEffect(() => {
         fetchUsers();
     }, [currentUser]);
+
+    useEffect(() => {
+        if (!setExportHandler) return;
+
+        const handleExport = () => {
+            if (!attendanceRecords || attendanceRecords.length === 0) {
+                alert('No attendance data available to export.');
+                return;
+            }
+
+            const exportData = attendanceRecords.map(r => {
+                const dateObj = new Date(r.date);
+                const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-');
+                const dayStr = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+
+                const formatTime = (timeStr) => {
+                    if (!timeStr) return '';
+                    const t = new Date(timeStr);
+                    if (isNaN(t.getTime())) return '';
+                    return t.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true });
+                };
+
+                const calculateWorkingHours = (checkIn, checkOut) => {
+                    if (!checkIn || !checkOut) return '';
+                    const start = new Date(checkIn);
+                    const end = new Date(checkOut);
+                    if (isNaN(start) || isNaN(end)) return '';
+                    const diffMs = end - start;
+                    const hrs = Math.floor(diffMs / 3600000);
+                    const mins = Math.floor((diffMs % 3600000) / 60000);
+                    return `${String(hrs).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m`;
+                };
+
+                return {
+                    'Employee Name': r.user?.name || r.user?.loginId || 'Unknown',
+                    'Date': dateStr,
+                    'Day': dayStr,
+                    'Status': r.status || 'Present', // Derived from DB or default to Present
+                    'Check In': formatTime(r.checkIn),
+                    'Check Out': formatTime(r.logoutTime),
+                    'Working Hours': calculateWorkingHours(r.checkIn, r.logoutTime)
+                };
+            });
+
+            exportToCSV(exportData, `Attendance_Export_${new Date().toISOString().split('T')[0]}.csv`);
+        };
+
+        setExportHandler(() => handleExport);
+
+        return () => setExportHandler(null);
+    }, [attendanceRecords, setExportHandler]);
 
     const handleAction = async (action) => {
         try {
