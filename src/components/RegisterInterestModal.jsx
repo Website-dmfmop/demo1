@@ -14,7 +14,7 @@ const countryCodes = [
   { code: '+49', country: 'Germany' },
 ];
 
-export default function RegisterInterestModal({ show, onClose, selectedCourse, t }) {
+export default function RegisterInterestModal({ show, onClose, selectedCourse, t, onSuccess, customSuccessMessage }) {
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [captchaToken, setCaptchaToken] = useState(null);
   
@@ -86,7 +86,16 @@ export default function RegisterInterestModal({ show, onClose, selectedCourse, t
       });
 
       if (res.ok) {
-        alert(`Registration Successful!\n\nYour interest in ${selectedCourse.courseName} has been recorded. Our team will contact you shortly.`);
+        if (customSuccessMessage) {
+            alert(customSuccessMessage);
+        } else {
+            alert(`Registration Successful!\n\nYour interest in ${selectedCourse.courseName} has been recorded. Our team will contact you shortly.`);
+        }
+        
+        if (onSuccess) {
+            onSuccess(payload);
+        }
+        
         onClose();
         // Form resets automatically when unmounted/re-mounted usually, but reset anyway
         setEnrollForm({

@@ -37,6 +37,7 @@ import LanguageCourseAdmission from './pages/LanguageCourseAdmission';
 import TechnicalCourseAdmission from './pages/TechnicalCourseAdmission';
 import OtherCourseAdmission from './pages/OtherCourseAdmission';
 import ExamRegistration from './pages/ExamRegistration';
+import LiveSection from './pages/LiveSection';
 import CourseTeaserToast from './components/Admissions/CourseTeaserToast';
 import RegisterNowFloater from './components/Admissions/RegisterNowFloater';
 
@@ -64,6 +65,7 @@ function App() {
         <Route path="/admission/language-course" element={<LanguageCourseAdmission />} />
         <Route path="/admission/technical-course" element={<TechnicalCourseAdmission />} />
         <Route path="/admission/other-course" element={<OtherCourseAdmission />} />
+        <Route path="/live-section" element={<LiveSection />} />
         <Route path="/competitive-exams-hub" element={<CompetitiveExamsHub />} />
         <Route path="/competitive-exams-hub/register" element={<ExamRegistration />} />
         {import.meta.env.DEV && <Route path="/csr" element={<CSR />} />}

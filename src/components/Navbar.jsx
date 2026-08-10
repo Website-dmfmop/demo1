@@ -56,6 +56,7 @@ const Navbar = () => {
                                 <Link to="/admission/language-course" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navLanguageCourse}</Link>
                                 <Link to="/admission/technical-course" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navTechnicalCourse}</Link>
                                 <Link to="/admission/other-course" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navOtherCourse}</Link>
+                                <Link to="/live-section" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navLiveSection}</Link>
                             </div>
                         </div>
                         {/* <Link className={getLinkClass('/csr')} to="/csr">{t.navCSR}</Link> */}
@@ -98,6 +99,7 @@ const Navbar = () => {
                             <Link to="/admission/language-course" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navLanguageCourse}</Link>
                             <Link to="/admission/technical-course" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navTechnicalCourse}</Link>
                             <Link to="/admission/other-course" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navOtherCourse}</Link>
+                            <Link to="/live-section" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navLiveSection}</Link>
                         </div>
                     </div>
 
