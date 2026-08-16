@@ -2240,7 +2240,6 @@ const Admin = () => {
                                     <tr>
                                         <th className="px-6 py-4 border-b border-gray-200">Name & Occupation</th>
                                         <th className="px-6 py-4 border-b border-gray-200">Contact Details</th>
-                                        <th className="px-6 py-4 border-b border-gray-200">Screenshot</th>
                                         <th className="px-6 py-4 border-b border-gray-200">Status</th>
                                         <th className="px-6 py-4 border-b border-gray-200">Date</th>
                                         <th className="px-6 py-4 border-b border-gray-200 text-center">Actions</th>
@@ -2248,7 +2247,7 @@ const Admin = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 bg-white">
                                     {dmfMembers.length === 0 ? (
-                                        <tr><td colSpan="6" className="py-12 text-center text-gray-400 font-medium">No members found.</td></tr>
+                                        <tr><td colSpan="5" className="py-12 text-center text-gray-400 font-medium">No members found.</td></tr>
                                     ) : (
                                         dmfMembers.map(member => {
                                             const jStatus = member.status || 'Pending';
@@ -2274,15 +2273,6 @@ const Admin = () => {
                                                         <div className="text-gray-800 font-medium text-xs break-all">{member.email}</div>
                                                         <div className="text-gray-500 text-xs mt-0.5">{member.phone}</div>
                                                         <div className="text-gray-500 text-[10px] mt-0.5 truncate max-w-[150px]" title={member.address}>{member.city}, {member.state}</div>
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        {member.screenshotUrl ? (
-                                                            <a href={`${API_URL}${member.screenshotUrl}`} target="_blank" rel="noreferrer" className="text-primary hover:underline text-xs flex items-center gap-1 font-bold">
-                                                                <span className="material-symbols-outlined text-[16px]">image</span> View Payment
-                                                            </a>
-                                                        ) : (
-                                                            <span className="text-gray-400 text-xs">No screenshot</span>
-                                                        )}
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-widest ${statusColor}`}>

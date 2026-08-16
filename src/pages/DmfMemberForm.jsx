@@ -20,18 +20,13 @@ const DmfMemberForm = () => {
         state: '',
         country: '',
         occupation: '',
-        message: '',
-        screenshotUrl: null
+        message: ''
     });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!captchaToken) {
             alert(language === 'hi' ? 'कृपया सत्यापित करें कि आप रोबोट नहीं हैं।' : 'Please verify that you are not a robot.');
-            return;
-        }
-        if (!formData.screenshotUrl) {
-            alert(language === 'hi' ? 'कृपया भुगतान का स्क्रीनशॉट अपलोड करें।' : 'Please upload the payment screenshot.');
             return;
         }
         setIsSubmitting(true);
@@ -47,7 +42,6 @@ const DmfMemberForm = () => {
             payload.append('country', formData.country);
             payload.append('occupation', formData.occupation);
             payload.append('message', formData.message);
-            payload.append('screenshotUrl', formData.screenshotUrl);
             payload.append('captchaToken', captchaToken);
 
             const res = await fetch(`${API_URL}/api/dmf-members`, {
@@ -57,7 +51,7 @@ const DmfMemberForm = () => {
 
             if (res.ok) {
                 alert(language === 'hi' ? 'DMF सदस्य बनने की इच्छा के लिए धन्यवाद! आपका अनुरोध जमा हो गया है।' : 'Thank you for wanting to become a DMF Member! Your request has been submitted.');
-                setFormData({ name: '', email: '', phone: '', address: '', city: '', state: '', country: '', occupation: '', message: '', screenshotUrl: null });
+                setFormData({ name: '', email: '', phone: '', address: '', city: '', state: '', country: '', occupation: '', message: '' });
             } else {
                 let errMsg = 'Unknown error';
                 try {
@@ -82,7 +76,7 @@ const DmfMemberForm = () => {
                         {language === 'hi' ? 'DMF सदस्य बनें' : 'Become a DMF Member'}
                     </h1>
                     <p className="text-on-surface-variant max-w-xl mx-auto">
-                        {language === 'hi' ? 'DMF सदस्य बनने के लिए नीचे दिया गया फॉर्म भरें और अपना भुगतान विवरण अपलोड करें।' : 'Fill out the form below and upload your payment details to become a DMF Member.'}
+                        {language === 'hi' ? 'DMF सदस्य बनने के लिए नीचे दिया गया फॉर्म भरें।' : 'Fill out the form below to become a DMF Member.'}
                     </p>
                 </div>
 
@@ -218,7 +212,6 @@ const DmfMemberForm = () => {
                                         Bank Information
                                     </h3>
                                     <div className="space-y-3 text-sm text-gray-700">
-                                        <p className="font-bold text-gray-900 mb-1">DMFs International Centre of Excellence, Khadki, Pune</p>
                                         <div>
                                             <span className="block text-xs text-gray-500 uppercase tracking-wider">Account Name</span>
                                             <span className="font-semibold">Dr. Dnyaneshwar Mule Foundation</span>
@@ -247,15 +240,7 @@ const DmfMemberForm = () => {
                                 </div>
                             </div>
 
-                            <div className="pt-2 border-t border-gray-100">
-                                <label className="block text-sm font-bold text-gray-700 mb-2">{language === 'hi' ? 'भुगतान स्क्रीनशॉट अपलोड करें' : 'Upload Payment Screenshot'} *</label>
-                                <input 
-                                    type="file" required accept="image/*"
-                                    onChange={e => setFormData({ ...formData, screenshotUrl: e.target.files[0] })}
-                                    className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-gray-600"
-                                />
-                                <p className="text-xs text-gray-500 mt-2">Accepted formats: .jpg, .png, .jpeg</p>
-                            </div>
+
 
                             {/* CAPTCHA */}
                             <div className="flex justify-center pt-2">
