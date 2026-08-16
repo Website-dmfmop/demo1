@@ -95,9 +95,9 @@ export const subPageTranslations = {
         skillDesc: "Equipping youth with essential digital, technical, and foreign language skills for the modern workforce.",
 
         // ShelterHome
-        shelterTag: "SENIOR CARE",
+        shelterTag: "SHELTER CARE",
         shelterTitle: "Shelter Home",
-        shelterDesc: "Providing a safe, nurturing, and dignified living environment for senior citizens with holistic care.",
+        shelterDesc: "Providing a safe, nurturing, and dignified living environment for homeless people of all ages with holistic care.",
 
         // DTNTLivesMatter
         dtntTag: "TRIBAL RIGHTS",
@@ -207,9 +207,9 @@ export const subPageTranslations = {
         skillDesc: "आधुनिक कार्यबल के लिए युवाओं को आवश्यक डिजिटल, तकनीकी और विदेशी भाषा कौशल से लैस करना।",
 
         // ShelterHome
-        shelterTag: "वरिष्ठ देखभाल",
+        shelterTag: "आश्रय देखभाल",
         shelterTitle: "शेल्टर होम",
-        shelterDesc: "समग्र देखभाल के साथ वरिष्ठ नागरिकों के लिए सुरक्षित, पोषणकारी और गरिमापूर्ण रहने का वातावरण प्रदान करना।",
+        shelterDesc: "समग्र देखभाल के साथ सभी उम्र के बेघर लोगों के लिए सुरक्षित, पोषणकारी और गरिमापूर्ण रहने का वातावरण प्रदान करना।",
 
         // DTNTLivesMatter
         dtntTag: "आदिवासी अधिकार",

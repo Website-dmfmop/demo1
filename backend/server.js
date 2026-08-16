@@ -782,6 +782,45 @@ app.delete('/api/partner-requests/:id', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// --- DMF MEMBERS API ---
+app.get('/api/dmf-members', async (req, res) => {
+    try {
+        const DmfMember = require('./models/DmfMember');
+        const members = await DmfMember.find().sort({ createdAt: -1 });
+        res.json(members);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/dmf-members', upload.single('screenshotUrl'), verifyCaptcha, async (req, res) => {
+    try {
+        const DmfMember = require('./models/DmfMember');
+        const data = { ...req.body };
+        if (req.file) data.screenshotUrl = '/uploads/' + req.file.filename;
+        const newMember = new DmfMember(data);
+        res.status(201).json(await newMember.save());
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+app.put('/api/dmf-members/:id/status', async (req, res) => {
+    try {
+        const DmfMember = require('./models/DmfMember');
+        const { status } = req.body;
+        if (!['Pending', 'Under Review', 'Approved', 'Rejected'].includes(status)) {
+            return res.status(400).json({ error: 'Invalid status' });
+        }
+        const updated = await DmfMember.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        if (!updated) return res.status(404).json({ error: 'DMF Member not found' });
+        res.json(updated);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.delete('/api/dmf-members/:id', async (req, res) => {
+    try {
+        const DmfMember = require('./models/DmfMember');
+        await DmfMember.findByIdAndDelete(req.params.id);
+        res.json({ message: 'DMF Member deleted' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
 
 // --- SLOT BOOKINGS API ---
 app.get('/api/slot-bookings', async (req, res) => {

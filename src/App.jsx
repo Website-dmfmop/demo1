@@ -31,6 +31,7 @@ import DTNTLivesMatter from './pages/DTNTLivesMatter';
 import JobFair from './pages/JobFair';
 import BecomePartner from './pages/BecomePartner';
 import SlotBooking from './pages/SlotBooking';
+import DmfMemberForm from './pages/DmfMemberForm';
 
 import GnmAdmission from './pages/GnmAdmission';
 import LanguageCourseAdmission from './pages/LanguageCourseAdmission';
@@ -83,6 +84,7 @@ function App() {
         <Route path="/job-fair" element={<JobFair />} />
         <Route path="/become-a-partner" element={<BecomePartner />} />
         <Route path="/slot-booking" element={<SlotBooking />} />
+        <Route path="/become-dmf-member" element={<DmfMemberForm />} />
       </Routes>
       <Footer />
       </LanguageProvider>
