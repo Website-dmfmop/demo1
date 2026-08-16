@@ -10,7 +10,6 @@ const dmfMemberSchema = new mongoose.Schema({
     country: { type: String, required: true },
     occupation: { type: String, required: true },
     message: { type: String }, // Optional: Why do you want to join?
-    screenshotUrl: { type: String, required: true }, // Path to uploaded screenshot
     status: { type: String, default: 'Pending' }, // Pending, Under Review, Approved, Rejected etc.
     createdAt: { type: Date, default: Date.now }
 });
