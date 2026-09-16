@@ -9,23 +9,20 @@ import { donateTranslations } from '../translations/pages';
 // without modifying the UI layout or presentation logic.
 // ============================================================================
 export const DONATION_CONFIG = {
-    // Set to true once official QR image and bank account details are populated
-    isLive: false,
+    // Official live donation channels enabled
+    isLive: true,
 
-    // QR / UPI Information
+    // QR Information
     qr: {
         imageSrc: '/Images/donation_qr.png',
-        upiId: 'vyapar.178120718854@hdfcbank',
     },
 
-    // Direct Bank Transfer Details (Pending official details)
+    // Official Direct Bank Transfer Details
     bank: {
-        accountName: '[Official Account Name Pending]',
-        bankName: '[Official Bank Name Pending]',
-        accountNumber: '[Official Account Number Pending]',
-        ifsc: '[Official IFSC Code Pending]',
-        branch: '[Official Branch Pending]',
-        accountType: 'Savings / Current Account',
+        accountName: 'Dr. Dnyaneshwar Mulay Foundation',
+        bankName: 'HDFC',
+        accountNumber: '50200124275122',
+        ifsc: 'HDFC0002054',
     },
 
     // Genuine Organization Contact for donation queries and receipts
@@ -317,30 +314,6 @@ export default function Donate() {
                                     )}
                                 </div>
 
-                                {/* UPI ID Row */}
-                                <div className="bg-surface-container-low p-4 rounded-xl mb-6">
-                                    <div className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                                        {t.upiIdLabel}
-                                    </div>
-                                    <div className="flex items-center justify-between gap-2">
-                                        <span className={`font-mono text-sm ${DONATION_CONFIG.qr.upiId ? 'text-primary font-bold' : 'text-on-surface-variant italic'}`}>
-                                            {DONATION_CONFIG.qr.upiId || t.upiPendingNotice}
-                                        </span>
-                                        {DONATION_CONFIG.qr.upiId && (
-                                            <button
-                                                onClick={() => handleCopy(DONATION_CONFIG.qr.upiId, 'upiId')}
-                                                className="px-3 py-1 bg-primary text-white text-xs font-semibold rounded hover:bg-primary-hover transition-all inline-flex items-center gap-1"
-                                                aria-label="Copy UPI ID"
-                                            >
-                                                <span className="material-symbols-outlined text-sm">
-                                                    {copiedField === 'upiId' ? 'check' : 'content_copy'}
-                                                </span>
-                                                {copiedField === 'upiId' ? t.copiedBtn : t.copyBtn}
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-
                                 {/* QR Payment Instructions */}
                                 <div className="space-y-3 pt-2">
                                     <div className="font-headline font-bold text-primary text-sm tracking-wide">
@@ -401,24 +374,8 @@ export default function Donate() {
 
                                 {/* Bank Details Card */}
                                 <div className="bg-gradient-to-br from-surface-container-low to-surface-container p-6 sm:p-8 rounded-2xl border border-outline-variant/60 shadow-sm relative overflow-hidden mb-8">
-                                    {/* Notice Banner */}
-                                    <div className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-900 text-xs mb-6">
-                                        <span className="material-symbols-outlined text-base shrink-0 text-amber-600">info</span>
-                                        <span className="font-medium">{t.detailsPendingNotice}</span>
-                                    </div>
-
                                     {/* Credential Grid */}
                                     <div className="space-y-4">
-                                        {/* Account Name */}
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/30 gap-1">
-                                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                                                {t.accNameLabel}
-                                            </span>
-                                            <span className="font-headline font-semibold text-primary text-sm sm:text-base">
-                                                {DONATION_CONFIG.bank.accountName}
-                                            </span>
-                                        </div>
-
                                         {/* Bank Name */}
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/30 gap-1">
                                             <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
@@ -427,6 +384,30 @@ export default function Donate() {
                                             <span className="font-headline font-semibold text-primary text-sm sm:text-base">
                                                 {DONATION_CONFIG.bank.bankName}
                                             </span>
+                                        </div>
+
+                                        {/* Account Name */}
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/30 gap-2">
+                                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                                                {t.accNameLabel}
+                                            </span>
+                                            <div className="flex items-center gap-3">
+                                                <span className="font-headline font-semibold text-primary text-sm sm:text-base">
+                                                    {DONATION_CONFIG.bank.accountName}
+                                                </span>
+                                                <button
+                                                    id="copy-acc-name-btn"
+                                                    onClick={() => handleCopy(DONATION_CONFIG.bank.accountName, 'accName')}
+                                                    className="px-3 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-lg transition-all inline-flex items-center gap-1.5 active:scale-95 shadow-sm"
+                                                    title="Copy Account Name"
+                                                    aria-label="Copy Account Name"
+                                                >
+                                                    <span className="material-symbols-outlined text-sm">
+                                                        {copiedField === 'accName' ? 'check' : 'content_copy'}
+                                                    </span>
+                                                    {copiedField === 'accName' ? t.copiedBtn : t.copyBtn}
+                                                </button>
+                                            </div>
                                         </div>
 
                                         {/* Account Number + Copy Button */}
@@ -454,7 +435,7 @@ export default function Donate() {
                                         </div>
 
                                         {/* IFSC Code + Copy Button */}
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/30 gap-2">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                             <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
                                                 {t.ifscLabel}
                                             </span>
@@ -474,26 +455,6 @@ export default function Donate() {
                                                     </span>
                                                     {copiedField === 'ifsc' ? t.copiedBtn : t.copyBtn}
                                                 </button>
-                                            </div>
-                                        </div>
-
-                                        {/* Branch & Account Type */}
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                                            <div>
-                                                <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-0.5">
-                                                    {t.branchLabel}
-                                                </span>
-                                                <span className="font-headline text-sm font-semibold text-primary">
-                                                    {DONATION_CONFIG.bank.branch}
-                                                </span>
-                                            </div>
-                                            <div>
-                                                <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-0.5">
-                                                    {t.accTypeLabel}
-                                                </span>
-                                                <span className="font-headline text-sm font-semibold text-primary">
-                                                    {DONATION_CONFIG.bank.accountType}
-                                                </span>
                                             </div>
                                         </div>
                                     </div>

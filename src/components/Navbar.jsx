@@ -59,37 +59,21 @@ const Navbar = () => {
                                 {t.navIcoe} <span className="material-symbols-outlined text-[18px]">arrow_drop_down</span>
                             </Link>
                             <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top -translate-y-2 group-hover:translate-y-0">
-                                <Link to="/icoe" className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-800 hover:bg-primary/5 hover:text-primary font-semibold transition-colors">
+                                <Link to="/icoe" className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-800 hover:bg-primary/5 hover:text-primary font-semibold transition-colors">
                                     <span className="material-symbols-outlined text-primary text-[18px]">domain</span>
                                     <span>{t.navIcoeOverview}</span>
                                 </Link>
-                                <a href="/icoe#programs" className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-800 hover:bg-primary/5 hover:text-primary font-semibold transition-colors">
-                                    <span className="material-symbols-outlined text-secondary-container text-[18px]">menu_book</span>
-                                    <span>{t.navIcoePrograms}</span>
-                                </a>
 
                                 <div className="h-px bg-gray-100 my-1.5"></div>
 
-                                <div className="px-4 py-1 flex items-center justify-between">
-                                    <Link to="/icoe/admissions" className="text-xs font-bold uppercase tracking-wider text-primary hover:text-secondary transition-colors flex items-center gap-1">
-                                        <span>{t.navIcoeAdmissions}</span>
-                                        <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
-                                    </Link>
-                                </div>
-                                <div className="pl-3 pr-2 py-0.5 space-y-0.5">
-                                    <Link to="/icoe/admissions/gnm" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navGnmAdmission}</Link>
-                                    <Link to="/icoe/competitive-exams" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navCompetitiveExams}</Link>
-                                    <Link to="/icoe/admissions/language-course" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navLanguageCourse}</Link>
-                                    <Link to="/icoe/admissions/technical-course" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navTechnicalCourse}</Link>
-                                    <Link to="/icoe/admissions/other-course" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navOtherCourse}</Link>
-                                    <Link to="/live-section" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navLiveSection}</Link>
-                                </div>
+                                <Link to="/icoe/admissions/language-course" className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-800 hover:bg-primary/5 hover:text-primary font-semibold transition-colors">
+                                    <span className="material-symbols-outlined text-secondary-container text-[18px]">translate</span>
+                                    <span>{t.navForeignLanguages}</span>
+                                </Link>
 
-                                <div className="h-px bg-gray-100 my-1.5"></div>
-
-                                <Link to="/icoe/job-placement" className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-800 hover:bg-primary/5 hover:text-primary font-semibold transition-colors">
+                                <Link to="/icoe/job-placement" className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-800 hover:bg-primary/5 hover:text-primary font-semibold transition-colors">
                                     <span className="material-symbols-outlined text-[#2e7d32] text-[18px]">work</span>
-                                    <span>{t.navIcoeJobPlacement}</span>
+                                    <span>{t.navInternationalJobs}</span>
                                 </Link>
                             </div>
                         </div>
@@ -147,25 +131,13 @@ const Navbar = () => {
                                 <span className="material-symbols-outlined text-sm">domain</span>
                                 <span>{t.navIcoeOverview}</span>
                             </Link>
-                            <a href="/icoe#programs" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-secondary-container transition-colors flex items-center gap-2">
-                                <span className="material-symbols-outlined text-sm">menu_book</span>
-                                <span>{t.navIcoePrograms}</span>
-                            </a>
-                            <Link to="/icoe/admissions" onClick={() => setMenuOpen(false)} className="text-white font-semibold text-sm hover:text-secondary-container transition-colors mt-1 pt-1 border-t border-white/10 flex items-center gap-2">
-                                <span className="material-symbols-outlined text-sm">how_to_reg</span>
-                                <span>{t.navIcoeAdmissions}</span>
+                            <Link to="/icoe/admissions/language-course" onClick={() => setMenuOpen(false)} className="text-white font-medium text-sm hover:text-secondary-container transition-colors flex items-center gap-2">
+                                <span className="material-symbols-outlined text-sm text-secondary-container">translate</span>
+                                <span>{t.navForeignLanguages}</span>
                             </Link>
-                            <div className="flex flex-col gap-2 pl-4 border-l border-white/10">
-                                <Link to="/icoe/admissions/gnm" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navGnmAdmission}</Link>
-                                <Link to="/icoe/competitive-exams" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navCompetitiveExams}</Link>
-                                <Link to="/icoe/admissions/language-course" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navLanguageCourse}</Link>
-                                <Link to="/icoe/admissions/technical-course" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navTechnicalCourse}</Link>
-                                <Link to="/icoe/admissions/other-course" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navOtherCourse}</Link>
-                                <Link to="/live-section" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navLiveSection}</Link>
-                            </div>
-                            <Link to="/icoe/job-placement" onClick={() => setMenuOpen(false)} className="text-white font-medium text-sm hover:text-secondary-container transition-colors flex items-center gap-2 mt-1">
-                                <span className="material-symbols-outlined text-sm">work</span>
-                                <span>{t.navIcoeJobPlacement}</span>
+                            <Link to="/icoe/job-placement" onClick={() => setMenuOpen(false)} className="text-white font-medium text-sm hover:text-secondary-container transition-colors flex items-center gap-2">
+                                <span className="material-symbols-outlined text-sm text-[#2e7d32]">work</span>
+                                <span>{t.navInternationalJobs}</span>
                             </Link>
                         </div>
                     </div>
