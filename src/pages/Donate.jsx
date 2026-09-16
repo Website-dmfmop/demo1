@@ -19,7 +19,7 @@ export const DONATION_CONFIG = {
 
     // Official Direct Bank Transfer Details
     bank: {
-        accountName: 'Dr. Dnyaneshwar Mulay Foundation',
+        accountName: 'Dr. Dnyaneshwar Mule Foundation',
         bankName: 'HDFC',
         accountNumber: '50200124275122',
         ifsc: 'HDFC0002054',
@@ -28,7 +28,7 @@ export const DONATION_CONFIG = {
     // Genuine Organization Contact for donation queries and receipts
     support: {
         email: 'corporate@dmfmop.org',
-        phone: '+91 8378086159',
+        phone: '+91 8999744563',
     },
 };
 
