@@ -46,3 +46,5 @@ export const FilterToolbar = ({
         </div>
     );
 };
+
+export default FilterToolbar;

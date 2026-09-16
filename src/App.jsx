@@ -1,3 +1,4 @@
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/Navbar';
@@ -12,7 +13,7 @@ import Donate from './pages/Donate';
 import Missions from './pages/Missions';
 import ICOE from './pages/ICOE';
 import Media from './pages/Media';
-import Admin from './pages/Admin';
+const Admin = lazy(() => import('./pages/Admin'));
 import Admission from './pages/Admission';
 import CompetitiveExamsHub from './pages/CompetitiveExamsHub';
 import CSR from './pages/CSR';
@@ -86,7 +87,21 @@ function App() {
         <Route path="/international-center-of-excellence" element={<CenterOfExcellence />} />
 
         <Route path="/media" element={<Media />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route 
+          path="/admin" 
+          element={
+            <Suspense fallback={
+              <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+                  <span className="text-sm font-medium text-gray-500">Loading Admin Console...</span>
+                </div>
+              </div>
+            }>
+              <Admin />
+            </Suspense>
+          } 
+        />
         {import.meta.env.DEV && <Route path="/csr" element={<CSR />} />}
         <Route path="/join-us" element={<JoinUs />} />
         <Route path="/movement-of-positivity" element={<MovementOfPositivity />} />
