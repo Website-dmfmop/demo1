@@ -186,7 +186,7 @@ const ExamRegistration = () => {
         <div className="min-h-screen bg-gray-50 pt-24 pb-12 px-4 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-[#000080]/10 to-transparent -z-10" />
             <div className="max-w-7xl mx-auto mb-6 relative z-10">
-                <button onClick={() => navigate('/competitive-exams-hub')} className="flex items-center gap-2 text-[#000080] font-semibold hover:text-blue-700 transition-colors bg-white px-4 py-2 rounded-full shadow-sm w-fit border border-gray-200">
+                <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#000080] font-semibold hover:text-blue-700 transition-colors bg-white px-4 py-2 rounded-full shadow-sm w-fit border border-gray-200">
                     <ArrowLeft size={18} /> Back to Exams
                 </button>
             </div>

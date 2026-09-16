@@ -1,175 +1,139 @@
 import re
+import os
 
-with open(r'd:\DMF Website\demo1\src\pages\Admin.jsx', 'r', encoding='utf-8') as f:
+with open("backend/server.js", "r", encoding="utf-8") as f:
     content = f.read()
 
-# The start marker
-start_marker = "  const createDiplomaCourse = async (e) => {"
-# The end marker
-end_marker = "  const createPress = async (e) => {"
+# 1. Require environment variables at the top
+startup_check = """
+if (!process.env.JWT_SECRET) {
+    console.error('FATAL ERROR: JWT_SECRET environment variable is not set.');
+    process.exit(1);
+}
+if (!process.env.RECAPTCHA_SECRET_KEY) {
+    console.error('FATAL ERROR: RECAPTCHA_SECRET_KEY environment variable is not set.');
+    process.exit(1);
+}
 
-start_idx = content.find(start_marker)
-end_idx = content.find(end_marker)
+const { verifyToken, restrictTo } = require('./middleware/auth');
+"""
+content = re.sub(r"(const express = require\('express'\);)", r"\1" + "\n" + startup_check, content, 1)
 
-if start_idx == -1 or end_idx == -1:
-    print("Markers not found!")
-    exit(1)
+# 2. CORS configuration
+cors_config = """
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:5173'];
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    }
+}));
+"""
+content = re.sub(r"app\.use\(cors\(\)\);", cors_config, content, 1)
 
-new_content = """  const createDiplomaCourse = async (e) => {
-      e.preventDefault();
-      try {
-          const url = editingId ? `${API_URL}/api/diploma-courses/${editingId}` : `${API_URL}/api/diploma-courses`;
-          const method = editingId ? 'PUT' : 'POST';
-          const res = await fetch(url, {
-              method,
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(diplomaCourseForm)
-          });
-          if (res.ok) {
-              setDiplomaCourseForm({ courseName: '', description: '', category: 'General' });
-              setShowDiplomaCourseForm(false);
-              setEditingId(null);
-              fetchData();
-          } else {
-              alert('Failed to save diploma course');
-          }
-      } catch (err) {
-          alert('Error saving diploma course');
-      }
-  };
+socket_cors = """cors: {
+        origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : "http://localhost:5173",
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+    }"""
+content = re.sub(r"cors: \{\s*origin: \"\*\",\s*methods: \[\"GET\", \"POST\", \"PUT\", \"DELETE\", \"PATCH\"\]\s*\}", socket_cors, content, 1)
 
-  const createCompetitiveExam = async (e) => {
-      e.preventDefault();
-      const formData = new FormData();
-      formData.append('examName', competitiveExamForm.examName);
-      formData.append('description', competitiveExamForm.description);
-      formData.append('category', competitiveExamForm.category);
-      if (competitiveExamForm.brochure) formData.append('brochure', competitiveExamForm.brochure);
 
-      try {
-          const url = editingId ? `${API_URL}/api/competitive-exams/${editingId}` : `${API_URL}/api/competitive-exams`;
-          const method = editingId ? 'PUT' : 'POST';
-          const res = await fetch(url, {
-              method,
-              body: formData
-          });
-          if (res.ok) {
-              setCompetitiveExamForm({ examName: '', description: '', category: 'General', brochure: null });
-              setShowCompetitiveExamForm(false);
-              setEditingId(null);
-              fetchData();
-          } else {
-              alert('Failed to save competitive exam');
-          }
-      } catch (err) {
-          alert('Error saving competitive exam');
-      }
-  };
+# 3. Handle Error leakage
+content = content.replace("res.status(500).json({ error: err.message })", "res.status(500).json({ error: 'Internal Server Error' })")
 
-  const handleLogin = async (e) => {
-      e.preventDefault();
-      try {
-          const res = await fetch(`${API_URL}/api/login`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ loginId, password })
-          });
-          const data = await res.json();
-          if (res.ok) {
-              sessionStorage.setItem('adminToken', data.token);
-              sessionStorage.setItem('adminUser', JSON.stringify(data.user));
-              setCurrentUser(data.user);
-              setIsAuthenticated(true);
-          } else {
-              alert(data.error || 'Invalid credentials');
-          }
-      } catch (err) {
-          alert('Login failed');
-      }
-  };
+# Remove hardcoded recaptcha secrets
+content = content.replace("let secretKey = process.env.RECAPTCHA_SECRET_KEY || '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';", "let secretKey = process.env.RECAPTCHA_SECRET_KEY;")
+content = re.sub(r"// Fallback for development.*?if \(!data\.success\) \{", "if (!data.success) {", content, flags=re.DOTALL)
 
-  const handleLogout = () => {
-      setIsAuthenticated(false);
-      sessionStorage.removeItem('adminToken');
-      sessionStorage.removeItem('adminUser');
-      setCurrentUser(null);
-      setPassword('');
-      setLoginId('');
-  };
 
-  const createMedia = async (e) => {
-      e.preventDefault();
-      const formData = new FormData();
-      formData.append('title', mediaForm.title);
-      formData.append('date', mediaForm.date);
-      formData.append('category', mediaForm.isCustomCategory ? mediaForm.customCategory : mediaForm.category);
-      if (mediaForm.file) formData.append('file', mediaForm.file);
+# 4. Uploads logic
+uploads_logic = """
+const uploadDirPublic = path.join(__dirname, 'uploads', 'public');
+const uploadDirPrivate = path.join(__dirname, 'uploads', 'private');
+if (!fs.existsSync(uploadDirPublic)) fs.mkdirSync(uploadDirPublic, { recursive: true });
+if (!fs.existsSync(uploadDirPrivate)) fs.mkdirSync(uploadDirPrivate, { recursive: true });
 
-      try {
-          const url = editingId ? `${API_URL}/api/media/${editingId}` : `${API_URL}/api/media`;
-          const res = await fetch(url, {
-              method: editingId ? 'PUT' : 'POST',
-              body: formData
-          });
-          if (res.ok) {
-              setMediaForm({ title: '', category: 'Events', isCustomCategory: false, customCategory: '', date: '', file: null });
-              setShowMediaForm(false);
-              setEditingId(null);
-              fetchData();
-          } else {
-              alert('Failed to save media item');
-          }
-      } catch (err) {
-          alert('Error saving media');
-      }
-  };
+app.use('/uploads', (req, res, next) => {
+    if (req.path.startsWith('/private/')) {
+        return res.status(403).json({ error: 'Forbidden: Private uploads cannot be accessed statically.' });
+    }
+    next();
+}, express.static(path.join(__dirname, 'uploads')));
 
-  const createVideo = async (e) => {
-      e.preventDefault();
-      const formData = new FormData();
-      formData.append('title', videoForm.title);
-      formData.append('desc', videoForm.desc);
-      formData.append('duration', videoForm.duration);
-      formData.append('link', videoForm.link);
-      if (videoForm.file) formData.append('thumb', videoForm.file);
+// Authenticated route for private uploads
+app.get('/api/private-uploads/:filename', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'), (req, res) => {
+    const filename = req.params.filename;
+    if (filename.includes('..') || filename.includes('/') || filename.includes('\\\\')) {
+        return res.status(400).json({ error: 'Invalid filename' });
+    }
+    const file = path.join(__dirname, 'uploads', 'private', filename);
+    res.download(file, (err) => {
+        if (err && !res.headersSent) res.status(404).json({ error: 'File not found' });
+    });
+});
 
-      try {
-          const url = editingId ? `${API_URL}/api/videos/${editingId}` : `${API_URL}/api/videos`;
-          const res = await fetch(url, { method: editingId ? 'PUT' : 'POST', body: formData });
-          if (res.ok) {
-              setVideoForm({ title: '', desc: '', duration: '', link: '', file: null });
-              setShowVideoForm(false);
-              setEditingId(null);
-              fetchData();
-          }
-      } catch (err) { alert('Error saving video'); }
-  };
+// Multer Storage Configuration
+const publicStorage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, 'uploads/public/'),
+    filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+});
+const privateStorage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, 'uploads/private/'),
+    filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+});
+const upload = multer({ storage: publicStorage });
+const privateUpload = multer({ storage: privateStorage });
 
-  const createPub = async (e) => {
-      e.preventDefault();
-      const formData = new FormData();
-      formData.append('title', pubForm.title);
-      formData.append('soon', pubForm.soon);
-      if (pubForm.imgFile) formData.append('img', pubForm.imgFile);
-      if (pubForm.pdfFile) formData.append('pdf', pubForm.pdfFile);
-
-      try {
-          const url = editingId ? `${API_URL}/api/publications/${editingId}` : `${API_URL}/api/publications`;
-          const res = await fetch(url, { method: editingId ? 'PUT' : 'POST', body: formData });
-          if (res.ok) {
-              setPubForm({ title: '', soon: false, imgFile: null, pdfFile: null });
-              setShowPubForm(false);
-              setEditingId(null);
-              fetchData();
-          }
-      } catch (err) { alert('Error saving publication'); }
-  };
-
+// ID Validation Middleware
+app.param('id', (req, res, next, id) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid ID format' });
+    }
+    next();
+});
 """
 
-content = content[:start_idx] + new_content + content[end_idx:]
+# Replace old uploads code
+content = re.sub(r"app\.use\('/uploads', express\.static\(path\.join\(__dirname, 'uploads'\)\)\);", "", content)
+content = re.sub(r"const storage = multer\.diskStorage\(\{.*?\}\);\s*const upload = multer\(\{ storage \}\);", uploads_logic, content, flags=re.DOTALL)
 
-with open(r'd:\DMF Website\demo1\src\pages\Admin.jsx', 'w', encoding='utf-8') as f:
+# Update POST routes for sensitive uploads to use privateUpload
+content = content.replace("upload.single('pdfFile')", "privateUpload.single('pdfFile')")
+content = content.replace("upload.single('pitchDeck')", "privateUpload.single('pitchDeck')")
+content = content.replace("upload.single('supportingDocument')", "privateUpload.single('supportingDocument')")
+
+content = content.replace("data.pdfFile = '/uploads/' + req.file.filename;", "data.pdfFile = '/api/private-uploads/' + req.file.filename;")
+content = content.replace("data.pitchDeck = '/uploads/' + req.file.filename;", "data.pitchDeck = '/api/private-uploads/' + req.file.filename;")
+content = content.replace("partnerData.supportingDocument = `/uploads/${req.file.filename}`;", "partnerData.supportingDocument = `/api/private-uploads/${req.file.filename}`;")
+
+# Public uploads path fix
+content = content.replace("'/uploads/' + req.file.filename", "'/uploads/public/' + req.file.filename")
+content = content.replace("'/uploads/' + req.files.img[0].filename", "'/uploads/public/' + req.files.img[0].filename")
+content = content.replace("'/uploads/' + req.files.pdf[0].filename", "'/uploads/public/' + req.files.pdf[0].filename")
+
+# 5. Endpoints protection
+admin_middleware = "verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'), "
+
+def protect_route(method, url, code, content):
+    pattern = rf"app\.{method}\('{url}', "
+    if method == "get" and url in ['/api/courses', '/api/diploma-courses', '/api/competitive-exams', '/api/media', '/api/videos', '/api/publications', '/api/press', '/api/jobs', '/api/projects', '/api/csr-partners', '/api/slot-bookings/booked']:
+        return content # public
+    if method == "post" and url in ['/api/donations', '/api/admissions', '/api/competitive-exam-admissions', '/api/joinees', '/api/job-applications', '/api/partner-requests', '/api/slot-bookings']:
+        return content # public submission
+    
+    # Protect
+    return re.sub(pattern, rf"app.{method}('{url}', {admin_middleware}", content)
+
+routes = re.findall(r"app\.(get|post|put|delete)\('(/api/[^']+)',", content)
+# deduplicate routes to avoid multiple replacements if multiple matches
+unique_routes = list(set(routes))
+for method, url in unique_routes:
+    content = protect_route(method, url, admin_middleware, content)
+
+with open("backend/server.js", "w", encoding="utf-8") as f:
     f.write(content)
 
-print("Patch applied successfully.")
+print("Patching complete.")

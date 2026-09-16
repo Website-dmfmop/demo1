@@ -46,7 +46,7 @@ const Footer = () => {
             {/* Brand */}
             <div className="flex-1 max-w-sm">
                 <img
-                    src="/logo/DMF_LOGO_PNG_2.png"
+                    src="/logo/New Logo.png"
                     alt="DMF - Movement of Positivity"
                     className="h-24 w-auto object-contain mb-4"
                 />
@@ -66,7 +66,8 @@ const Footer = () => {
                 <ul className="space-y-3">
                     <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/">{t.footerHome}</Link></li>
                     <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/about">{t.footerWhatWeAre}</Link></li>
-                    <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/icoe">{t.footerWhatWeDo}</Link></li>
+                    <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/what-we-do">{t.footerWhatWeDo}</Link></li>
+                    <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/icoe">{t.footerIcoe}</Link></li>
                     <li><Link className="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]" to="/media">{t.footerMedia}</Link></li>
                 </ul>
             </div>
@@ -106,7 +107,7 @@ const Footer = () => {
                 {t.footerCopyright}
             </p>
             <div className="flex gap-8">
-                <a className="text-gray-400 text-[10px] uppercase tracking-widest hover:text-white" href="#">{t.footerPrivacy}</a>
+                <Link className="text-gray-400 text-[10px] uppercase tracking-widest hover:text-white" to="/privacy-policy">{t.footerPrivacy}</Link>
                 <a className="text-gray-400 text-[10px] uppercase tracking-widest hover:text-white" href="#">{t.footerTerms}</a>
             </div>
         </div>

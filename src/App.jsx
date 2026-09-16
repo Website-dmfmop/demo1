@@ -17,6 +17,7 @@ import Admission from './pages/Admission';
 import CompetitiveExamsHub from './pages/CompetitiveExamsHub';
 import CSR from './pages/CSR';
 import JoinUs from './pages/JoinUs';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 import JobPlacement from './pages/JobPlacement';
 import MovementOfPositivity from './pages/MovementOfPositivity';
@@ -36,6 +37,7 @@ import GnmAdmission from './pages/GnmAdmission';
 import LanguageCourseAdmission from './pages/LanguageCourseAdmission';
 import TechnicalCourseAdmission from './pages/TechnicalCourseAdmission';
 import OtherCourseAdmission from './pages/OtherCourseAdmission';
+import WhatWeDo from './pages/WhatWeDo';
 import ExamRegistration from './pages/ExamRegistration';
 import CourseTeaserToast from './components/Admissions/CourseTeaserToast';
 import RegisterNowFloater from './components/Admissions/RegisterNowFloater';
@@ -52,13 +54,24 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/what-we-do" element={<WhatWeDo />} />
         <Route path="/events" element={<Events />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/donate" element={<Donate />} />
         <Route path="/missions" element={<Missions />} />
+
+        {/* ── Canonical ICOE Ecosystem Routes ── */}
         <Route path="/icoe" element={<ICOE />} />
-        <Route path="/media" element={<Media />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/icoe/admissions" element={<Admission />} />
+        <Route path="/icoe/admissions/gnm" element={<GnmAdmission />} />
+        <Route path="/icoe/admissions/language-course" element={<LanguageCourseAdmission />} />
+        <Route path="/icoe/admissions/technical-course" element={<TechnicalCourseAdmission />} />
+        <Route path="/icoe/admissions/other-course" element={<OtherCourseAdmission />} />
+        <Route path="/icoe/competitive-exams" element={<CompetitiveExamsHub />} />
+        <Route path="/icoe/competitive-exams/register" element={<ExamRegistration />} />
+        <Route path="/icoe/job-placement" element={<JobPlacement />} />
+
+        {/* ── Backwards-Compatible Legacy Routes (Aliases) ── */}
         <Route path="/admission" element={<Admission />} />
         <Route path="/admission/gnm" element={<GnmAdmission />} />
         <Route path="/admission/language-course" element={<LanguageCourseAdmission />} />
@@ -66,11 +79,14 @@ function App() {
         <Route path="/admission/other-course" element={<OtherCourseAdmission />} />
         <Route path="/competitive-exams-hub" element={<CompetitiveExamsHub />} />
         <Route path="/competitive-exams-hub/register" element={<ExamRegistration />} />
+        <Route path="/job-placement" element={<JobPlacement />} />
+        <Route path="/international-center-of-excellence" element={<CenterOfExcellence />} />
+
+        <Route path="/media" element={<Media />} />
+        <Route path="/admin" element={<Admin />} />
         {import.meta.env.DEV && <Route path="/csr" element={<CSR />} />}
         <Route path="/join-us" element={<JoinUs />} />
-        <Route path="/job-placement" element={<JobPlacement />} />
         <Route path="/movement-of-positivity" element={<MovementOfPositivity />} />
-        <Route path="/international-center-of-excellence" element={<CenterOfExcellence />} />
         <Route path="/words-beyond-borders" element={<WordsBeyondBorders />} />
         <Route path="/nursing-college" element={<NursingCollege />} />
         <Route path="/social-innovation-path" element={<SocialInnovationPath />} />
@@ -81,6 +97,7 @@ function App() {
         <Route path="/job-fair" element={<JobFair />} />
         <Route path="/become-a-partner" element={<BecomePartner />} />
         <Route path="/slot-booking" element={<SlotBooking />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
       <Footer />
       </LanguageProvider>

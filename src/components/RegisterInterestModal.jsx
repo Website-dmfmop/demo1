@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ReCAPTCHA from "react-google-recaptcha";
+import ReCAPTCHA from "./ui/SafeReCAPTCHA";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -272,7 +272,7 @@ export default function RegisterInterestModal({ show, onClose, selectedCourse, t
 
             <div className="flex justify-center pt-4">
               <ReCAPTCHA
-                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'}
+                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
                 onChange={(token) => setCaptchaToken(token)}
               />
             </div>

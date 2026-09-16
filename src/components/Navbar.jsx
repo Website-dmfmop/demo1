@@ -27,7 +27,7 @@ const Navbar = () => {
             <div className="flex w-full items-center justify-between px-6 lg:px-12 py-4">
                 <Link to="/" className="flex items-center gap-x-4 flex-shrink-0">
                     <img
-                        src="/logo/DMF_LOGO_PNG_2.png"
+                        src="/logo/New Logo.png"
                         alt="DMF - Movement of Positivity"
                         className="h-14 md:h-16 w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
                     />
@@ -40,26 +40,61 @@ const Navbar = () => {
                         </span>
                     </div>
                 </Link>
-                <div className="flex items-center gap-x-8">
-                    <div className="hidden lg:flex flex-row items-center gap-x-8">
+                <div className="flex items-center gap-x-6 lg:gap-x-8">
+                    <div className="hidden lg:flex flex-row items-center gap-x-6 xl:gap-x-8">
                         <Link className={getLinkClass('/')} to="/">{t.navHome}</Link>
                         <Link className={getLinkClass('/about')} to="/about">{t.navWhatWeAre}</Link>
-                        <Link className={getLinkClass('/icoe')} to="/icoe">{t.navWhatWeDo}</Link>
-                        <Link className={getLinkClass('/media')} to="/media">{t.navMedia}</Link>
+                        <Link className={getLinkClass('/what-we-do')} to="/what-we-do">{t.navWhatWeDo}</Link>
+
+                        {/* ── ICOE First-Class Dropdown ── */}
                         <div className="relative group">
-                            <span className={`font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] whitespace-nowrap cursor-pointer flex items-center gap-1 ${path.startsWith('/admission') || path.startsWith('/competitive-exams-hub') ? 'text-white border-b-2 border-[#fe9832] pb-1' : 'text-white/80 group-hover:text-white'}`}>
-                                {t.navAdmission} <span className="material-symbols-outlined text-[18px]">arrow_drop_down</span>
-                            </span>
-                            <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 py-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top -translate-y-2 group-hover:translate-y-0">
-                                <Link to="/admission/gnm" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navGnmAdmission}</Link>
-                                <Link to="/competitive-exams-hub" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navCompetitiveExams}</Link>
-                                <Link to="/admission/language-course" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navLanguageCourse}</Link>
-                                <Link to="/admission/technical-course" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navTechnicalCourse}</Link>
-                                <Link to="/admission/other-course" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navOtherCourse}</Link>
+                            <Link
+                                to="/icoe"
+                                className={`font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+                                    path.startsWith('/icoe') || path.startsWith('/admission') || path.startsWith('/competitive-exams-hub') || path === '/job-placement'
+                                        ? 'text-white border-b-2 border-[#fe9832] pb-1'
+                                        : 'text-white/80 group-hover:text-white'
+                                }`}
+                            >
+                                {t.navIcoe} <span className="material-symbols-outlined text-[18px]">arrow_drop_down</span>
+                            </Link>
+                            <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top -translate-y-2 group-hover:translate-y-0">
+                                <Link to="/icoe" className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-800 hover:bg-primary/5 hover:text-primary font-semibold transition-colors">
+                                    <span className="material-symbols-outlined text-primary text-[18px]">domain</span>
+                                    <span>{t.navIcoeOverview}</span>
+                                </Link>
+                                <a href="/icoe#programs" className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-800 hover:bg-primary/5 hover:text-primary font-semibold transition-colors">
+                                    <span className="material-symbols-outlined text-secondary-container text-[18px]">menu_book</span>
+                                    <span>{t.navIcoePrograms}</span>
+                                </a>
+
+                                <div className="h-px bg-gray-100 my-1.5"></div>
+
+                                <div className="px-4 py-1 flex items-center justify-between">
+                                    <Link to="/icoe/admissions" className="text-xs font-bold uppercase tracking-wider text-primary hover:text-secondary transition-colors flex items-center gap-1">
+                                        <span>{t.navIcoeAdmissions}</span>
+                                        <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                                    </Link>
+                                </div>
+                                <div className="pl-3 pr-2 py-0.5 space-y-0.5">
+                                    <Link to="/icoe/admissions/gnm" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navGnmAdmission}</Link>
+                                    <Link to="/icoe/competitive-exams" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navCompetitiveExams}</Link>
+                                    <Link to="/icoe/admissions/language-course" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navLanguageCourse}</Link>
+                                    <Link to="/icoe/admissions/technical-course" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navTechnicalCourse}</Link>
+                                    <Link to="/icoe/admissions/other-course" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navOtherCourse}</Link>
+                                </div>
+
+                                <div className="h-px bg-gray-100 my-1.5"></div>
+
+                                <Link to="/icoe/job-placement" className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-800 hover:bg-primary/5 hover:text-primary font-semibold transition-colors">
+                                    <span className="material-symbols-outlined text-[#2e7d32] text-[18px]">work</span>
+                                    <span>{t.navIcoeJobPlacement}</span>
+                                </Link>
                             </div>
                         </div>
-                        {/* <Link className={getLinkClass('/csr')} to="/csr">{t.navCSR}</Link> */}
-                        <Link className={getLinkClass('/job-placement')} to="/job-placement">{t.navJobPlacement}</Link>
+
+                        <Link className={getLinkClass('/media')} to="/media">{t.navMedia}</Link>
+
                         <div className="relative group">
                             <span className="font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] whitespace-nowrap text-white/80 group-hover:text-white cursor-pointer flex items-center gap-1">
                                 {t.navJoinUs} <span className="material-symbols-outlined text-[18px]">arrow_drop_down</span>
@@ -72,7 +107,17 @@ const Navbar = () => {
                                 <Link to="/slot-booking" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors flex items-center gap-2"><span className="material-symbols-outlined text-[16px]">calendar_month</span>{t.navBookSlot}</Link>
                             </div>
                         </div>
+
+                        {/* ── Donate Header Button ── */}
+                        <Link
+                            to="/donate"
+                            className="px-4 py-2 bg-secondary-container hover:bg-white text-on-secondary-container hover:text-primary font-headline font-bold text-xs uppercase tracking-wider rounded-lg shadow-md transition-all duration-300 flex items-center gap-1.5 active:scale-95"
+                        >
+                            <span className="material-symbols-outlined text-sm">favorite</span>
+                            <span>{t.navDonate}</span>
+                        </Link>
                     </div>
+
                     <button
                         className="lg:hidden text-white p-2"
                         onClick={() => setMenuOpen(!menuOpen)}
@@ -84,36 +129,63 @@ const Navbar = () => {
 
             {/* Mobile Menu */}
             {menuOpen && (
-                <div className="lg:hidden bg-primary/95 backdrop-blur-xl border-t border-white/10 px-6 py-6 flex flex-col gap-4">
+                <div className="lg:hidden bg-primary/95 backdrop-blur-xl border-t border-white/10 px-6 py-6 flex flex-col gap-4 max-h-[85vh] overflow-y-auto">
                     <Link className={getLinkClass('/')} to="/" onClick={() => setMenuOpen(false)}>{t.navHome}</Link>
                     <Link className={getLinkClass('/about')} to="/about" onClick={() => setMenuOpen(false)}>{t.navWhatWeAre}</Link>
-                    <Link className={getLinkClass('/icoe')} to="/icoe" onClick={() => setMenuOpen(false)}>{t.navWhatWeDo}</Link>
-                    <Link className={getLinkClass('/media')} to="/media" onClick={() => setMenuOpen(false)}>{t.navMedia}</Link>
-                    
-                    <div className="flex flex-col gap-2 mt-2 pt-2 border-t border-white/10">
-                        <span className="font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] text-white/50 px-2">{t.navAdmission}</span>
-                        <div className="flex flex-col gap-3 pl-4">
-                            <Link to="/admission/gnm" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navGnmAdmission}</Link>
-                            <Link to="/competitive-exams-hub" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navCompetitiveExams}</Link>
-                            <Link to="/admission/language-course" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navLanguageCourse}</Link>
-                            <Link to="/admission/technical-course" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navTechnicalCourse}</Link>
-                            <Link to="/admission/other-course" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navOtherCourse}</Link>
+                    <Link className={getLinkClass('/what-we-do')} to="/what-we-do" onClick={() => setMenuOpen(false)}>{t.navWhatWeDo}</Link>
+
+                    {/* Mobile ICOE Section */}
+                    <div className="flex flex-col gap-2 mt-1 pt-3 border-t border-white/10">
+                        <div className="flex items-center justify-between px-2">
+                            <span className="font-headline tracking-tight uppercase font-bold text-sm text-secondary-container">{t.navIcoe}</span>
+                        </div>
+                        <div className="flex flex-col gap-2.5 pl-3">
+                            <Link to="/icoe" onClick={() => setMenuOpen(false)} className="text-white font-medium text-sm hover:text-secondary-container transition-colors flex items-center gap-2">
+                                <span className="material-symbols-outlined text-sm">domain</span>
+                                <span>{t.navIcoeOverview}</span>
+                            </Link>
+                            <a href="/icoe#programs" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-secondary-container transition-colors flex items-center gap-2">
+                                <span className="material-symbols-outlined text-sm">menu_book</span>
+                                <span>{t.navIcoePrograms}</span>
+                            </a>
+                            <Link to="/icoe/admissions" onClick={() => setMenuOpen(false)} className="text-white font-semibold text-sm hover:text-secondary-container transition-colors mt-1 pt-1 border-t border-white/10 flex items-center gap-2">
+                                <span className="material-symbols-outlined text-sm">how_to_reg</span>
+                                <span>{t.navIcoeAdmissions}</span>
+                            </Link>
+                            <div className="flex flex-col gap-2 pl-4 border-l border-white/10">
+                                <Link to="/icoe/admissions/gnm" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navGnmAdmission}</Link>
+                                <Link to="/icoe/competitive-exams" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navCompetitiveExams}</Link>
+                                <Link to="/icoe/admissions/language-course" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navLanguageCourse}</Link>
+                                <Link to="/icoe/admissions/technical-course" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navTechnicalCourse}</Link>
+                                <Link to="/icoe/admissions/other-course" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navOtherCourse}</Link>
+                            </div>
+                            <Link to="/icoe/job-placement" onClick={() => setMenuOpen(false)} className="text-white font-medium text-sm hover:text-secondary-container transition-colors flex items-center gap-2 mt-1">
+                                <span className="material-symbols-outlined text-sm">work</span>
+                                <span>{t.navIcoeJobPlacement}</span>
+                            </Link>
                         </div>
                     </div>
 
-                    <Link className={getLinkClass('/csr')} to="/csr" onClick={() => setMenuOpen(false)}>{t.navCSR}</Link>
-                    <Link className={getLinkClass('/job-placement')} to="/job-placement" onClick={() => setMenuOpen(false)}>{t.navJobPlacement}</Link>
+                    <Link className={getLinkClass('/media')} to="/media" onClick={() => setMenuOpen(false)}>{t.navMedia}</Link>
 
-                    <div className="flex flex-col gap-2 mt-2 pt-4 border-t border-white/10">
-                        <span className="font-headline tracking-tight leading-relaxed uppercase font-semibold text-[15px] text-white/50 px-2">{t.navJoinUs}</span>
-                        <div className="flex flex-col gap-3 pl-4">
+                    <div className="flex flex-col gap-2 mt-1 pt-3 border-t border-white/10">
+                        <span className="font-headline tracking-tight leading-relaxed uppercase font-semibold text-[14px] text-white/50 px-2">{t.navJoinUs}</span>
+                        <div className="flex flex-col gap-2.5 pl-4">
                             <Link to="/join-us?purpose=Volunteer" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navVolunteer}</Link>
                             <Link to="/join-us?purpose=Member" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navMember}</Link>
                             <Link to="/join-us?purpose=Partner" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navPartner}</Link>
-                            <Link to="/join-us?purpose=Supporter" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navSupporter}</Link>
                             <Link to="/slot-booking" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navBookSlot}</Link>
                         </div>
                     </div>
+
+                    <Link
+                        to="/donate"
+                        onClick={() => setMenuOpen(false)}
+                        className="mt-2 py-3 px-4 bg-secondary-container text-on-secondary-container font-headline font-bold text-sm uppercase tracking-wider rounded-xl text-center shadow-lg flex items-center justify-center gap-2"
+                    >
+                        <span className="material-symbols-outlined text-sm">favorite</span>
+                        <span>{t.navDonate}</span>
+                    </Link>
                 </div>
             )}
         </nav>

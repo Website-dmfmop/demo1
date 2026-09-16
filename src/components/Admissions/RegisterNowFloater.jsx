@@ -7,8 +7,9 @@ const RegisterNowFloater = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Show ONLY on /competitive-exams-hub
-    const showFloater = location.pathname === '/competitive-exams-hub';
+    // Show on /competitive-exams-hub and /icoe/competitive-exams
+    const isIcoeHub = location.pathname === '/icoe/competitive-exams';
+    const showFloater = isIcoeHub || location.pathname === '/competitive-exams-hub';
 
     if (!showFloater) return null;
 
@@ -22,7 +23,7 @@ const RegisterNowFloater = () => {
             <motion.button
                 whileHover="hover"
                 initial="initial"
-                onClick={() => navigate('/competitive-exams-hub/register')}
+                onClick={() => navigate(isIcoeHub ? '/icoe/competitive-exams/register' : '/competitive-exams-hub/register')}
                 className="bg-[#000080] text-white px-6 py-4 rounded-full shadow-blue-900/50 shadow-xl flex items-center gap-2 font-manrope font-bold text-lg relative overflow-hidden group transition-all"
             >
                 <motion.div

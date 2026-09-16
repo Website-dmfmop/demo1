@@ -2,333 +2,713 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { donateTranslations } from '../translations/pages';
-import ReCAPTCHA from "react-google-recaptcha";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// ============================================================================
+// DONATION CONFIGURATION
+// Keep this section isolated so real donation details can be dropped in later
+// without modifying the UI layout or presentation logic.
+// ============================================================================
+export const DONATION_CONFIG = {
+    // Set to true once official QR image and bank account details are populated
+    isLive: false,
+
+    // QR / UPI Information
+    qr: {
+        imageSrc: '/Images/donation_qr.png',
+        upiId: 'vyapar.178120718854@hdfcbank',
+    },
+
+    // Direct Bank Transfer Details (Pending official details)
+    bank: {
+        accountName: '[Official Account Name Pending]',
+        bankName: '[Official Bank Name Pending]',
+        accountNumber: '[Official Account Number Pending]',
+        ifsc: '[Official IFSC Code Pending]',
+        branch: '[Official Branch Pending]',
+        accountType: 'Savings / Current Account',
+    },
+
+    // Genuine Organization Contact for donation queries and receipts
+    support: {
+        email: 'corporate@dmfmop.org',
+        phone: '+91 8378086159',
+    },
+};
 
 export default function Donate() {
     const { language } = useLanguage();
-    const t = donateTranslations[language];
-    const [amount, setAmount] = useState(100);
-    const [customAmount, setCustomAmount] = useState('');
-    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-    const [status, setStatus] = useState('');
-    const [captchaToken, setCaptchaToken] = useState(null);
+    const t = donateTranslations[language] || donateTranslations.en;
 
-    const handleAmountClick = (val) => {
-        setAmount(val);
-        setCustomAmount('');
-    };
+    const [copiedField, setCopiedField] = useState(null);
 
-    const handleCustomAmountChange = (e) => {
-        setCustomAmount(e.target.value);
-        setAmount(e.target.value ? parseInt(e.target.value) : 0);
-    };
-
-    const handleInputChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleDonation = async (e) => {
-        e.preventDefault();
-        if (!captchaToken) {
-            setStatus('error');
-            return;
-        }
-        setStatus('submitting');
-        try {
-            const finalAmount = customAmount ? parseInt(customAmount) : amount;
-            if (!finalAmount || finalAmount <= 0) {
-                setStatus('error');
-                return;
-            }
-
-            const res = await fetch(`${API_URL}/api/donations`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: formData.name,
-                    email: formData.email,
-                    amount: finalAmount,
-                    message: formData.message,
-                    captchaToken
-                })
+    const handleCopy = (text, fieldName) => {
+        if (!text) return;
+        if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                setCopiedField(fieldName);
+                setTimeout(() => setCopiedField(null), 2500);
+            }).catch(() => {
+                // Fallback for older browsers
+                fallbackCopy(text, fieldName);
             });
+        } else {
+            fallbackCopy(text, fieldName);
+        }
+    };
 
-            if (res.ok) {
-                setStatus('success');
-                setFormData({ name: '', email: '', message: '' });
-            } else {
-                setStatus('error');
-            }
-        } catch (error) {
-            setStatus('error');
+    const fallbackCopy = (text, fieldName) => {
+        try {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            setCopiedField(fieldName);
+            setTimeout(() => setCopiedField(null), 2500);
+        } catch (err) {
+            console.warn('Copy failed', err);
+        }
+    };
+
+    const scrollToSection = (id) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
         }
     };
 
     return (
-        <div>
+        <div className="bg-surface text-on-surface">
+            {/* ── 1. HERO SECTION ─────────────────────────────────── */}
+            <section className="relative overflow-hidden bg-[#00003c] pt-32 sm:pt-36 md:pt-44 pb-16 sm:pb-20 md:pb-24">
+                {/* Background photo with subtle dark overlay */}
+                <div className="absolute inset-0 z-0">
+                    <img
+                        alt="Community Empowerment"
+                        className="w-full h-full object-cover opacity-35 scale-105 transition-transform duration-1000"
+                        src="/Images/2.png"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#00003c] via-[#00003c]/90 to-[#00003c]/60"></div>
+                </div>
 
+                <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 w-full z-10">
+                    <div className="max-w-3xl">
+                        {/* Pre-title Tag */}
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#fe9832]/15 border border-[#fe9832]/30 mb-5">
+                            <span className="w-2 h-2 rounded-full bg-[#fe9832] animate-pulse"></span>
+                            <span className="font-label text-[#fe9832] uppercase tracking-[0.2em] font-bold text-xs">
+                                {t.heroTag}
+                            </span>
+                        </div>
 
+                        {/* Headline */}
+                        <h1 className="font-headline text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight mb-6">
+                            {t.heroTitle}{' '}
+                            <span className="text-[#fe9832] underline decoration-[#fe9832]/40 decoration-wavy underline-offset-8">
+                                {t.heroTitleHighlight}
+                            </span>
+                        </h1>
 
-            <main>
+                        {/* Sincere Subtitle */}
+                        <p className="text-gray-200 text-lg sm:text-xl leading-relaxed mb-8 max-w-2xl font-body">
+                            {t.heroDesc}
+                        </p>
 
-                <section className="relative h-[716px] flex items-center overflow-hidden signature-gradient">
-                    <div className="absolute inset-0 z-0">
-                        <img alt="Empowerment" className="w-full h-full object-cover" src="/Images/2.png" />
-                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/60 via-primary/20 to-transparent"></div>
-                    </div>
-                    <div className="relative max-w-7xl mx-auto px-8 w-full">
-                        <div className="max-w-2xl">
-                            <span className="font-label text-secondary-container uppercase tracking-widest font-semibold text-sm mb-4 block">{t.heroTag}</span>
-                            <h1 className="font-headline text-5xl md:text-7xl font-extrabold text-white leading-tight tracking-tighter mb-6">
-                                {t.heroTitle} <span className="text-secondary-container">{t.heroTitleHighlight}</span>
-                            </h1>
-                            <p className="text-white/90 text-xl leading-relaxed max-w-xl font-body">
-                                {t.heroDesc}
-                            </p>
+                        {/* Action Buttons */}
+                        <div className="flex flex-wrap items-center gap-4 mb-10">
+                            <button
+                                id="hero-donate-cta"
+                                onClick={() => scrollToSection('donation-methods')}
+                                className="inline-flex items-center gap-3 px-8 py-4 bg-[#fe9832] hover:bg-[#e08324] text-[#00003c] font-headline font-extrabold text-sm uppercase tracking-wider rounded-lg shadow-xl hover:shadow-[0_10px_25px_rgba(254,152,50,0.35)] transition-all transform active:scale-95"
+                            >
+                                <span className="material-symbols-outlined text-xl">volunteer_activism</span>
+                                {t.heroCta}
+                            </button>
+
+                            <button
+                                onClick={() => scrollToSection('why-support')}
+                                className="inline-flex items-center gap-2 px-6 py-4 bg-white/10 hover:bg-white/15 text-white font-headline font-semibold text-sm rounded-lg backdrop-blur-sm border border-white/20 transition-all hover:border-white/40"
+                            >
+                                <span className="material-symbols-outlined text-lg">info</span>
+                                {t.heroSecondaryCta}
+                            </button>
+                        </div>
+
+                        {/* Trust Highlights */}
+                        <div className="pt-8 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs text-gray-300">
+                            <div className="flex items-center gap-2.5">
+                                <span className="material-symbols-outlined text-[#fe9832] text-xl shrink-0">account_balance</span>
+                                <span>Direct NGO Bank Transfer</span>
+                            </div>
+                            <div className="flex items-center gap-2.5">
+                                <span className="material-symbols-outlined text-[#fe9832] text-xl shrink-0">qr_code_scanner</span>
+                                <span>Instant UPI QR Channel</span>
+                            </div>
+                            <div className="flex items-center gap-2.5">
+                                <span className="material-symbols-outlined text-[#fe9832] text-xl shrink-0">shield</span>
+                                <span>100% Direct Grassroots Impact</span>
+                            </div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section className="max-w-7xl mx-auto px-8 -mt-24 relative z-10 mb-24">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* ── 2. WHY YOUR SUPPORT MATTERS ─────────────────────── */}
+            <section id="why-support" className="py-20 md:py-28 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto">
+                <div className="text-center max-w-3xl mx-auto mb-16">
+                    <span className="font-label text-[#8f4e00] font-bold tracking-[0.2em] text-xs uppercase block mb-3">
+                        {t.whySupportTag}
+                    </span>
+                    <h2 className="font-headline text-3xl sm:text-4xl font-extrabold text-primary mb-4 tracking-tight">
+                        {t.whySupportTitle}
+                    </h2>
+                    <p className="text-on-surface-variant text-base sm:text-lg leading-relaxed font-body">
+                        {t.whySupportSubtitle}
+                    </p>
+                </div>
 
-                        <div className="lg:col-span-7 bg-surface-container-lowest p-8 md:p-12 rounded-xl shadow-2xl border-t-4 border-secondary-container relative overflow-hidden">
-                            {status === 'success' ? (
-                                <div className="text-center py-12">
-                                    <div className="w-20 h-20 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
-                                        <span className="material-symbols-outlined text-4xl">check_circle</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {/* Pillar 1: Social Innovation Path */}
+                    <div className="bg-surface-container-lowest rounded-2xl p-8 border border-outline-variant/40 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                        <div>
+                            <div className="w-14 h-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                                <span className="material-symbols-outlined text-3xl">lightbulb</span>
+                            </div>
+                            <h3 className="font-headline text-xl font-bold text-primary mb-3">
+                                {t.pillar1Title}
+                            </h3>
+                            <p className="text-on-surface-variant text-sm sm:text-base leading-relaxed mb-6 font-body">
+                                {t.pillar1Desc}
+                            </p>
+                        </div>
+                        <div className="pt-4 border-t border-surface-container flex items-center text-xs font-semibold text-primary uppercase tracking-wider">
+                            <span className="material-symbols-outlined text-base mr-2 text-[#fe9832]">check_circle</span>
+                            Grassroots Problem Solving
+                        </div>
+                    </div>
+
+                    {/* Pillar 2: Skill Reach Programmes */}
+                    <div className="bg-surface-container-lowest rounded-2xl p-8 border border-outline-variant/40 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                        <div>
+                            <div className="w-14 h-14 rounded-xl bg-[#2e7d32]/10 text-[#2e7d32] flex items-center justify-center mb-6 group-hover:bg-[#2e7d32] group-hover:text-white transition-colors duration-300">
+                                <span className="material-symbols-outlined text-3xl">build</span>
+                            </div>
+                            <h3 className="font-headline text-xl font-bold text-primary mb-3">
+                                {t.pillar2Title}
+                            </h3>
+                            <p className="text-on-surface-variant text-sm sm:text-base leading-relaxed mb-6 font-body">
+                                {t.pillar2Desc}
+                            </p>
+                        </div>
+                        <div className="pt-4 border-t border-surface-container flex items-center text-xs font-semibold text-[#2e7d32] uppercase tracking-wider">
+                            <span className="material-symbols-outlined text-base mr-2 text-[#2e7d32]">check_circle</span>
+                            Youth Vocational Dignity
+                        </div>
+                    </div>
+
+                    {/* Pillar 3: She Leads (Women's Leadership) */}
+                    <div className="bg-surface-container-lowest rounded-2xl p-8 border border-outline-variant/40 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                        <div>
+                            <div className="w-14 h-14 rounded-xl bg-[#fe9832]/15 text-[#8f4e00] flex items-center justify-center mb-6 group-hover:bg-[#fe9832] group-hover:text-[#00003c] transition-colors duration-300">
+                                <span className="material-symbols-outlined text-3xl">diversity_1</span>
+                            </div>
+                            <h3 className="font-headline text-xl font-bold text-primary mb-3">
+                                {t.pillar3Title}
+                            </h3>
+                            <p className="text-on-surface-variant text-sm sm:text-base leading-relaxed mb-6 font-body">
+                                {t.pillar3Desc}
+                            </p>
+                        </div>
+                        <div className="pt-4 border-t border-surface-container flex items-center text-xs font-semibold text-[#8f4e00] uppercase tracking-wider">
+                            <span className="material-symbols-outlined text-base mr-2 text-[#fe9832]">check_circle</span>
+                            Rural Economic Self-Reliance
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── 3. MAIN DONATION SECTION (CENTERPIECE) ──────────── */}
+            <section id="donation-methods" className="py-20 bg-surface-container-low px-6 sm:px-8 lg:px-12 relative">
+                <div className="max-w-7xl mx-auto">
+                    {/* Section Header */}
+                    <div className="text-center max-w-3xl mx-auto mb-16">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 text-primary text-xs font-bold tracking-[0.2em] uppercase mb-3">
+                            <span className="material-symbols-outlined text-sm">payments</span>
+                            {t.donationMethodsTag}
+                        </div>
+                        <h2 className="font-headline text-3xl sm:text-5xl font-extrabold text-primary mb-4 tracking-tight">
+                            {t.donationMethodsTitle}
+                        </h2>
+                        <p className="text-on-surface-variant text-base sm:text-lg leading-relaxed max-w-2xl mx-auto font-body">
+                            {t.donationMethodsSubtitle}
+                        </p>
+                    </div>
+
+                    {/* TWO-COLUMN DONATION METHODS */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+
+                        {/* ── OPTION A: UPI / QR CODE (5 cols) ── */}
+                        <div className="lg:col-span-5 bg-surface-container-lowest rounded-3xl p-8 sm:p-10 border border-outline-variant/50 shadow-lg flex flex-col justify-between">
+                            <div>
+                                {/* Header */}
+                                <div className="flex items-start justify-between gap-4 mb-6">
+                                    <div>
+                                        <span className="inline-block px-2.5 py-1 rounded-md bg-[#fe9832]/15 text-[#8f4e00] text-xs font-black uppercase tracking-wider mb-2">
+                                            {t.qrBadge}
+                                        </span>
+                                        <h3 className="font-headline text-2xl font-extrabold text-primary">
+                                            {t.qrTitle}
+                                        </h3>
                                     </div>
-                                    <h3 className="text-3xl font-display font-bold text-primary mb-3">{t.thankYou}</h3>
-                                    <p className="text-on-surface-variant mb-8 text-lg">{t.thankYouDesc}</p>
-                                    <button
-                                        onClick={() => setStatus('')}
-                                        className="px-8 py-3 bg-secondary-container hover:bg-secondary text-white rounded-lg transition-colors font-medium"
-                                    >
-                                        {t.donateAgain}
-                                    </button>
+                                    <div className="w-12 h-12 rounded-xl bg-primary/5 text-primary flex items-center justify-center shrink-0">
+                                        <span className="material-symbols-outlined text-2xl">qr_code_scanner</span>
+                                    </div>
                                 </div>
-                            ) : (
-                                <form onSubmit={handleDonation}>
-                                    <div className="flex items-center justify-between mb-10">
-                                        <h2 className="font-headline text-3xl font-bold text-primary">{t.makeDonation}</h2>
-                                        <div className="flex bg-surface-container rounded-full p-1">
-                                            <button type="button" className="px-6 py-2 rounded-full text-sm font-semibold transition-all bg-primary text-white">One-time</button>
-                                            <button type="button" className="px-6 py-2 rounded-full text-sm font-semibold transition-all text-on-surface-variant hover:bg-surface-variant">Monthly</button>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                                        {[25, 50, 100, 500].map((val) => (
-                                            <button
-                                                key={val}
-                                                type="button"
-                                                onClick={() => handleAmountClick(val)}
-                                                className={`py-4 border-2 rounded-xl font-headline font-bold text-xl transition-all ${amount === val && !customAmount
-                                                    ? 'border-secondary-container bg-secondary-container/10 text-secondary scale-[1.02]'
-                                                    : 'border-outline-variant hover:border-secondary-container hover:text-secondary focus:ring-2 focus:ring-secondary-container'
-                                                    }`}
-                                            >
-                                                ₹{val}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    <div className="relative mb-8">
-                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-outline font-bold text-xl">₹</span>
-                                        <input
-                                            className="w-full pl-10 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary font-body text-lg"
-                                            placeholder="Custom Amount"
-                                            type="number"
-                                            value={customAmount}
-                                            onChange={handleCustomAmountChange}
-                                        />
-                                    </div>
-                                    <div className="space-y-4 mb-10">
-                                        <input
-                                            required
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleInputChange}
-                                            className="w-full px-4 py-4 bg-surface-container-low border border-transparent rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                            placeholder="Full Name *"
-                                            type="text"
-                                        />
-                                        <input
-                                            required
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleInputChange}
-                                            className="w-full px-4 py-4 bg-surface-container-low border border-transparent rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                            placeholder="Email Address *"
-                                            type="email"
-                                        />
-                                        <div className="relative">
-                                            <span className="absolute left-4 top-4 material-symbols-outlined text-outline text-xl">chat</span>
-                                            <textarea
-                                                name="message"
-                                                value={formData.message}
-                                                onChange={handleInputChange}
-                                                className="w-full pl-12 pr-4 py-4 bg-surface-container-low border border-transparent rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all min-h-[100px] resize-none"
-                                                placeholder="Message (Optional)"
-                                            ></textarea>
-                                        </div>
-                                    </div>
 
-                                    {status === 'error' && (
-                                        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-sm">
-                                            There was an error processing your donation. Please ensure you checked the CAPTCHA box and try again.
+                                {/* QR Placeholder / Live Display */}
+                                <div className="my-6">
+                                    {DONATION_CONFIG.qr.imageSrc ? (
+                                        <div className="bg-white p-6 rounded-2xl border border-outline-variant/60 shadow-inner flex flex-col items-center justify-center">
+                                            <img
+                                                src={DONATION_CONFIG.qr.imageSrc}
+                                                alt="Official DMF Donation QR Code"
+                                                className="w-56 h-56 object-contain rounded-lg shadow-sm"
+                                            />
+                                            <div className="mt-4 flex flex-col items-center gap-2">
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 text-green-700 text-xs font-semibold">
+                                                    <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                                                    Official UPI QR Code
+                                                </span>
+                                                <a
+                                                    href={DONATION_CONFIG.qr.imageSrc}
+                                                    download="DMF_Donation_QR.png"
+                                                    className="inline-flex items-center gap-1.5 text-xs text-primary hover:text-primary-hover font-semibold underline underline-offset-4 transition-colors mt-1"
+                                                >
+                                                    <span className="material-symbols-outlined text-sm">download</span>
+                                                    Save QR to Device
+                                                </a>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        /* Clearly Unmistakable Development / Pending Placeholder */
+                                        <div className="bg-surface-container-low/70 border-2 border-dashed border-[#fe9832]/50 rounded-2xl p-8 flex flex-col items-center justify-center text-center relative overflow-hidden group">
+                                            {/* Decorative watermark */}
+                                            <div className="w-20 h-20 rounded-2xl bg-[#fe9832]/10 text-[#8f4e00] flex items-center justify-center mb-4">
+                                                <span className="material-symbols-outlined text-4xl">qr_code_2</span>
+                                            </div>
+
+                                            <h4 className="font-headline font-bold text-primary text-base mb-1">
+                                                {t.qrPlaceholderTitle}
+                                            </h4>
+
+                                            <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed max-w-xs mb-4">
+                                                {t.qrPlaceholderDesc}
+                                            </p>
+
+                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#fe9832]/10 text-[#8f4e00] text-xs font-semibold">
+                                                <span className="material-symbols-outlined text-sm">schedule</span>
+                                                Official QR Updating Soon
+                                            </div>
                                         </div>
                                     )}
+                                </div>
 
-                                    {/* CAPTCHA */}
-                                    <div className="flex justify-center mb-6">
-                                        <ReCAPTCHA
-                                            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                                            onChange={(token) => setCaptchaToken(token)}
-                                        />
+                                {/* UPI ID Row */}
+                                <div className="bg-surface-container-low p-4 rounded-xl mb-6">
+                                    <div className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                                        {t.upiIdLabel}
                                     </div>
-
-                                    <button
-                                        type="submit"
-                                        disabled={status === 'submitting'}
-                                        className="w-full py-5 bg-primary text-white font-headline font-bold text-lg rounded-xl hover:bg-primary-hover hover:shadow-[0_0_20px_rgba(254,152,50,0.3)] transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-70"
-                                    >
-                                        {status === 'submitting' ? (
-                                            <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                                        ) : (
-                                            <>
-                                                <span className="material-symbols-outlined" data-weight="fill">favorite</span>
-                                                {t.completeDonation}
-                                            </>
+                                    <div className="flex items-center justify-between gap-2">
+                                        <span className={`font-mono text-sm ${DONATION_CONFIG.qr.upiId ? 'text-primary font-bold' : 'text-on-surface-variant italic'}`}>
+                                            {DONATION_CONFIG.qr.upiId || t.upiPendingNotice}
+                                        </span>
+                                        {DONATION_CONFIG.qr.upiId && (
+                                            <button
+                                                onClick={() => handleCopy(DONATION_CONFIG.qr.upiId, 'upiId')}
+                                                className="px-3 py-1 bg-primary text-white text-xs font-semibold rounded hover:bg-primary-hover transition-all inline-flex items-center gap-1"
+                                                aria-label="Copy UPI ID"
+                                            >
+                                                <span className="material-symbols-outlined text-sm">
+                                                    {copiedField === 'upiId' ? 'check' : 'content_copy'}
+                                                </span>
+                                                {copiedField === 'upiId' ? t.copiedBtn : t.copyBtn}
+                                            </button>
                                         )}
-                                    </button>
-                                    <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-outline font-label text-xs uppercase tracking-widest">
-                                        <div className="flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-on-tertiary-container">verified_user</span>
-                                            100% Transparency
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-on-tertiary-container">lock</span>
-                                            Secure SSL Encryption
-                                        </div>
                                     </div>
-                                </form>
-                            )}
+                                </div>
+
+                                {/* QR Payment Instructions */}
+                                <div className="space-y-3 pt-2">
+                                    <div className="font-headline font-bold text-primary text-sm tracking-wide">
+                                        {t.qrStepsTitle}
+                                    </div>
+                                    <ul className="space-y-2.5 text-xs sm:text-sm text-on-surface-variant">
+                                        <li className="flex items-start gap-2.5">
+                                            <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">1</span>
+                                            <span>{t.qrStep1}</span>
+                                        </li>
+                                        <li className="flex items-start gap-2.5">
+                                            <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">2</span>
+                                            <span>{t.qrStep2}</span>
+                                        </li>
+                                        <li className="flex items-start gap-2.5 bg-[#fe9832]/10 p-2.5 rounded-xl border border-[#fe9832]/25 text-primary">
+                                            <span className="material-symbols-outlined text-base text-[#8f4e00] shrink-0 mt-0.5">photo_library</span>
+                                            <span className="font-medium text-xs sm:text-[13px] leading-relaxed">{t.qrStepAlt}</span>
+                                        </li>
+                                        <li className="flex items-start gap-2.5">
+                                            <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">3</span>
+                                            <span>{t.qrStep3}</span>
+                                        </li>
+                                        <li className="flex items-start gap-2.5">
+                                            <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">4</span>
+                                            <span>{t.qrStep4}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {/* Mobile User Tip */}
+                            <div className="mt-8 pt-4 border-t border-surface-container text-xs text-on-surface-variant/80 flex items-center gap-2">
+                                <span className="material-symbols-outlined text-[#fe9832] text-base shrink-0">smartphone</span>
+                                <span>Browsing from mobile? You can also use the Direct Bank Transfer details (Option 2) in your banking app.</span>
+                            </div>
                         </div>
 
-                        <div className="lg:col-span-5 space-y-6">
-                            <div className="bg-surface-container-low p-8 rounded-xl relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-secondary-container/10 rounded-bl-full -mr-10 -mt-10"></div>
-                                <h3 className="font-headline text-2xl font-bold text-primary mb-6">{t.whereMoneyGoes}</h3>
-                                <div className="space-y-8">
-                                    <div className="flex gap-4">
-                                        <div className="w-12 h-12 shrink-0 bg-primary text-white rounded-lg flex items-center justify-center">
-                                            <span className="material-symbols-outlined">school</span>
-                                        </div>
-                                        <div>
-                                            <h4 className="font-headline font-bold text-on-surface">{t.universalEdu}</h4>
-                                            <p className="text-on-surface-variant text-sm mt-1">{t.universalEduDesc}</p>
-                                        </div>
+                        {/* ── OPTION B: DIRECT BANK TRANSFER (7 cols) ── */}
+                        <div className="lg:col-span-7 bg-surface-container-lowest rounded-3xl p-8 sm:p-10 border border-outline-variant/50 shadow-lg flex flex-col justify-between">
+                            <div>
+                                {/* Header */}
+                                <div className="flex items-start justify-between gap-4 mb-6">
+                                    <div>
+                                        <span className="inline-block px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-black uppercase tracking-wider mb-2">
+                                            {t.bankBadge}
+                                        </span>
+                                        <h3 className="font-headline text-2xl font-extrabold text-primary">
+                                            {t.bankTitle}
+                                        </h3>
+                                        <p className="text-on-surface-variant text-sm mt-1 font-body">
+                                            {t.bankDesc}
+                                        </p>
                                     </div>
-                                    <div className="flex gap-4">
-                                        <div className="w-12 h-12 shrink-0 bg-secondary-container text-white rounded-lg flex items-center justify-center">
-                                            <span className="material-symbols-outlined">gavel</span>
-                                        </div>
-                                        <div>
-                                            <h4 className="font-headline font-bold text-on-surface">{t.legalEmpowerment}</h4>
-                                            <p className="text-on-surface-variant text-sm mt-1">{t.legalEmpowermentDesc}</p>
-                                        </div>
+                                    <div className="w-12 h-12 rounded-xl bg-primary/5 text-primary flex items-center justify-center shrink-0">
+                                        <span className="material-symbols-outlined text-2xl">account_balance</span>
                                     </div>
-                                    <div className="flex gap-4">
-                                        <div className="w-12 h-12 shrink-0 bg-tertiary-container text-on-tertiary-container rounded-lg flex items-center justify-center">
-                                            <span className="material-symbols-outlined">medical_services</span>
+                                </div>
+
+                                {/* Bank Details Card */}
+                                <div className="bg-gradient-to-br from-surface-container-low to-surface-container p-6 sm:p-8 rounded-2xl border border-outline-variant/60 shadow-sm relative overflow-hidden mb-8">
+                                    {/* Notice Banner */}
+                                    <div className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-900 text-xs mb-6">
+                                        <span className="material-symbols-outlined text-base shrink-0 text-amber-600">info</span>
+                                        <span className="font-medium">{t.detailsPendingNotice}</span>
+                                    </div>
+
+                                    {/* Credential Grid */}
+                                    <div className="space-y-4">
+                                        {/* Account Name */}
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/30 gap-1">
+                                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                                                {t.accNameLabel}
+                                            </span>
+                                            <span className="font-headline font-semibold text-primary text-sm sm:text-base">
+                                                {DONATION_CONFIG.bank.accountName}
+                                            </span>
                                         </div>
-                                        <div>
-                                            <h4 className="font-headline font-bold text-on-surface">{t.mobileMedical}</h4>
-                                            <p className="text-on-surface-variant text-sm mt-1">{t.mobileMedicalDesc}</p>
+
+                                        {/* Bank Name */}
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/30 gap-1">
+                                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                                                {t.bankNameLabel}
+                                            </span>
+                                            <span className="font-headline font-semibold text-primary text-sm sm:text-base">
+                                                {DONATION_CONFIG.bank.bankName}
+                                            </span>
+                                        </div>
+
+                                        {/* Account Number + Copy Button */}
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/30 gap-2">
+                                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                                                {t.accNumberLabel}
+                                            </span>
+                                            <div className="flex items-center gap-3">
+                                                <span className="font-mono text-sm sm:text-base font-bold text-primary tracking-wide">
+                                                    {DONATION_CONFIG.bank.accountNumber}
+                                                </span>
+                                                <button
+                                                    id="copy-acc-btn"
+                                                    onClick={() => handleCopy(DONATION_CONFIG.bank.accountNumber, 'accNumber')}
+                                                    className="px-3 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-lg transition-all inline-flex items-center gap-1.5 active:scale-95 shadow-sm"
+                                                    title="Copy Account Number"
+                                                    aria-label="Copy Account Number"
+                                                >
+                                                    <span className="material-symbols-outlined text-sm">
+                                                        {copiedField === 'accNumber' ? 'check' : 'content_copy'}
+                                                    </span>
+                                                    {copiedField === 'accNumber' ? t.copiedBtn : t.copyBtn}
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* IFSC Code + Copy Button */}
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/30 gap-2">
+                                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                                                {t.ifscLabel}
+                                            </span>
+                                            <div className="flex items-center gap-3">
+                                                <span className="font-mono text-sm sm:text-base font-bold text-primary tracking-wide">
+                                                    {DONATION_CONFIG.bank.ifsc}
+                                                </span>
+                                                <button
+                                                    id="copy-ifsc-btn"
+                                                    onClick={() => handleCopy(DONATION_CONFIG.bank.ifsc, 'ifsc')}
+                                                    className="px-3 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-lg transition-all inline-flex items-center gap-1.5 active:scale-95 shadow-sm"
+                                                    title="Copy IFSC Code"
+                                                    aria-label="Copy IFSC Code"
+                                                >
+                                                    <span className="material-symbols-outlined text-sm">
+                                                        {copiedField === 'ifsc' ? 'check' : 'content_copy'}
+                                                    </span>
+                                                    {copiedField === 'ifsc' ? t.copiedBtn : t.copyBtn}
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Branch & Account Type */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                                            <div>
+                                                <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-0.5">
+                                                    {t.branchLabel}
+                                                </span>
+                                                <span className="font-headline text-sm font-semibold text-primary">
+                                                    {DONATION_CONFIG.bank.branch}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-0.5">
+                                                    {t.accTypeLabel}
+                                                </span>
+                                                <span className="font-headline text-sm font-semibold text-primary">
+                                                    {DONATION_CONFIG.bank.accountType}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="bg-primary p-8 rounded-xl text-white">
-                                <h3 className="font-headline text-xl font-bold mb-4">Corporate Partnerships</h3>
-                                <p className="text-white/80 text-sm mb-6 leading-relaxed">Join hands with the foundation for sustainable CSR initiatives. Let's build a legacy together.</p>
-                                <Link className="inline-flex items-center gap-2 text-secondary-container font-bold hover:gap-4 transition-all uppercase text-xs tracking-widest" to="/join-us?purpose=Partner">
-                                    Become a Partner
-                                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </section>
 
-                <section className="bg-surface-container py-24 px-8">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="text-center mb-16">
-                            <span className="font-label text-secondary uppercase tracking-widest font-semibold text-xs mb-2 block">OTHER METHODS</span>
-                            <h2 className="font-headline text-4xl font-extrabold text-primary">Alternative Ways to Give</h2>
-                        </div>
-                        <div className="grid md:grid-cols-3 gap-8">
-                            <div className="bg-surface-container-lowest p-8 rounded-xl border-l-4 border-primary">
-                                <span className="material-symbols-outlined text-primary text-4xl mb-4">account_balance</span>
-                                <h3 className="font-headline font-bold text-xl mb-3">Bank Transfer</h3>
-                                <p className="text-on-surface-variant text-sm mb-4">Direct wire transfers for larger contributions or recurring support.</p>
-                                <div className="text-xs font-mono bg-surface-container p-3 rounded text-on-surface-variant">
-                                    Foundation A/C: 9876543210<br />
-                                    IFSC: DMF0001234
+                                {/* Bank Transfer Step-by-Step */}
+                                <div className="space-y-3">
+                                    <div className="font-headline font-bold text-primary text-sm tracking-wide">
+                                        {t.bankStepsTitle}
+                                    </div>
+                                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm text-on-surface-variant">
+                                        <li className="flex items-start gap-2.5 bg-surface-container-low/50 p-3 rounded-xl border border-outline-variant/30">
+                                            <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">1</span>
+                                            <span>{t.bankStep1}</span>
+                                        </li>
+                                        <li className="flex items-start gap-2.5 bg-surface-container-low/50 p-3 rounded-xl border border-outline-variant/30">
+                                            <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">2</span>
+                                            <span>{t.bankStep2}</span>
+                                        </li>
+                                        <li className="flex items-start gap-2.5 bg-surface-container-low/50 p-3 rounded-xl border border-outline-variant/30">
+                                            <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">3</span>
+                                            <span>{t.bankStep3}</span>
+                                        </li>
+                                        <li className="flex items-start gap-2.5 bg-surface-container-low/50 p-3 rounded-xl border border-outline-variant/30">
+                                            <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">4</span>
+                                            <span>{t.bankStep4}</span>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                            <div className="bg-surface-container-lowest p-8 rounded-xl border-l-4 border-secondary-container">
-                                <span className="material-symbols-outlined text-secondary-container text-4xl mb-4">featured_seasonal_and_gifts</span>
-                                <h3 className="font-headline font-bold text-xl mb-3">Legacy Gifts</h3>
-                                <p className="text-on-surface-variant text-sm mb-4">Bequests, endowments, or naming rights for infrastructure projects.</p>
-                                <a className="text-primary font-bold text-xs uppercase tracking-widest hover:underline" href="#">Contact Advisory</a>
+
+                            {/* Reassurance note */}
+                            <div className="mt-8 pt-4 border-t border-surface-container text-xs text-on-surface-variant/80 flex items-center gap-2">
+                                <span className="material-symbols-outlined text-green-600 text-base shrink-0">verified_user</span>
+                                <span>Zero third-party gateway deductions: 100% of your contribution reaches the foundation directly.</span>
                             </div>
-                            <div className="bg-surface-container-lowest p-8 rounded-xl border-l-4 border-tertiary-container">
-                                <span className="material-symbols-outlined text-on-tertiary-container text-4xl mb-4">volunteer_activism</span>
-                                <h3 className="font-headline font-bold text-xl mb-3">In-Kind Donations</h3>
-                                <p className="text-on-surface-variant text-sm mb-4">Donating technology, medical equipment, or educational materials.</p>
-                                <a className="text-primary font-bold text-xs uppercase tracking-widest hover:underline" href="#">View Needs List</a>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            {/* ── 4. AFTER CONTRIBUTING & TRANSACTION ACKNOWLEDGEMENT ─ */}
+            <section className="py-16 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto">
+                <div className="bg-gradient-to-r from-primary to-[#00005a] rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden">
+                    <div className="absolute right-0 top-0 -mt-8 -mr-8 w-64 h-64 bg-[#fe9832]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <div className="relative z-10 max-w-3xl">
+                        <span className="inline-block px-3 py-1 rounded-full bg-white/10 text-[#fe9832] font-label font-bold text-xs uppercase tracking-[0.2em] mb-4">
+                            {t.afterDonatingTag}
+                        </span>
+                        <h2 className="font-headline text-2xl sm:text-3xl font-extrabold mb-4">
+                            {t.afterDonatingTitle}
+                        </h2>
+                        <p className="text-gray-200 text-sm sm:text-base leading-relaxed mb-8 font-body">
+                            {t.afterDonatingDesc}
+                        </p>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10 flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-lg bg-[#fe9832] text-[#00003c] flex items-center justify-center shrink-0">
+                                    <span className="material-symbols-outlined text-xl">mail</span>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-300">{t.contactEmailLabel}</div>
+                                    <a
+                                        href={`mailto:${DONATION_CONFIG.support.email}`}
+                                        className="font-bold text-white hover:text-[#fe9832] transition-colors text-sm sm:text-base"
+                                    >
+                                        {DONATION_CONFIG.support.email}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10 flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-lg bg-[#fe9832] text-[#00003c] flex items-center justify-center shrink-0">
+                                    <span className="material-symbols-outlined text-xl">call</span>
+                                </div>
+                                <div>
+                                    <div className="text-xs text-gray-300">{t.contactPhoneLabel}</div>
+                                    <a
+                                        href={`tel:${DONATION_CONFIG.support.phone.replace(/\s+/g, '')}`}
+                                        className="font-bold text-white hover:text-[#fe9832] transition-colors text-sm sm:text-base"
+                                    >
+                                        {DONATION_CONFIG.support.phone}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section className="py-24 px-8 bg-surface">
-                    <div className="max-container flex flex-col md:flex-row gap-12 items-center">
-                        <div className="md:w-1/2 relative">
-                            <div className="w-full aspect-[4/5] overflow-hidden rounded-xl shadow-2xl">
-                                <img alt="Social Impact" className="w-full h-full object-cover" data-alt="A thoughtful environmental portrait of a community elder being assisted by a volunteer in a bright, clean, modern medical clinic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_I_viR-kRK3PnVcL6SVNH6u7t6nmRJsrKHWlL5ZFFvBSQPlvzrxojAnCzI_1mkISQbXoQa5_i-rpN8mqfcHKLFz7lCcXv79S1RqRoqAsdyta29CvrB-hwdEnZ5SpcD-oklmZAkRqAixwPH8PMScQCShsLdQRJg35OIaj_rprhGcfsW3IIPiKy-ppTQOgiOcVuX7Bae7p194jK_r636_-7Vz7LZ_g2qLPDBBrs7vHemGN0KN86XQi1Gsa12Kcrbb0i-dES2ylmGI7J" />
+            {/* ── 5. TRUST & TRANSPARENCY ──────────────────────────── */}
+            <section className="py-20 bg-surface-container-low px-6 sm:px-8 lg:px-12">
+                <div className="max-w-7xl mx-auto">
+                    {/* Section Header */}
+                    <div className="max-w-3xl mb-12">
+                        <span className="font-label text-[#8f4e00] font-bold tracking-[0.2em] text-xs uppercase block mb-3">
+                            {t.trustTag}
+                        </span>
+                        <h2 className="font-headline text-3xl sm:text-4xl font-extrabold text-primary leading-tight mb-4">
+                            {t.trustTitle}
+                        </h2>
+                        <p className="text-on-surface-variant text-base sm:text-lg leading-relaxed font-body">
+                            {t.trustDesc}
+                        </p>
+                    </div>
+
+                    {/* 3 Integrity & Governance Pillar Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                        <div className="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 border border-outline-variant/40 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                            <div>
+                                <div className="w-12 h-12 rounded-xl bg-green-500/10 text-green-600 flex items-center justify-center mb-5">
+                                    <span className="material-symbols-outlined text-2xl">verified</span>
+                                </div>
+                                <h3 className="font-headline font-bold text-primary text-lg mb-2">
+                                    {t.trustPoint1Title}
+                                </h3>
+                                <p className="text-on-surface-variant text-sm leading-relaxed font-body">
+                                    {t.trustPoint1Desc}
+                                </p>
                             </div>
-                            <div className="absolute -bottom-6 -right-6 bg-secondary-container p-8 rounded-xl text-white shadow-xl hidden md:block">
-                                <div className="text-4xl font-extrabold font-headline">150k+</div>
-                                <div className="text-xs uppercase font-bold tracking-widest opacity-90">Lives Impacted</div>
+                            <div className="mt-6 pt-4 border-t border-surface-container text-xs font-semibold text-green-700 flex items-center gap-1.5">
+                                <span className="material-symbols-outlined text-sm">check_circle</span>
+                                Grassroots Accountability
                             </div>
                         </div>
-                        <div className="md:w-1/2 space-y-6">
-                            <h2 className="font-headline text-4xl font-extrabold text-primary leading-tight">Your trust is our greatest <span className="text-secondary-container">asset</span>.</h2>
-                            <p className="text-lg text-on-surface-variant leading-relaxed font-body">
-                                The Dr. Dyaneshawar Mulay Foundation operates with extreme fiscal responsibility. Every cent is audited and tracked to ensure the maximum possible impact on the ground.
+
+                        <div className="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 border border-outline-variant/40 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                            <div>
+                                <div className="w-12 h-12 rounded-xl bg-green-500/10 text-green-600 flex items-center justify-center mb-5">
+                                    <span className="material-symbols-outlined text-2xl">balance</span>
+                                </div>
+                                <h3 className="font-headline font-bold text-primary text-lg mb-2">
+                                    {t.trustPoint2Title}
+                                </h3>
+                                <p className="text-on-surface-variant text-sm leading-relaxed font-body">
+                                    {t.trustPoint2Desc}
+                                </p>
+                            </div>
+                            <div className="mt-6 pt-4 border-t border-surface-container text-xs font-semibold text-green-700 flex items-center gap-1.5">
+                                <span className="material-symbols-outlined text-sm">check_circle</span>
+                                Values-Based Leadership
+                            </div>
+                        </div>
+
+                        <div className="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 border border-outline-variant/40 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                            <div>
+                                <div className="w-12 h-12 rounded-xl bg-green-500/10 text-green-600 flex items-center justify-center mb-5">
+                                    <span className="material-symbols-outlined text-2xl">eco</span>
+                                </div>
+                                <h3 className="font-headline font-bold text-primary text-lg mb-2">
+                                    {t.trustPoint3Title}
+                                </h3>
+                                <p className="text-on-surface-variant text-sm leading-relaxed font-body">
+                                    {t.trustPoint3Desc}
+                                </p>
+                            </div>
+                            <div className="mt-6 pt-4 border-t border-surface-container text-xs font-semibold text-green-700 flex items-center gap-1.5">
+                                <span className="material-symbols-outlined text-sm">check_circle</span>
+                                Long-Term Self-Reliance
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Full-Width Corporate Partnerships & CSR Card */}
+                    <div className="bg-surface-container-lowest border border-outline-variant/50 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
+                        <div className="max-w-2xl">
+                            <div className="inline-flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-wider mb-2">
+                                <span className="material-symbols-outlined text-base text-[#fe9832]">handshake</span>
+                                Institutional & CSR Engagement
+                            </div>
+                            <h3 className="font-headline font-bold text-primary text-xl mb-1">
+                                {t.csrTitle}
+                            </h3>
+                            <p className="text-on-surface-variant text-sm leading-relaxed font-body">
+                                {t.csrDesc}
                             </p>
-                            <ul className="space-y-4">
-                                <li className="flex items-center gap-3 font-semibold text-primary">
-                                    <span className="material-symbols-outlined text-on-tertiary-container">check_circle</span>
-                                    Quarterly Impact Reports
-                                </li>
-                                <li className="flex items-center gap-3 font-semibold text-primary">
-                                    <span className="material-symbols-outlined text-on-tertiary-container">check_circle</span>
-                                    Zero Admin Fee Options
-                                </li>
-                                <li className="flex items-center gap-3 font-semibold text-primary">
-                                    <span className="material-symbols-outlined text-on-tertiary-container">check_circle</span>
-                                    Real-time Project Updates
-                                </li>
-                            </ul>
                         </div>
+                        <Link
+                            to="/join-us?purpose=Partner"
+                            className="shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all shadow-sm active:scale-95"
+                        >
+                            {t.csrCta}
+                            <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                        </Link>
                     </div>
-                </section>
-            </main>
+                </div>
+            </section>
 
+            {/* ── 6. FINAL CALL TO ACTION ─────────────────────────── */}
+            <section className="py-20 px-6 sm:px-8 lg:px-12 bg-surface text-center">
+                <div className="max-w-3xl mx-auto">
+                    <div className="w-16 h-16 rounded-full bg-[#fe9832]/20 text-[#8f4e00] flex items-center justify-center mx-auto mb-6">
+                        <span className="material-symbols-outlined text-3xl">favorite</span>
+                    </div>
+
+                    <h2 className="font-headline text-3xl sm:text-4xl font-extrabold text-primary mb-4 tracking-tight">
+                        {t.finalCtaTitle}
+                    </h2>
+
+                    <p className="text-on-surface-variant text-base sm:text-lg leading-relaxed mb-8 font-body">
+                        {t.finalCtaDesc}
+                    </p>
+
+                    <button
+                        onClick={() => scrollToSection('donation-methods')}
+                        className="inline-flex items-center gap-3 px-10 py-4 bg-[#fe9832] hover:bg-[#e08324] text-[#00003c] font-headline font-extrabold text-sm uppercase tracking-wider rounded-lg shadow-xl hover:shadow-[0_10px_25px_rgba(254,152,50,0.35)] transition-all transform active:scale-95"
+                    >
+                        <span className="material-symbols-outlined text-xl">payments</span>
+                        {t.finalCtaBtn}
+                    </button>
+                </div>
+            </section>
         </div>
     );
 }

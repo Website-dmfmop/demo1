@@ -188,7 +188,7 @@ export default function Home() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                             {/* Positivity Column (MOP) */}
-                            <Link to="/icoe#movement-of-positivity" className="block relative bg-secondary-container p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl overflow-hidden cursor-pointer">
+                            <Link to="/what-we-do#movement-of-positivity" className="block relative bg-secondary-container p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl overflow-hidden cursor-pointer">
                                 <div className="absolute top-0 right-0 p-8 opacity-10 scale-150">
                                     <span className="material-symbols-outlined text-8xl" data-icon="sunny">sunny</span>
                                 </div>
@@ -202,7 +202,7 @@ export default function Home() {
                                 </div>
                             </Link>
                             {/* Compassion Column (ICOE) */}
-                            <Link to="/icoe#icoe" className="block relative bg-surface-container-lowest p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl border border-outline-variant/10 cursor-pointer">
+                            <Link to="/icoe" className="block relative bg-surface-container-lowest p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl border border-outline-variant/10 cursor-pointer">
                                 <div className="absolute top-0 right-0 p-8 opacity-10 scale-150 text-primary">
                                     <span className="material-symbols-outlined text-8xl" data-icon="favorite">favorite</span>
                                 </div>
@@ -216,7 +216,7 @@ export default function Home() {
                                 </div>
                             </Link>
                             {/* Creativity Column (Words Beyond Borders) */}
-                            <Link to="/icoe#words-beyond-borders" className="block relative bg-[#2e7d32] p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl overflow-hidden cursor-pointer">
+                            <Link to="/what-we-do#words-beyond-borders" className="block relative bg-[#2e7d32] p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl overflow-hidden cursor-pointer">
                                 <div className="absolute top-0 right-0 p-8 opacity-10 scale-150 text-white">
                                     <span className="material-symbols-outlined text-8xl" data-icon="diversity_3">diversity_3</span>
                                 </div>

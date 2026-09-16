@@ -4,6 +4,15 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/User');
+const mongoose = require('mongoose');
+
+// ID Validation Middleware
+router.param('id', (req, res, next, id) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid ID format' });
+    }
+    next();
+});
 const Task = require('../models/Task');
 const RolePermission = require('../models/RolePermission');
 const Attendance = require('../models/Attendance');
@@ -35,13 +44,13 @@ router.post('/login', async (req, res) => {
 
         const token = jwt.sign(
             { id: user._id, role: user.role, loginId: user.loginId, name: user.name, isSystemAccount: user.isSystemAccount }, 
-            process.env.JWT_SECRET || 'fallback_secret', 
+            process.env.JWT_SECRET, 
             { expiresIn: '24h' }
         );
         
         res.json({ token, user: { id: user._id, role: user.role, loginId: user.loginId, name: user.name, isSystemAccount: user.isSystemAccount } });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -75,6 +84,9 @@ router.post('/users', verifyToken, restrictTo('SUPER_ADMIN_STRICT'), async (req,
 });
 
 // Fetch users for dropdowns
+const { validateObjectId } = require('../middleware/validation');
+router.param('id', validateObjectId);
+
 router.get('/users', verifyToken, async (req, res) => {
     try {
         let query = {};
@@ -98,7 +110,7 @@ router.get('/users', verifyToken, async (req, res) => {
         const users = await mongoQuery;
         res.json(users);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -115,7 +127,7 @@ router.delete('/users/:id', verifyToken, restrictTo('SUPER_ADMIN_STRICT'), async
         await User.findByIdAndDelete(req.params.id);
         res.json({ message: 'User deleted successfully' });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -139,7 +151,7 @@ router.put('/users/:id', verifyToken, restrictTo('SUPER_ADMIN_STRICT'), async (r
         await targetUser.save();
         res.json({ message: 'User updated successfully' });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -149,7 +161,7 @@ router.get('/permissions', verifyToken, async (req, res) => {
         const permissions = await RolePermission.find();
         res.json(permissions);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -168,7 +180,7 @@ router.put('/permissions/:role', verifyToken, restrictTo('SUPER_ADMIN_STRICT'), 
         const updatedPermission = await permission.save();
         res.json(updatedPermission);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -283,7 +295,7 @@ router.get('/tasks', verifyToken, async (req, res) => {
             
         res.json(tasksWithPriority);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -374,7 +386,7 @@ router.put('/users/profile', verifyToken, async (req, res) => {
         const updatedUser = await user.save();
         res.json({ id: updatedUser._id, loginId: updatedUser.loginId, name: updatedUser.name, role: updatedUser.role });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -420,7 +432,7 @@ router.put('/tasks/:id', verifyToken, async (req, res) => {
 
         res.json(populatedTask);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -437,7 +449,7 @@ router.delete('/tasks/:id', verifyToken, async (req, res) => {
         await Task.findByIdAndDelete(req.params.id);
         res.json({ message: 'Task deleted successfully' });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -460,7 +472,7 @@ router.post('/attendance/checkin', verifyToken, async (req, res) => {
         await attendance.save();
         res.status(201).json(attendance);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -480,7 +492,7 @@ router.post('/attendance/checkout', verifyToken, async (req, res) => {
         await attendance.save();
         res.json(attendance);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -512,7 +524,7 @@ router.get('/attendance', verifyToken, async (req, res) => {
 
         res.json(records);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 // --- WORKSPACE CHAT ROUTES ---
@@ -552,7 +564,7 @@ router.get('/workspace-chat', verifyToken, async (req, res) => {
 
         res.json(messages.reverse()); // Return chronological order
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -628,7 +640,7 @@ router.post('/workspace-chat', verifyToken, async (req, res) => {
 
         res.status(201).json(populatedMessage);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -685,7 +697,7 @@ router.put('/workspace-chat/:id', verifyToken, async (req, res) => {
 
         res.json(populatedMessage);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -712,7 +724,7 @@ router.delete('/workspace-chat/:id', verifyToken, async (req, res) => {
 
         res.json({ message: 'Deleted successfully' });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -725,7 +737,7 @@ router.get('/workspace-chat/state', verifyToken, async (req, res) => {
         }
         res.json(state);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -752,7 +764,7 @@ router.post('/workspace-chat/state/sync', verifyToken, async (req, res) => {
         await state.save();
         res.json(state);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -796,7 +808,7 @@ router.get('/workspace-chat/search', verifyToken, async (req, res) => {
         
         res.json(messages);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 

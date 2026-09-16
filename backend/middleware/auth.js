@@ -2,13 +2,17 @@ const jwt = require('jsonwebtoken');
 
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    if (!authHeader) return res.status(403).json({ error: 'No token provided' });
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized: No token provided' });
 
     const token = authHeader.split(' ')[1];
-    if (!token) return res.status(403).json({ error: 'Malformed token' });
+    if (!token) return res.status(401).json({ error: 'Unauthorized: Malformed token' });
 
-    jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret', async (err, decoded) => {
-        if (err) return res.status(401).json({ error: 'Unauthorized' });
+    if (!process.env.JWT_SECRET) {
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+        if (err) return res.status(401).json({ error: 'Unauthorized: Invalid token' });
         req.user = decoded;
         
         // Inject super delegate status
@@ -30,7 +34,7 @@ const verifyToken = (req, res, next) => {
 
 const restrictTo = (...roles) => {
     return (req, res, next) => {
-        if (!req.user) return res.status(403).json({ error: 'Forbidden: Insufficient permissions' });
+        if (!req.user) return res.status(401).json({ error: 'Unauthorized: No user information' });
         
         const isStrict = roles.includes('SUPER_ADMIN_STRICT');
         if (isStrict) {
