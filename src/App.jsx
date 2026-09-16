@@ -32,6 +32,7 @@ import DTNTLivesMatter from './pages/DTNTLivesMatter';
 import JobFair from './pages/JobFair';
 import BecomePartner from './pages/BecomePartner';
 import SlotBooking from './pages/SlotBooking';
+import DmfMemberForm from './pages/DmfMemberForm';
 
 import GnmAdmission from './pages/GnmAdmission';
 import LanguageCourseAdmission from './pages/LanguageCourseAdmission';
@@ -39,6 +40,7 @@ import TechnicalCourseAdmission from './pages/TechnicalCourseAdmission';
 import OtherCourseAdmission from './pages/OtherCourseAdmission';
 import WhatWeDo from './pages/WhatWeDo';
 import ExamRegistration from './pages/ExamRegistration';
+import LiveSection from './pages/LiveSection';
 import CourseTeaserToast from './components/Admissions/CourseTeaserToast';
 import RegisterNowFloater from './components/Admissions/RegisterNowFloater';
 
@@ -77,6 +79,7 @@ function App() {
         <Route path="/admission/language-course" element={<LanguageCourseAdmission />} />
         <Route path="/admission/technical-course" element={<TechnicalCourseAdmission />} />
         <Route path="/admission/other-course" element={<OtherCourseAdmission />} />
+        <Route path="/live-section" element={<LiveSection />} />
         <Route path="/competitive-exams-hub" element={<CompetitiveExamsHub />} />
         <Route path="/competitive-exams-hub/register" element={<ExamRegistration />} />
         <Route path="/job-placement" element={<JobPlacement />} />
@@ -97,6 +100,7 @@ function App() {
         <Route path="/job-fair" element={<JobFair />} />
         <Route path="/become-a-partner" element={<BecomePartner />} />
         <Route path="/slot-booking" element={<SlotBooking />} />
+        <Route path="/become-dmf-member" element={<DmfMemberForm />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
       <Footer />

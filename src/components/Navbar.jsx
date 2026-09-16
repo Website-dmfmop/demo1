@@ -32,10 +32,10 @@ const Navbar = () => {
                         className="h-14 md:h-16 w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
                     />
                     <div className="flex flex-col max-w-[200px] sm:max-w-[200px] md:max-w-none">
-                        <span className="text-white font-headline font-bold text-sm sm:text-xl leading-tight tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                        <span className="text-[#f97316] font-headline font-extrabold text-sm sm:text-xl leading-tight tracking-wide drop-shadow-sm">
                             {t.brandName}
                         </span>
-                        <span className="hidden sm:block text-[#fe9832] font-headline font-bold text-xs uppercase tracking-[0.2em] mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                        <span className="hidden sm:block text-green-600 font-headline font-extrabold text-xs uppercase tracking-[0.2em] mt-0.5 drop-shadow-sm">
                             {t.brandTagline}
                         </span>
                     </div>
@@ -82,6 +82,7 @@ const Navbar = () => {
                                     <Link to="/icoe/admissions/language-course" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navLanguageCourse}</Link>
                                     <Link to="/icoe/admissions/technical-course" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navTechnicalCourse}</Link>
                                     <Link to="/icoe/admissions/other-course" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navOtherCourse}</Link>
+                                    <Link to="/live-section" className="block px-3 py-1.5 text-xs text-gray-600 hover:bg-primary/5 hover:text-primary font-medium rounded-md transition-colors">{t.navLiveSection}</Link>
                                 </div>
 
                                 <div className="h-px bg-gray-100 my-1.5"></div>
@@ -103,6 +104,8 @@ const Navbar = () => {
                                 <Link to="/join-us?purpose=Volunteer" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navVolunteer}</Link>
                                 <Link to="/join-us?purpose=Member" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navMember}</Link>
                                 <Link to="/join-us?purpose=Partner" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">{t.navPartner}</Link>
+                                <div className="h-px bg-gray-100 my-1"></div>
+                                <Link to="/become-dmf-member" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors">Become a DMF Member</Link>
                                 <div className="h-px bg-gray-100 my-1"></div>
                                 <Link to="/slot-booking" className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary font-medium transition-colors flex items-center gap-2"><span className="material-symbols-outlined text-[16px]">calendar_month</span>{t.navBookSlot}</Link>
                             </div>
@@ -158,6 +161,7 @@ const Navbar = () => {
                                 <Link to="/icoe/admissions/language-course" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navLanguageCourse}</Link>
                                 <Link to="/icoe/admissions/technical-course" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navTechnicalCourse}</Link>
                                 <Link to="/icoe/admissions/other-course" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navOtherCourse}</Link>
+                                <Link to="/live-section" onClick={() => setMenuOpen(false)} className="text-white/70 font-medium text-xs hover:text-white transition-colors">{t.navLiveSection}</Link>
                             </div>
                             <Link to="/icoe/job-placement" onClick={() => setMenuOpen(false)} className="text-white font-medium text-sm hover:text-secondary-container transition-colors flex items-center gap-2 mt-1">
                                 <span className="material-symbols-outlined text-sm">work</span>
@@ -174,6 +178,7 @@ const Navbar = () => {
                             <Link to="/join-us?purpose=Volunteer" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navVolunteer}</Link>
                             <Link to="/join-us?purpose=Member" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navMember}</Link>
                             <Link to="/join-us?purpose=Partner" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navPartner}</Link>
+                            <Link to="/become-dmf-member" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">Become a DMF Member</Link>
                             <Link to="/slot-booking" onClick={() => setMenuOpen(false)} className="text-white/80 font-medium text-sm hover:text-white transition-colors">{t.navBookSlot}</Link>
                         </div>
                     </div>

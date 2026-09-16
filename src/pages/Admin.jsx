@@ -33,6 +33,7 @@ const Admin = () => {
   const [press, setPress] = useState([]);
   const [liveSessions, setLiveSessions] = useState([]);
   const [joinees, setJoinees] = useState([]);
+  const [dmfMembers, setDmfMembers] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [jobApplications, setJobApplications] = useState([]);
   const [partnerRequests, setPartnerRequests] = useState([]);
@@ -50,6 +51,7 @@ const Admin = () => {
   
   // Analytics & Media SubTabs
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [selectedAdmissionDetails, setSelectedAdmissionDetails] = useState(null);
   const [mediaSubTab, setMediaSubTab] = useState('photos'); // photos, videos, publications, press
 
   const [editingId, setEditingId] = useState(null);
@@ -122,12 +124,16 @@ const Admin = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      if (activeTab === 'admissions') {
+      if (activeTab === 'admissions' || activeTab === 'live_session_admissions') {
         const res = await fetch(`${API_URL}/api/admissions`);
         if (!res.ok) throw new Error('Failed to fetch admissions');
         const data = await res.json();
         setAdmissions(data);
-        setCurrentExportData(data);
+        setCurrentExportData(
+            activeTab === 'live_session_admissions'
+                ? data.filter(adm => adm.courseCategory === 'Live Session')
+                : data.filter(adm => adm.courseCategory !== 'Live Session')
+        );
       } else if (activeTab === 'competitive_exam_admissions') {
         const res = await fetch(`${API_URL}/api/competitive-exam-admissions`);
         if (!res.ok) throw new Error('Failed to fetch competitive exam admissions');
@@ -181,6 +187,12 @@ const Admin = () => {
         if (!res.ok) throw new Error('Failed to fetch joinees');
         const data = await res.json();
         setJoinees(data);
+        setCurrentExportData(data);
+      } else if (activeTab === 'dmf_members') {
+        const res = await fetch(`${API_URL}/api/dmf-members`);
+        if (!res.ok) throw new Error('Failed to fetch dmf members');
+        const data = await res.json();
+        setDmfMembers(data);
         setCurrentExportData(data);
       } else if (activeTab === 'jobs') {
         const res = await fetch(`${API_URL}/api/jobs`);
@@ -302,6 +314,21 @@ const Admin = () => {
     }
   };
 
+  const updateDmfMemberStatus = async (id, newStatus) => {
+    setActionMenuOpenId(null);
+    try {
+      const res = await fetch(`${API_URL}/api/dmf-members/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) fetchData();
+      else alert('Failed to update status');
+    } catch (err) {
+      alert('Error updating status');
+    }
+  };
+
   const updateJoineeStatus = async (id, newStatus) => {
     setActionMenuOpenId(null);
     try {
@@ -374,6 +401,7 @@ const Admin = () => {
       let endpoint = `${API_URL}/api/${type}s/${id}`;
       if (type === 'media') endpoint = `${API_URL}/api/media/${id}`;
       if (type === 'press') endpoint = `${API_URL}/api/press/${id}`;
+      if (type === 'dmf-member') endpoint = `${API_URL}/api/dmf-members/${id}`;
       if (type === 'job-application') endpoint = `${API_URL}/api/job-applications/${id}`;
       if (type === 'partner-request') endpoint = `${API_URL}/api/partner-requests/${id}`;
       if (type === 'slot-booking') endpoint = `${API_URL}/api/slot-bookings/${id}`;
@@ -669,24 +697,28 @@ const Admin = () => {
   };
 
   // Helper counters & sorted arrays
-  const sortedAdmissions = [...admissions].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const sortedAllAdmissions = [...admissions].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const regularAdmissions = sortedAllAdmissions.filter(adm => adm.courseCategory !== 'Live Session');
+  const liveSessionAdmissions = sortedAllAdmissions.filter(adm => adm.courseCategory === 'Live Session');
+  
+  const sortedAdmissions = regularAdmissions;
   const sortedDonations = [...donations].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
   const totalDonationsAmount = donations.reduce((sum, don) => sum + (don.amount || 0), 0);
-  const recentAdmissionsCount = admissions.filter(a => new Date() - new Date(a.createdAt) < 7 * 24 * 60 * 60 * 1000).length;
-  const pendingAdmissionsCount = admissions.filter(a => !a.status || a.status === 'Pending' || a.status === 'Under Review').length;
+  const recentAdmissionsCount = regularAdmissions.filter(a => new Date() - new Date(a.createdAt) < 7 * 24 * 60 * 60 * 1000).length;
+  const pendingAdmissionsCount = regularAdmissions.filter(a => !a.status || a.status === 'Pending' || a.status === 'Under Review').length;
 
   // Chart Data preparation
   const PIE_COLORS = ['#FE9832', '#00C49F', '#FFBB28', '#FF8042'];
   const admissionStatusData = [
-    { name: 'Pending', value: admissions.filter(a => !a.status || a.status === 'Pending').length },
-    { name: 'Approved', value: admissions.filter(a => a.status === 'Approved').length },
-    { name: 'Under Review', value: admissions.filter(a => a.status === 'Under Review').length },
-    { name: 'Rejected', value: admissions.filter(a => a.status === 'Rejected').length },
+    { name: 'Pending', value: regularAdmissions.filter(a => !a.status || a.status === 'Pending').length },
+    { name: 'Approved', value: regularAdmissions.filter(a => a.status === 'Approved').length },
+    { name: 'Under Review', value: regularAdmissions.filter(a => a.status === 'Under Review').length },
+    { name: 'Rejected', value: regularAdmissions.filter(a => a.status === 'Rejected').length },
   ].filter(d => d.value > 0);
 
   // Simple aggregation for chart (group by date)
   const admissionsByDateMap = {};
-  admissions.forEach(a => {
+  regularAdmissions.forEach(a => {
       const dString = new Date(a.createdAt).toLocaleDateString();
       admissionsByDateMap[dString] = (admissionsByDateMap[dString] || 0) + 1;
   });
@@ -735,7 +767,7 @@ const Admin = () => {
     );
   }
 
-  const canExportCurrentView = ['admissions', 'competitive_exam_admissions', 'donations', 'courses', 'diploma_courses', 'competitive_exams', 'live_sessions', 'joinees', 'jobs', 'job-applications', 'partner-requests', 'slot-bookings', 'projects', 'tasks', 'attendance', 'team'].includes(activeTab);
+  const canExportCurrentView = ['admissions', 'live_session_admissions', 'competitive_exam_admissions', 'donations', 'courses', 'diploma_courses', 'competitive_exams', 'live_sessions', 'joinees', 'dmf_members', 'jobs', 'job-applications', 'partner-requests', 'slot-bookings', 'projects', 'tasks', 'attendance', 'team'].includes(activeTab);
 
   const navigateToTask = (taskId) => {
       setActiveTab('tasks');
@@ -807,6 +839,14 @@ const Admin = () => {
                         <span className="material-symbols-outlined text-[20px]">school</span> Admissions
                     </button>
                     <button
+                        onClick={() => setActiveTab('live_session_admissions')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'live_session_admissions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">podcasts</span> Live Session Data
+                    </button>
+                    <button
                         onClick={() => setActiveTab('competitive_exam_admissions')}
                         className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
                         activeTab === 'competitive_exam_admissions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
@@ -835,6 +875,15 @@ const Admin = () => {
                         }`}
                     >
                         <span className="material-symbols-outlined text-[20px]">group_add</span> Join Requests
+                    </button>
+
+                    <button
+                        onClick={() => setActiveTab('dmf_members')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'dmf_members' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">card_membership</span> DMF Members
                     </button>
 
                     <button
@@ -957,6 +1006,7 @@ const Admin = () => {
             <div className="h-6 w-px bg-gray-200 mx-1 md:mx-2 shrink-0"></div>
             <h2 className="text-sm sm:text-base md:text-xl font-headline font-bold text-gray-800 uppercase tracking-wide truncate">
                 {activeTab === 'admissions' && 'Admissions Data'}
+                {activeTab === 'live_session_admissions' && 'Live Session Registrations'}
                 {activeTab === 'competitive_exam_admissions' && 'Competitive Exam Admissions'}
                 {activeTab === 'donations' && 'Donations Tracker'}
                 {activeTab === 'courses' && 'Course Management'}
@@ -965,6 +1015,7 @@ const Admin = () => {
                 {activeTab === 'media' && 'Media Management'}
                 {activeTab === 'live_sessions' && 'Live Sessions Management'}
                 {activeTab === 'joinees' && 'Join Requests'}
+                {activeTab === 'dmf_members' && 'DMF Members'}
                 {activeTab === 'jobs' && 'Job Placements Management'}
                 {activeTab === 'job-applications' && 'Job Applications'}
                 {activeTab === 'partner-requests' && 'Partnership Requests'}
@@ -1025,7 +1076,7 @@ const Admin = () => {
                                 </div>
                                 <div>
                                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Admissions</p>
-                                    <h3 className="text-3xl font-headline font-bold text-gray-800">{admissions.length}</h3>
+                                    <h3 className="text-3xl font-headline font-bold text-gray-800">{regularAdmissions.length}</h3>
                                 </div>
                             </div>
                             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6">
@@ -1109,6 +1160,7 @@ const Admin = () => {
                                                 <th className="px-6 py-4 border-b border-gray-200">Contact Info</th>
                                                 <th className="px-6 py-4 border-b border-gray-200">Status</th>
                                                 <th className="px-6 py-4 border-b border-gray-200">Date</th>
+                                                <th className="px-6 py-4 border-b border-gray-200 text-center">Full Data</th>
                                                 <th className="px-6 py-4 border-b border-gray-200 text-center">Actions</th>
                                             </tr>
                                         </thead>
@@ -1154,6 +1206,15 @@ const Admin = () => {
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 text-gray-500 text-xs whitespace-nowrap">{new Date(adm.createdAt).toLocaleDateString()}</td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        <button 
+                                                            onClick={(e) => { e.stopPropagation(); setSelectedAdmissionDetails(adm); }}
+                                                            className="p-1.5 rounded-lg text-primary hover:bg-primary/10 transition-colors"
+                                                            title="View Full Data"
+                                                        >
+                                                            <span className="material-symbols-outlined text-[20px]">visibility</span>
+                                                        </button>
+                                                    </td>
                                                     <td className="px-6 py-4 text-center relative pointer-events-auto">
                                                         <button 
                                                             onClick={(e) => { e.stopPropagation(); setActionMenuOpenId(actionMenuOpenId === adm._id ? null : adm._id); }}
@@ -1185,6 +1246,106 @@ const Admin = () => {
                             </div>
                         )}
                     </>
+                )}
+
+                {/* ---------- LIVE SESSION ADMISSIONS TAB ---------- */}
+                {activeTab === 'live_session_admissions' && (
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-visible relative animate-in fade-in duration-300">
+                        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-white rounded-t-2xl">
+                            <h3 className="font-headline font-bold text-lg text-gray-800">Live Session Registrations</h3>
+                        </div>
+                        <div className="overflow-x-auto min-h-[300px]">
+                            <table className="w-full text-left text-sm">
+                                <thead className="bg-gray-50 text-gray-500 font-semibold text-xs uppercase tracking-wider">
+                                    <tr>
+                                        <th className="px-6 py-4 border-b border-gray-200">Applicant Name</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Session</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Contact Info</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Status</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Date</th>
+                                        <th className="px-6 py-4 border-b border-gray-200 text-center">Full Data</th>
+                                        <th className="px-6 py-4 border-b border-gray-200 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100 bg-white">
+                                    {liveSessionAdmissions.length === 0 ? (
+                                    <tr><td colSpan="6" className="py-12 text-center text-gray-400 font-medium">No records found.</td></tr>
+                                    ) : (
+                                    liveSessionAdmissions.map(adm => {
+                                        const admStatus = adm.status || 'Pending';
+                                        let statusColor = 'bg-yellow-100 text-yellow-700'; let dotColor = 'bg-yellow-500';
+                                        if (admStatus === 'Approved') { statusColor = 'bg-green-100 text-green-700'; dotColor = 'bg-green-500'; }
+                                        if (admStatus === 'Rejected') { statusColor = 'bg-red-100 text-red-700'; dotColor = 'bg-red-500'; }
+                                        if (admStatus === 'Under Review') { statusColor = 'bg-blue-100 text-blue-700'; dotColor = 'bg-blue-500'; }
+
+                                        const fullName = adm.fullName || (adm.firstName ? `${adm.firstName} ${adm.lastName}` : (adm.studentName || 'Unknown'));
+
+                                        return (
+                                        <tr key={adm._id} className="hover:bg-blue-50/30 transition-colors">
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg">
+                                                        {fullName.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-bold text-gray-800">{fullName}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td className="px-6 py-4">
+                                                <div className="font-bold text-xs text-gray-600 uppercase tracking-tight">{adm.courseCategory || 'N/A'}</div>
+                                                <div className="text-sm text-primary font-bold">{adm.subCourse || 'N/A'}</div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="text-gray-800 font-medium text-xs">{adm.email || 'No Email'}</div>
+                                                <div className="text-gray-500 text-xs">{adm.contactNumber}</div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-widest ${statusColor}`}>
+                                                    <div className={`w-1 h-1 rounded-full ${dotColor}`}></div>
+                                                    {admStatus}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 text-gray-500 text-xs whitespace-nowrap">{new Date(adm.createdAt).toLocaleDateString()}</td>
+                                            <td className="px-6 py-4 text-center">
+                                                <button 
+                                                    onClick={(e) => { e.stopPropagation(); setSelectedAdmissionDetails(adm); }}
+                                                    className="p-1.5 rounded-lg text-primary hover:bg-primary/10 transition-colors"
+                                                    title="View Full Data"
+                                                >
+                                                    <span className="material-symbols-outlined text-[20px]">visibility</span>
+                                                </button>
+                                            </td>
+                                            <td className="px-6 py-4 text-center relative pointer-events-auto">
+                                                <button 
+                                                    onClick={(e) => { e.stopPropagation(); setActionMenuOpenId(actionMenuOpenId === adm._id ? null : adm._id); }}
+                                                    className={`p-1.5 rounded-lg transition-colors ${actionMenuOpenId === adm._id ? 'bg-gray-100 text-primary' : 'text-gray-400 hover:text-primary hover:bg-gray-50'}`}
+                                                >
+                                                    <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                                                </button>
+                                                
+                                                {actionMenuOpenId === adm._id && (
+                                                    <div className="absolute right-12 top-8 w-48 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 py-2 z-50 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+                                                        <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 border-b border-gray-50 text-left">Set Status</div>
+                                                        <button onClick={() => updateAdmissionStatus(adm._id, 'Pending')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-yellow-500"></div> Pending</button>
+                                                        <button onClick={() => updateAdmissionStatus(adm._id, 'Under Review')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-blue-500"></div> Under Review</button>
+                                                        <button onClick={() => updateAdmissionStatus(adm._id, 'Approved')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-green-500"></div> Approve</button>
+                                                        <button onClick={() => updateAdmissionStatus(adm._id, 'Rejected')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 font-medium"><div className="w-2 h-2 rounded-full bg-red-500"></div> Reject</button>
+                                                        <button onClick={() => deleteRecord('admission', adm._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 mt-1 font-bold">
+                                                            <span className="material-symbols-outlined text-[16px]">delete</span> Delete Record
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </td>
+                                        </tr>
+                                        );
+                                    })
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 )}
 
                 {/* ---------- COMP EXAM ADMISSIONS TAB ---------- */}
@@ -2064,6 +2225,93 @@ const Admin = () => {
                     </div>
                 )}
 
+                {/* ---------- DMF MEMBERS TAB ---------- */}
+                {activeTab === 'dmf_members' && (
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-visible relative animate-in fade-in duration-300">
+                        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-white rounded-t-2xl">
+                            <h3 className="font-headline font-bold text-lg text-gray-800">DMF Members</h3>
+                            <div className="flex bg-gray-100 p-1 rounded-lg">
+                                <div className="px-3 py-1 text-xs font-bold bg-white text-primary rounded-md shadow-sm">All ({dmfMembers.length})</div>
+                            </div>
+                        </div>
+                        <div className="overflow-x-auto min-h-[300px]">
+                            <table className="w-full text-left text-sm">
+                                <thead className="bg-gray-50 text-gray-500 font-semibold text-xs uppercase tracking-wider">
+                                    <tr>
+                                        <th className="px-6 py-4 border-b border-gray-200">Name & Occupation</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Contact Details</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Status</th>
+                                        <th className="px-6 py-4 border-b border-gray-200">Date</th>
+                                        <th className="px-6 py-4 border-b border-gray-200 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100 bg-white">
+                                    {dmfMembers.length === 0 ? (
+                                        <tr><td colSpan="5" className="py-12 text-center text-gray-400 font-medium">No members found.</td></tr>
+                                    ) : (
+                                        dmfMembers.map(member => {
+                                            const jStatus = member.status || 'Pending';
+                                            let statusColor = 'bg-yellow-100 text-yellow-700'; let dotColor = 'bg-yellow-500';
+                                            if (jStatus === 'Under Review') { statusColor = 'bg-blue-100 text-blue-700'; dotColor = 'bg-blue-500'; }
+                                            if (jStatus === 'Approved') { statusColor = 'bg-green-100 text-green-700'; dotColor = 'bg-green-500'; }
+                                            if (jStatus === 'Rejected') { statusColor = 'bg-red-100 text-red-700'; dotColor = 'bg-red-500'; }
+
+                                            return (
+                                                <tr key={member._id} className="hover:bg-blue-50/30 transition-colors">
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg shrink-0">
+                                                                {member.name.charAt(0).toUpperCase()}
+                                                            </div>
+                                                            <div>
+                                                                <div className="font-bold text-gray-800">{member.name}</div>
+                                                                <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider bg-gray-100 px-2 py-0.5 rounded w-fit mt-1">{member.occupation}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="text-gray-800 font-medium text-xs break-all">{member.email}</div>
+                                                        <div className="text-gray-500 text-xs mt-0.5">{member.phone}</div>
+                                                        <div className="text-gray-500 text-[10px] mt-0.5 truncate max-w-[150px]" title={member.address}>{member.city}, {member.state}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-widest ${statusColor}`}>
+                                                            <div className={`w-1 h-1 rounded-full ${dotColor}`}></div>
+                                                            {jStatus}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-gray-500 text-xs whitespace-nowrap">{new Date(member.createdAt).toLocaleDateString()}</td>
+                                                    <td className="px-6 py-4 text-center relative pointer-events-auto">
+                                                        <button 
+                                                            onClick={(e) => { e.stopPropagation(); setActionMenuOpenId(actionMenuOpenId === member._id ? null : member._id); }}
+                                                            className={`p-1.5 rounded-lg transition-colors ${actionMenuOpenId === member._id ? 'bg-gray-100 text-primary' : 'text-gray-400 hover:text-primary hover:bg-gray-50'}`}
+                                                        >
+                                                            <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                                                        </button>
+                                                        
+                                                        {actionMenuOpenId === member._id && (
+                                                            <div className="absolute right-12 top-8 w-48 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 py-2 z-50 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+                                                                <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 border-b border-gray-50 text-left">Update Status</div>
+                                                                <button onClick={() => updateDmfMemberStatus(member._id, 'Pending')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-yellow-500"></div> Pending</button>
+                                                                <button onClick={() => updateDmfMemberStatus(member._id, 'Under Review')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-blue-500"></div> Under Review</button>
+                                                                <button onClick={() => updateDmfMemberStatus(member._id, 'Approved')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"><div className="w-2 h-2 rounded-full bg-green-500"></div> Approved</button>
+                                                                <button onClick={() => updateDmfMemberStatus(member._id, 'Rejected')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 font-medium"><div className="w-2 h-2 rounded-full bg-red-500"></div> Reject</button>
+                                                                <button onClick={() => deleteRecord('dmf-member', member._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 mt-1 font-bold">
+                                                                    <span className="material-symbols-outlined text-[16px]">delete</span> Delete Record
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
                 {/* ---------- JOB PLACEMENTS TAB ---------- */}
                 {activeTab === 'jobs' && (
                     <div className="space-y-6 animate-in fade-in duration-300">
@@ -2774,6 +3022,87 @@ const Admin = () => {
                         </div>
                         <div className="p-6 border-t border-gray-100 bg-gray-50 rounded-b-2xl flex justify-end gap-3 shrink-0">
                             <button onClick={() => setSelectedCsrPartnerDetails(null)} className="px-5 py-2.5 rounded-xl font-bold text-gray-600 hover:bg-gray-200 transition-colors">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ADMISSION DETAILS MODAL */}
+            {selectedAdmissionDetails && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white rounded-t-2xl z-10">
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-800">
+                                    {selectedAdmissionDetails.fullName || (selectedAdmissionDetails.firstName ? `${selectedAdmissionDetails.firstName} ${selectedAdmissionDetails.lastName}` : (selectedAdmissionDetails.studentName || 'Unknown'))}
+                                </h2>
+                                <p className="text-sm text-gray-500 mt-1 capitalize">Admission Details</p>
+                            </div>
+                            <button onClick={() => setSelectedAdmissionDetails(null)} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div className="p-6 overflow-y-auto">
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Email</p>
+                                        <p className="text-gray-800 font-medium">{selectedAdmissionDetails.email || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Contact Number</p>
+                                        <p className="text-gray-800 font-medium">{selectedAdmissionDetails.mobileCountryCode || ''} {selectedAdmissionDetails.contactNumber || selectedAdmissionDetails.phone || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Date of Birth / Age</p>
+                                        <p className="text-gray-800 font-medium">
+                                            {selectedAdmissionDetails.dateOfBirth ? new Date(selectedAdmissionDetails.dateOfBirth).toLocaleDateString() : 'N/A'} 
+                                            {selectedAdmissionDetails.age ? ` (${selectedAdmissionDetails.age} yrs)` : ''}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Gender</p>
+                                        <p className="text-gray-800 font-medium capitalize">{selectedAdmissionDetails.gender || 'N/A'}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Address</p>
+                                    <p className="text-gray-700 text-sm whitespace-pre-wrap leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">{selectedAdmissionDetails.address || 'N/A'}</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Parent Name</p>
+                                        <p className="text-gray-800 font-medium">{selectedAdmissionDetails.parentName || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Parent Contact</p>
+                                        <p className="text-gray-800 font-medium">{selectedAdmissionDetails.parentCountryCode || ''} {selectedAdmissionDetails.parentContactNumber || 'N/A'}</p>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Course Category</p>
+                                        <p className="text-gray-800 font-medium">{selectedAdmissionDetails.courseCategory || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Sub Course</p>
+                                        <p className="text-gray-800 font-medium">{selectedAdmissionDetails.subCourse || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Status</p>
+                                        <p className="text-gray-800 font-medium">{selectedAdmissionDetails.status || 'Pending'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Applied On</p>
+                                        <p className="text-gray-800 font-medium">{new Date(selectedAdmissionDetails.createdAt).toLocaleString()}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-6 border-t border-gray-100 bg-gray-50 rounded-b-2xl flex justify-end gap-3 shrink-0">
+                            <button onClick={() => setSelectedAdmissionDetails(null)} className="px-5 py-2.5 rounded-xl font-bold text-gray-600 hover:bg-gray-200 transition-colors">
                                 Close
                             </button>
                         </div>
