@@ -47,7 +47,7 @@ router.put('/api/media/:id', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 
         const data = { ...req.body };
         if (req.file) data.src = '/uploads/public/' + req.file.filename;
 
-        const updatedItem = await MediaItem.findByIdAndUpdate(req.params.id, data, { new: true });
+        const updatedItem = await MediaItem.findByIdAndUpdate(req.params.id, data, { returnDocument: 'after' });
         res.json(updatedItem);
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -87,7 +87,7 @@ router.put('/api/videos/:id', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR',
         const data = { ...req.body };
         if (req.file) data.thumb = '/uploads/public/' + req.file.filename;
 
-        const updatedVid = await VideoHighlight.findByIdAndUpdate(req.params.id, data, { new: true });
+        const updatedVid = await VideoHighlight.findByIdAndUpdate(req.params.id, data, { returnDocument: 'after' });
         res.json(updatedVid);
     } catch (err) { res.status(400).json({ error: err.message }); }
 });
@@ -133,7 +133,7 @@ router.put('/api/publications/:id', verifyToken, restrictTo('SUPER_ADMIN', 'DIRE
             if (req.files.pdf && req.files.pdf[0]) data.pdf = '/uploads/public/' + req.files.pdf[0].filename;
         }
 
-        const updatedPub = await Publication.findByIdAndUpdate(req.params.id, data, { new: true });
+        const updatedPub = await Publication.findByIdAndUpdate(req.params.id, data, { returnDocument: 'after' });
         res.json(updatedPub);
     } catch (err) { res.status(400).json({ error: err.message }); }
 });
@@ -161,7 +161,7 @@ router.delete('/api/press/:id', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR
 
 router.put('/api/press/:id', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'),  async (req, res) => {
     try {
-        const updatedPress = await PressCoverage.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updatedPress = await PressCoverage.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
         res.json(updatedPress);
     } catch (err) { res.status(400).json({ error: err.message }); }
 });

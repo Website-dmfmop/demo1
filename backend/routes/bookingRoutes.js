@@ -55,7 +55,7 @@ router.put('/api/slot-bookings/:id/status', verifyToken, restrictTo('SUPER_ADMIN
         if (!['Booked', 'Confirmed', 'Completed', 'Cancelled'].includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
-        const updated = await SlotBooking.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const updated = await SlotBooking.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' });
         if (!updated) return res.status(404).json({ error: 'Booking not found' });
         res.json(updated);
     } catch (err) { res.status(500).json({ error: 'Internal Server Error' }); }
@@ -115,7 +115,7 @@ router.put('/api/slot-bookings/:id/status', verifyToken, restrictTo('SUPER_ADMIN
         if (!['Booked', 'Confirmed', 'Completed', 'Cancelled'].includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
-        const updated = await SlotBooking.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const updated = await SlotBooking.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' });
         if (!updated) return res.status(404).json({ error: 'Booking not found' });
         res.json(updated);
     } catch (err) { res.status(500).json({ error: 'Internal Server Error' }); }

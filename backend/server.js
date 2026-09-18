@@ -2,10 +2,6 @@ require('dotenv').config({ override: true });
 const express = require('express');
 const { validateEnv } = require('./config/env');
 validateEnv();
-if (!process.env.RECAPTCHA_SECRET_KEY) {
-    console.error('FATAL ERROR: RECAPTCHA_SECRET_KEY environment variable is not set.');
-    process.exit(1);
-}
 
 const { verifyToken, restrictTo } = require('./middleware/auth');
 
@@ -44,7 +40,7 @@ io.use((socket, next) => {
     const token = socket.handshake.auth.token || socket.handshake.query.token;
     if (!token) return next(new Error('Authentication error'));
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         socket.user = decoded;
         next();
     } catch (err) {
@@ -301,7 +297,7 @@ app.put('/api/dmf-members/:id/status', async (req, res) => {
         if (!['Pending', 'Under Review', 'Approved', 'Rejected'].includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
-        const updated = await DmfMember.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const updated = await DmfMember.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' });
         if (!updated) return res.status(404).json({ error: 'DMF Member not found' });
         res.json(updated);
     } catch (err) { res.status(500).json({ error: err.message }); }

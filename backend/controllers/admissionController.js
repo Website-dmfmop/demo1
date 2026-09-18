@@ -31,7 +31,7 @@ exports.updateAdmissionStatus = async (req, res) => {
         const updatedAdmission = await Admission.findByIdAndUpdate(
             req.params.id, 
             { status }, 
-            { new: true }
+            { returnDocument: 'after' }
         );
         if (!updatedAdmission) return res.status(404).json({ error: 'Admission not found' });
         res.json(updatedAdmission);
@@ -72,7 +72,7 @@ exports.updateCompetitiveExamAdmissionStatus = async (req, res) => {
         if (!['Pending', 'Under Review', 'Approved', 'Rejected'].includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
-        const updated = await CompetitiveExamAdmission.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const updated = await CompetitiveExamAdmission.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' });
         res.json(updated);
     } catch (err) { res.status(500).json({ error: 'Internal Server Error' }); }
 };
@@ -114,7 +114,7 @@ exports.updateJoineeStatus = async (req, res) => {
         const updatedJoinee = await Joinee.findByIdAndUpdate(
             req.params.id, 
             { status }, 
-            { new: true }
+            { returnDocument: 'after' }
         );
         if (!updatedJoinee) return res.status(404).json({ error: 'Joinee not found' });
         res.json(updatedJoinee);

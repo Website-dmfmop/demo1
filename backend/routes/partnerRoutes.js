@@ -30,7 +30,7 @@ router.put('/api/partner-requests/:id/status', verifyToken, restrictTo('SUPER_AD
         if (!['Pending', 'Under Review', 'Approved', 'Rejected'].includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
-        const updated = await PartnerRequest.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const updated = await PartnerRequest.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' });
         if (!updated) return res.status(404).json({ error: 'Partner request not found' });
         res.json(updated);
     } catch (err) { res.status(500).json({ error: 'Internal Server Error' }); }
@@ -65,7 +65,7 @@ router.put('/api/partner-requests/:id/status', verifyToken, restrictTo('SUPER_AD
         if (!['Pending', 'Under Review', 'Approved', 'Rejected'].includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
-        const updated = await PartnerRequest.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const updated = await PartnerRequest.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' });
         if (!updated) return res.status(404).json({ error: 'Partner request not found' });
         res.json(updated);
     } catch (err) { res.status(500).json({ error: 'Internal Server Error' }); }

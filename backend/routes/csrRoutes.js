@@ -43,7 +43,7 @@ router.put('/api/projects/:id/status', verifyToken, restrictTo('SUPER_ADMIN', 'D
         if (!['Pending', 'Approved', 'Rejected'].includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
-        const updated = await Project.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const updated = await Project.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' });
         if (!updated) return res.status(404).json({ error: 'Project not found' });
         res.json(updated);
     } catch (err) { res.status(500).json({ error: 'Internal Server Error' }); }
@@ -80,7 +80,7 @@ router.put('/api/csr-partners/:id/status', verifyToken, restrictTo('SUPER_ADMIN'
         if (!['Pending', 'Approved', 'Rejected'].includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
-        const updated = await CSRPartner.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const updated = await CSRPartner.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' });
         if (!updated) return res.status(404).json({ error: 'CSR Partner not found' });
         res.json(updated);
     } catch (err) { res.status(500).json({ error: 'Internal Server Error' }); }
@@ -120,7 +120,7 @@ router.put('/api/projects/:id/status', verifyToken, restrictTo('SUPER_ADMIN', 'D
         if (!['Pending', 'Approved', 'Rejected'].includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
-        const updated = await Project.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const updated = await Project.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' });
         if (!updated) return res.status(404).json({ error: 'Project not found' });
         res.json(updated);
     } catch (err) { res.status(500).json({ error: 'Internal Server Error' }); }
@@ -157,7 +157,7 @@ router.put('/api/csr-partners/:id/status', verifyToken, restrictTo('SUPER_ADMIN'
         if (!['Pending', 'Approved', 'Rejected'].includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
-        const updated = await CSRPartner.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const updated = await CSRPartner.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' });
         if (!updated) return res.status(404).json({ error: 'CSR Partner not found' });
         res.json(updated);
     } catch (err) { res.status(500).json({ error: 'Internal Server Error' }); }

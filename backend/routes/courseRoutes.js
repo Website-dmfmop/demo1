@@ -47,7 +47,7 @@ router.put('/api/courses/:id', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR'
         const data = { ...req.body };
         if (req.file) data.brochure = '/uploads/public/' + req.file.filename;
 
-        const updatedCourse = await Course.findByIdAndUpdate(req.params.id, data, { new: true });
+        const updatedCourse = await Course.findByIdAndUpdate(req.params.id, data, { returnDocument: 'after' });
         res.json(updatedCourse);
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -75,7 +75,7 @@ router.post('/api/diploma-courses', verifyToken, restrictTo('SUPER_ADMIN', 'DIRE
 
 router.put('/api/diploma-courses/:id', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'),  async (req, res) => {
     try {
-        const updatedCourse = await DiplomaCourse.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updatedCourse = await DiplomaCourse.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
         res.json(updatedCourse);
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -126,7 +126,7 @@ router.put('/api/competitive-exams/:id', verifyToken, restrictTo('SUPER_ADMIN', 
             try { data.pattern = JSON.parse(data.pattern); } catch(e) {}
         }
 
-        const updatedExam = await CompetitiveExam.findByIdAndUpdate(req.params.id, data, { new: true });
+        const updatedExam = await CompetitiveExam.findByIdAndUpdate(req.params.id, data, { returnDocument: 'after' });
         res.json(updatedExam);
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -165,7 +165,7 @@ router.delete('/api/live-sessions/:id', verifyToken, restrictTo('SUPER_ADMIN', '
 
 router.put('/api/live-sessions/:id', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'),  async (req, res) => {
     try {
-        const updatedSession = await LiveSession.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updatedSession = await LiveSession.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
         res.json(updatedSession);
     } catch (err) { res.status(400).json({ error: err.message }); }
 });

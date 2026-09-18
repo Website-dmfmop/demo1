@@ -32,7 +32,7 @@ router.delete('/api/jobs/:id', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR'
 
 router.put('/api/jobs/:id', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'),  async (req, res) => {
     try {
-        const updatedJob = await JobPosting.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updatedJob = await JobPosting.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
         res.json(updatedJob);
     } catch (err) { res.status(400).json({ error: err.message }); }
 });
@@ -61,7 +61,7 @@ router.delete('/api/job-applications/:id', verifyToken, restrictTo('SUPER_ADMIN'
 router.put('/api/job-applications/:id/status', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'),  async (req, res) => {
     try {
         const { status } = req.body;
-        const updatedApp = await JobApplication.findByIdAndUpdate(req.params.id, { status }, { new: true });
+        const updatedApp = await JobApplication.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' });
         res.json(updatedApp);
     } catch (err) { res.status(400).json({ error: err.message }); }
 });
