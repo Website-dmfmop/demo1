@@ -1,10 +1,13 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { subPageTranslations } from '../translations/subPages';
+import { commonTranslations } from '../translations/common';
+import { WORDS_BEYOND_BORDERS_LINK } from '../config/initiatives';
 
 export default function WordsBeyondBorders() {
     const { language } = useLanguage();
     const t = subPageTranslations[language];
+    const tc = commonTranslations[language];
     return (
         <div>
             <main>
@@ -48,6 +51,19 @@ export default function WordsBeyondBorders() {
                                     <p className="text-on-surface-variant leading-relaxed mb-8">
                                         {language === 'hi' ? 'राजनयिक दुनिया में एक दुर्लभ और शक्तिशाली दृष्टिकोण रखते हैं। अपने कार्य के माध्यम से, वे विविध समाजों, संस्कृतियों, राजनीतिक प्रणालियों और वैश्विक चुनौतियों से जुड़ते हैं। वे संघर्ष और सहयोग, वार्ता और परिवर्तन के क्षणों के साक्षी होते हैं। कई लोग इन जीवंत अनुभवों को प्रभावशाली साहित्यिक कृतियों में बदलते हैं — जो राष्ट्रों, विचारों और मानवीय कहानियों को जोड़ने वाली अंतर्दृष्टि प्रदान करती हैं।' : 'Diplomats occupy a rare and powerful vantage point in the world. Through their work, they engage with diverse societies, cultures, political systems, and global challenges. They witness moments of conflict and cooperation, negotiation and transformation. Many translate these lived experiences into compelling literary works—offering insights that bridge nations, ideas, and human stories.'}
                                     </p>
+                                    <div className="mb-8">
+                                        <a
+                                            href={WORDS_BEYOND_BORDERS_LINK}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            id="wbb-visit-website-action"
+                                            className="inline-flex items-center gap-2 text-secondary hover:text-primary font-headline font-bold text-xs uppercase tracking-wider py-2 transition-colors group focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 rounded"
+                                            aria-label={language === 'hi' ? 'वर्ड्स बियॉन्ड बॉर्डर्स आधिकारिक वेबसाइट देखें' : 'Visit Words Beyond Borders Official Website'}
+                                        >
+                                            <span>{tc.visitWebsite}</span>
+                                            <span className="material-symbols-outlined text-sm transition-transform group-hover:translate-x-0.5">arrow_forward</span>
+                                        </a>
+                                    </div>
                                 </div>
                                 <div className="bg-primary/5 border-l-4 border-secondary-container p-6 rounded-r-xl">
                                     <p className="italic text-primary font-medium leading-relaxed">

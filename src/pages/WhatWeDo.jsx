@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { icoeTranslations } from '../translations/icoe';
 import { commonTranslations } from '../translations/common';
+import { WORDS_BEYOND_BORDERS_LINK } from '../config/initiatives';
 
 export default function WhatWeDo() {
     const { language } = useLanguage();
@@ -272,13 +273,27 @@ export default function WhatWeDo() {
                                                 ))}
                                             </div>
                                         </div>
-                                        <Link
-                                            to={item.to}
-                                            className="inline-flex items-center gap-2 text-primary font-headline font-bold text-xs uppercase tracking-wider hover:text-secondary-container transition-colors mt-auto pt-4 border-t border-outline-variant/10"
-                                        >
-                                            <span>{tc.learnMore}</span>
-                                            <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                                        </Link>
+                                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-auto pt-4 border-t border-outline-variant/10">
+                                            <Link
+                                                to={item.to}
+                                                className="inline-flex items-center gap-2 text-primary font-headline font-bold text-xs uppercase tracking-wider hover:text-secondary-container transition-colors"
+                                            >
+                                                <span>{tc.learnMore}</span>
+                                                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                            </Link>
+                                            {item.to === '/words-beyond-borders' && (
+                                                <a
+                                                    href={WORDS_BEYOND_BORDERS_LINK}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-1.5 text-secondary font-headline font-bold text-xs uppercase tracking-wider hover:text-primary transition-colors group"
+                                                    aria-label={`${item.label} - ${tc.visitWebsite}`}
+                                                >
+                                                    <span>{tc.visitWebsite}</span>
+                                                    <span className="material-symbols-outlined text-sm transition-transform group-hover:translate-x-0.5">arrow_forward</span>
+                                                </a>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             ))}

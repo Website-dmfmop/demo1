@@ -61,6 +61,7 @@ export const commonTranslations = {
         phone: "Phone",
         email: "Email",
         website: "Website",
+        visitWebsite: "Visit Website",
         contactUs: "Contact Us",
     },
     hi: {
@@ -125,6 +126,7 @@ export const commonTranslations = {
         phone: "फ़ोन",
         email: "ईमेल",
         website: "वेबसाइट",
+        visitWebsite: "वेबसाइट देखें",
         contactUs: "संपर्क करें",
     },
 };

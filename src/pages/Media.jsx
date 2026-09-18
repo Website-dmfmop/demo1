@@ -85,6 +85,27 @@ export default function Media() {
                                     <span key={i} className="bg-surface-container-low text-primary text-xs font-bold px-4 py-2 rounded-full border border-outline-variant/30 uppercase tracking-widest">{b}</span>
                                 ))}
                             </div>
+
+                            {/* Five Compact Social-Media Cards */}
+                            <div className="mt-8 pt-6 border-t border-outline-variant/15">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+                                    {SOCIAL.map((s, i) => (
+                                        <a
+                                            key={i}
+                                            href={s.link || '#'}
+                                            target={s.link && s.link !== '#' ? "_blank" : undefined}
+                                            rel={s.link && s.link !== '#' ? "noopener noreferrer" : undefined}
+                                            className="bg-surface-container-lowest rounded-xl p-3 flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer group no-underline block border border-outline-variant/10"
+                                        >
+                                            <div className={`w-9 h-9 rounded-full ${s.color} flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300 shadow-xs`}>
+                                                <span className="material-symbols-outlined text-white text-lg">{s.icon}</span>
+                                            </div>
+                                            <div className="font-headline font-bold text-primary text-xs mb-0.5 leading-tight">{s.platform}</div>
+                                            <div className="text-on-surface-variant text-[10px] leading-tight truncate max-w-full">{s.handle}</div>
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                         <div className="md:col-span-5 relative">
                             <div className="aspect-[4/5] rounded-xl overflow-hidden shadow-2xl">
@@ -274,27 +295,6 @@ export default function Media() {
                                         </div>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Social Media */}
-                <section className="py-20 bg-surface-container-low px-8">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="text-center mb-14">
-                            <span className="font-label text-secondary text-xs font-bold tracking-widest uppercase mb-3 block">{t.connectWithUs}</span>
-                            <h2 className="font-headline text-4xl font-extrabold text-primary mb-4">{t.followJourney}</h2>
-                            <div className="w-16 h-1 bg-secondary-container mx-auto mb-4"></div>
-                            <p className="text-on-surface-variant max-w-2xl mx-auto">{t.socialDesc}</p>
-                        </div>
-                        <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
-                            {SOCIAL.map((s, i) => (
-                                <a key={i} href={s.link || '#'} target={s.link && s.link !== '#' ? "_blank" : undefined} rel={s.link && s.link !== '#' ? "noopener noreferrer" : undefined} className="bg-surface-container-lowest rounded-2xl p-6 flex flex-col items-center text-center hover:-translate-y-2 transition-all duration-300 shadow-sm cursor-pointer group no-underline block">
-                                    <div className={`w-14 h-14 rounded-full ${s.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}><span className="material-symbols-outlined text-white text-2xl">{s.icon}</span></div>
-                                    <div className="font-headline font-bold text-primary text-sm mb-1">{s.platform}</div>
-                                    <div className="text-on-surface-variant text-xs mb-2">{s.handle}</div>
-                                </a>
                             ))}
                         </div>
                     </div>
