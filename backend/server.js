@@ -115,7 +115,7 @@ const { upload, privateUpload } = require('./middleware/upload');
 
 
 
-const { validateObjectId, verifyCaptcha } = require('./middleware/validation');
+const { validateObjectId } = require('./middleware/validation');
 // ID Validation Middleware
 app.param('id', validateObjectId);
 
