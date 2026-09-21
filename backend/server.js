@@ -4,7 +4,7 @@ const { validateEnv } = require('./config/env');
 validateEnv();
 
 const { verifyToken, restrictTo } = require('./middleware/auth');
-
+const { verifyCaptcha } = require('./middleware/validation');
 const mongoose = require('mongoose');
 const { expressCors, getAllowedOrigins } = require('./config/cors');
 const multer = require('multer');

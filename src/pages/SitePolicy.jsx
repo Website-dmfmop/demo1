@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useSpring, useReducedMotion } from 'framer-motion';
-import { privacyPolicyData } from '../content/privacyPolicy';
+import { privacyPolicyData } from '../content/sitePolicy';
 
-const PrivacyPolicy = () => {
+const SitePolicy = () => {
     const shouldReduceMotion = useReducedMotion();
     const [activeSection, setActiveSection] = useState('section-1');
     const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
@@ -376,4 +376,4 @@ const PrivacyPolicy = () => {
     );
 };
 
-export default PrivacyPolicy;
+export default SitePolicy;

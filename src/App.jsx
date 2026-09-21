@@ -18,7 +18,7 @@ import Admission from './pages/Admission';
 import CompetitiveExamsHub from './pages/CompetitiveExamsHub';
 import CSR from './pages/CSR';
 import JoinUs from './pages/JoinUs';
-import PrivacyPolicy from './pages/PrivacyPolicy';
+import SitePolicy from './pages/SitePolicy';
 
 import JobPlacement from './pages/JobPlacement';
 import MovementOfPositivity from './pages/MovementOfPositivity';
@@ -116,7 +116,7 @@ function App() {
         <Route path="/become-a-partner" element={<BecomePartner />} />
         <Route path="/slot-booking" element={<SlotBooking />} />
         <Route path="/become-dmf-member" element={<DmfMemberForm />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/privacy-policy" element={<SitePolicy />} />
       </Routes>
       <Footer />
       </LanguageProvider>
