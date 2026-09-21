@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
+import { API_URL } from '../config/api';
+
 const SocketContext = createContext(null);
 
 export const useSocket = () => useContext(SocketContext);
@@ -13,8 +15,8 @@ export const SocketProvider = ({ children }) => {
         const token = sessionStorage.getItem('adminToken');
         if (!token) return;
 
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const newSocket = io(API_URL, {
+        const socketTarget = API_URL || window.location.origin;
+        const newSocket = io(socketTarget, {
             auth: { token }
         });
 

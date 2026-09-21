@@ -1,3 +1,4 @@
+import { API_URL } from '../config/api';
 import React, { createContext, useContext, useState } from 'react';
 
 const CSRContext = createContext();
@@ -10,7 +11,7 @@ export const CSRProvider = ({ children }) => {
     React.useEffect(() => {
         const fetchData = async () => {
             try {
-                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                // Using centralized API_URL
                 const [projRes, partRes] = await Promise.all([
                     fetch(`${API_URL}/api/projects`),
                     fetch(`${API_URL}/api/csr-partners`)

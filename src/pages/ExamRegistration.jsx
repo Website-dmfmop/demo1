@@ -1,3 +1,4 @@
+import { API_URL } from '../config/api';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -56,7 +57,7 @@ const ExamRegistrationForm = ({ onSubmitSuccess }) => {
             setIsSubmitting(true);
             try {
                 const payload = { ...formData };
-                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                // Using centralized API_URL
                 const response = await fetch(`${API_URL}/api/competitive-exam-admissions`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

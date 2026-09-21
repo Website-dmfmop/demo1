@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { admissionTranslations } from '../translations/pages';
 import RegisterInterestModal from '../components/RegisterInterestModal';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_URL } from '../config/api';
 
 const Admission = () => {
   const { language } = useLanguage();

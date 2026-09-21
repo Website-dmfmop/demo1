@@ -4,7 +4,7 @@ import { commonTranslations } from '../translations/common';
 import { admissionTranslations } from '../translations/pages';
 import RegisterInterestModal from '../components/RegisterInterestModal';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_URL } from '../config/api';
 
 export default function LiveSection() {
   const { language } = useLanguage();

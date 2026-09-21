@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { mediaTranslations } from '../translations/media';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_URL } from '../config/api';
 
 const TESTIMONIALS = [
     { name: 'Priya Sharma', role: 'German Language Graduate, ICOE', quote: 'The German A1 to B1 programme at ICOE completely transformed my career prospects. Within three months of completing the course, I received a placement offer from a healthcare facility in Germany.', icon: 'school', color: 'bg-primary' },

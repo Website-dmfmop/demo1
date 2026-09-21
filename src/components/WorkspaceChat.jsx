@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useSocket } from '../context/SocketContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_URL } from '../config/api';
 const GROUPING_THRESHOLD_MS = 5 * 60 * 1000;
 const DEFAULT_EMOJIS = ['👍', '❤️', '😂', '🎉', '👀', '😮'];
 

@@ -13,10 +13,10 @@ import { SocketProvider } from '../context/SocketContext';
 import WorkspaceChat from '../components/WorkspaceChat';
 import ErrorBoundary from '../components/ErrorBoundary';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_URL, authFetch } from '../config/api';
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState('tasks');
+  const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('admin_active_tab') || 'admissions');
   const [highlightedTaskId, setHighlightedTaskId] = useState(null);
   const [currentExportData, setCurrentExportData] = useState([]);
   const [exportHandler, setExportHandler] = useState(null);
@@ -69,9 +69,7 @@ const Admin = () => {
     if (isAuthenticated && currentUser) {
       const fetchPerms = async () => {
         try {
-          const res = await fetch(`${API_URL}/api/permissions`, {
-            headers: { 'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}` }
-          });
+          const res = await authFetch(`${API_URL}/api/permissions`);
           if (res.ok) {
             const data = await res.json();
             setPermissions(data);
@@ -118,16 +116,27 @@ const Admin = () => {
     setShowAnalytics(false);
     setIsMobileMenuOpen(false);
     setExportHandler(null); // Reset on tab change
+    sessionStorage.setItem('admin_active_tab', activeTab);
     fetchData();
   }, [activeTab]);
 
+  const handleApiResponse = async (res, entityName) => {
+    if (res.status === 401) {
+      throw new Error('Your session has expired or is unauthorized. Please log out and log in again.');
+    }
+    if (!res.ok) {
+      throw new Error(`Unable to load ${entityName}. Please try again.`);
+    }
+    return res.json();
+  };
+
   const fetchData = async () => {
     setLoading(true);
+    setError(null);
     try {
       if (activeTab === 'admissions' || activeTab === 'live_session_admissions') {
-        const res = await fetch(`${API_URL}/api/admissions`);
-        if (!res.ok) throw new Error('Failed to fetch admissions');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/admissions`);
+        const data = await handleApiResponse(res, 'admissions');
         setAdmissions(data);
         setCurrentExportData(
             activeTab === 'live_session_admissions'
@@ -135,104 +144,95 @@ const Admin = () => {
                 : data.filter(adm => adm.courseCategory !== 'Live Session')
         );
       } else if (activeTab === 'competitive_exam_admissions') {
-        const res = await fetch(`${API_URL}/api/competitive-exam-admissions`);
-        if (!res.ok) throw new Error('Failed to fetch competitive exam admissions');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/competitive-exam-admissions`);
+        const data = await handleApiResponse(res, 'competitive exam admissions');
         setCompExamAdmissions(data);
         setCurrentExportData(data);
       } else if (activeTab === 'donations') {
-        const res = await fetch(`${API_URL}/api/donations`);
-        if (!res.ok) throw new Error('Failed to fetch donations');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/donations`);
+        const data = await handleApiResponse(res, 'donations');
         setDonations(data);
         setCurrentExportData(data);
       } else if (activeTab === 'courses') {
-        const res = await fetch(`${API_URL}/api/courses`);
-        if (!res.ok) throw new Error('Failed to fetch courses');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/courses`);
+        const data = await handleApiResponse(res, 'courses');
         setCourses(data);
         setCurrentExportData(data);
       } else if (activeTab === 'diploma_courses') {
-        const res = await fetch(`${API_URL}/api/diploma-courses`);
-        if (!res.ok) throw new Error('Failed to fetch diploma courses');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/diploma-courses`);
+        const data = await handleApiResponse(res, 'diploma courses');
         setDiplomaCourses(data);
         setCurrentExportData(data);
       } else if (activeTab === 'competitive_exams') {
-        const res = await fetch(`${API_URL}/api/competitive-exams`);
-        if (!res.ok) throw new Error('Failed to fetch competitive exams');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/competitive-exams`);
+        const data = await handleApiResponse(res, 'competitive exams');
         setCompetitiveExams(data);
         setCurrentExportData(data);
       } else if (activeTab === 'media') {
         const [resMedia, resVid, resPub, resPress] = await Promise.all([
-          fetch(`${API_URL}/api/media`),
-          fetch(`${API_URL}/api/videos`),
-          fetch(`${API_URL}/api/publications`),
-          fetch(`${API_URL}/api/press`)
+          authFetch(`${API_URL}/api/media`),
+          authFetch(`${API_URL}/api/videos`),
+          authFetch(`${API_URL}/api/publications`),
+          authFetch(`${API_URL}/api/press`)
         ]);
-        if (!resMedia.ok) throw new Error('Failed to fetch media');
-        setMediaItems(await resMedia.json());
-        setVideos(await resVid.json());
-        setPublications(await resPub.json());
-        setPress(await resPress.json());
+        const [mediaData, vidData, pubData, pressData] = await Promise.all([
+          handleApiResponse(resMedia, 'media items'),
+          handleApiResponse(resVid, 'videos'),
+          handleApiResponse(resPub, 'publications'),
+          handleApiResponse(resPress, 'press items')
+        ]);
+        setMediaItems(mediaData);
+        setVideos(vidData);
+        setPublications(pubData);
+        setPress(pressData);
       } else if (activeTab === 'live_sessions') {
-        const res = await fetch(`${API_URL}/api/live-sessions`);
-        if (!res.ok) throw new Error('Failed to fetch live sessions');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/live-sessions`);
+        const data = await handleApiResponse(res, 'live sessions');
         setLiveSessions(data);
         setCurrentExportData(data);
       } else if (activeTab === 'joinees') {
-        const res = await fetch(`${API_URL}/api/joinees`);
-        if (!res.ok) throw new Error('Failed to fetch joinees');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/joinees`);
+        const data = await handleApiResponse(res, 'joinees');
         setJoinees(data);
         setCurrentExportData(data);
       } else if (activeTab === 'dmf_members') {
-        const res = await fetch(`${API_URL}/api/dmf-members`);
-        if (!res.ok) throw new Error('Failed to fetch dmf members');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/dmf-members`);
+        const data = await handleApiResponse(res, 'dmf members');
         setDmfMembers(data);
         setCurrentExportData(data);
       } else if (activeTab === 'jobs') {
-        const res = await fetch(`${API_URL}/api/jobs`);
-        if (!res.ok) throw new Error('Failed to fetch jobs');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/jobs`);
+        const data = await handleApiResponse(res, 'jobs');
         setJobs(data);
         setCurrentExportData(data);
       } else if (activeTab === 'job-applications') {
-        const res = await fetch(`${API_URL}/api/job-applications`);
-        if (!res.ok) throw new Error('Failed to fetch job applications');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/job-applications`);
+        const data = await handleApiResponse(res, 'job applications');
         setJobApplications(data);
         setCurrentExportData(data);
       } else if (activeTab === 'csr_partners') {
-        const res = await fetch(`${API_URL}/api/csr-partners`);
-        if (!res.ok) throw new Error('Failed to fetch CSR partners');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/csr-partners`);
+        const data = await handleApiResponse(res, 'CSR partners');
         setCsrPartners(data);
         setCurrentExportData(data);
       } else if (activeTab === 'partner-requests') {
-        const res = await fetch(`${API_URL}/api/partner-requests`);
-        if (!res.ok) throw new Error('Failed to fetch partner requests');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/partner-requests`);
+        const data = await handleApiResponse(res, 'partner requests');
         setPartnerRequests(data);
         setCurrentExportData(data);
       } else if (activeTab === 'slot-bookings') {
-        const res = await fetch(`${API_URL}/api/slot-bookings`);
-        if (!res.ok) throw new Error('Failed to fetch slot bookings');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/slot-bookings`);
+        const data = await handleApiResponse(res, 'slot bookings');
         setSlotBookings(data);
         setCurrentExportData(data);
       } else if (activeTab === 'projects') {
-        const res = await fetch(`${API_URL}/api/projects`);
-        if (!res.ok) throw new Error('Failed to fetch projects');
-        const data = await res.json();
+        const res = await authFetch(`${API_URL}/api/projects`);
+        const data = await handleApiResponse(res, 'projects');
         setProjects(data);
         setCurrentExportData(data);
       }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Unable to load admin data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -257,7 +257,7 @@ const Admin = () => {
   const updateSlotBookingStatus = async (id, newStatus) => {
     setActionMenuOpenId(null);
     try {
-      const res = await fetch(`${API_URL}/api/slot-bookings/${id}/status`, {
+      const res = await authFetch(`${API_URL}/api/slot-bookings/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -272,7 +272,7 @@ const Admin = () => {
   const handleUpdateStatus = async (id, status, type) => {
     try {
       const endpoint = type === 'csr_partner' ? 'csr-partners' : 'partner-requests';
-      const res = await fetch(`${API_URL}/api/${endpoint}/${id}/status`, {
+      const res = await authFetch(`${API_URL}/api/${endpoint}/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
@@ -287,7 +287,7 @@ const Admin = () => {
   const updateAdmissionStatus = async (id, newStatus) => {
     setActionMenuOpenId(null);
     try {
-      const res = await fetch(`${API_URL}/api/admissions/${id}/status`, {
+      const res = await authFetch(`${API_URL}/api/admissions/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -302,7 +302,7 @@ const Admin = () => {
   const updateCompExamAdmissionStatus = async (id, newStatus) => {
     setActionMenuOpenId(null);
     try {
-      const res = await fetch(`${API_URL}/api/competitive-exam-admissions/${id}/status`, {
+      const res = await authFetch(`${API_URL}/api/competitive-exam-admissions/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -317,7 +317,7 @@ const Admin = () => {
   const updateDmfMemberStatus = async (id, newStatus) => {
     setActionMenuOpenId(null);
     try {
-      const res = await fetch(`${API_URL}/api/dmf-members/${id}/status`, {
+      const res = await authFetch(`${API_URL}/api/dmf-members/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -332,7 +332,7 @@ const Admin = () => {
   const updateJoineeStatus = async (id, newStatus) => {
     setActionMenuOpenId(null);
     try {
-      const res = await fetch(`${API_URL}/api/joinees/${id}/status`, {
+      const res = await authFetch(`${API_URL}/api/joinees/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -347,7 +347,7 @@ const Admin = () => {
   const updateJobApplicationStatus = async (id, newStatus) => {
     setActionMenuOpenId(null);
     try {
-      const res = await fetch(`${API_URL}/api/job-applications/${id}/status`, {
+      const res = await authFetch(`${API_URL}/api/job-applications/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -362,7 +362,7 @@ const Admin = () => {
   const updatePartnerRequestStatus = async (id, newStatus) => {
     setActionMenuOpenId(null);
     try {
-      const res = await fetch(`${API_URL}/api/partner-requests/${id}/status`, {
+      const res = await authFetch(`${API_URL}/api/partner-requests/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -377,7 +377,7 @@ const Admin = () => {
   const updateProjectStatus = async (id, newStatus) => {
     setActionMenuOpenId(null);
     try {
-      const res = await fetch(`${API_URL}/api/projects/${id}/status`, {
+      const res = await authFetch(`${API_URL}/api/projects/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -409,7 +409,7 @@ const Admin = () => {
       if (type === 'competitive-exam-admission') endpoint = `${API_URL}/api/competitive-exam-admissions/${id}`;
       if (type === 'project') endpoint = `${API_URL}/api/projects/${id}`;
 
-      const res = await fetch(endpoint, { method: 'DELETE' });
+      const res = await authFetch(endpoint, { method: 'DELETE' });
       if (res.ok) {
           fetchData();
           setItemToDelete(null);
@@ -433,7 +433,7 @@ const Admin = () => {
       try {
           const url = editingId ? `${API_URL}/api/courses/${editingId}` : `${API_URL}/api/courses`;
           const method = editingId ? 'PUT' : 'POST';
-          const res = await fetch(url, {
+          const res = await authFetch(url, {
               method,
               body: formData
           });
@@ -455,7 +455,7 @@ const Admin = () => {
       try {
           const url = editingId ? `${API_URL}/api/diploma-courses/${editingId}` : `${API_URL}/api/diploma-courses`;
           const method = editingId ? 'PUT' : 'POST';
-          const res = await fetch(url, {
+          const res = await authFetch(url, {
               method,
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(diplomaCourseForm)
@@ -487,7 +487,7 @@ const Admin = () => {
       try {
           const url = editingId ? `${API_URL}/api/competitive-exams/${editingId}` : `${API_URL}/api/competitive-exams`;
           const method = editingId ? 'PUT' : 'POST';
-          const res = await fetch(url, {
+          const res = await authFetch(url, {
               method,
               body: formData
           });
@@ -530,6 +530,7 @@ const Admin = () => {
       setIsAuthenticated(false);
       sessionStorage.removeItem('adminToken');
       sessionStorage.removeItem('adminUser');
+      sessionStorage.removeItem('admin_active_tab');
       setCurrentUser(null);
       setPassword('');
       setLoginId('');
@@ -545,7 +546,7 @@ const Admin = () => {
 
       try {
           const url = editingId ? `${API_URL}/api/media/${editingId}` : `${API_URL}/api/media`;
-          const res = await fetch(url, {
+          const res = await authFetch(url, {
               method: editingId ? 'PUT' : 'POST',
               body: formData
           });
@@ -573,7 +574,7 @@ const Admin = () => {
 
       try {
           const url = editingId ? `${API_URL}/api/videos/${editingId}` : `${API_URL}/api/videos`;
-          const res = await fetch(url, { method: editingId ? 'PUT' : 'POST', body: formData });
+          const res = await authFetch(url, { method: editingId ? 'PUT' : 'POST', body: formData });
           if (res.ok) {
               setVideoForm({ title: '', desc: '', duration: '', link: '', file: null });
               setShowVideoForm(false);
@@ -593,7 +594,7 @@ const Admin = () => {
 
       try {
           const url = editingId ? `${API_URL}/api/publications/${editingId}` : `${API_URL}/api/publications`;
-          const res = await fetch(url, { method: editingId ? 'PUT' : 'POST', body: formData });
+          const res = await authFetch(url, { method: editingId ? 'PUT' : 'POST', body: formData });
           if (res.ok) {
               setPubForm({ title: '', soon: false, imgFile: null, pdfFile: null });
               setShowPubForm(false);
@@ -610,7 +611,7 @@ const Admin = () => {
 
       try {
           const url = editingId ? `${API_URL}/api/press/${editingId}` : `${API_URL}/api/press`;
-          const res = await fetch(url, {
+          const res = await authFetch(url, {
               method: editingId ? 'PUT' : 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(data)
@@ -628,7 +629,7 @@ const Admin = () => {
       e.preventDefault();
       try {
           const url = editingId ? `${API_URL}/api/live-sessions/${editingId}` : `${API_URL}/api/live-sessions`;
-          const res = await fetch(url, {
+          const res = await authFetch(url, {
               method: editingId ? 'PUT' : 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(liveSessionForm)
@@ -648,7 +649,7 @@ const Admin = () => {
       e.preventDefault();
       try {
           const url = editingId ? `${API_URL}/api/jobs/${editingId}` : `${API_URL}/api/jobs`;
-          const res = await fetch(url, {
+          const res = await authFetch(url, {
               method: editingId ? 'PUT' : 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(jobForm)
@@ -1047,8 +1048,21 @@ const Admin = () => {
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-8">
             
             {error && (
-            <div className="max-w-6xl mx-auto bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-sm mb-6 flex items-center gap-3 font-medium">
-                <span className="material-symbols-outlined">error</span> {error}
+            <div className="max-w-6xl mx-auto bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-xl shadow-sm mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-medium">
+                <div className="flex items-center gap-3">
+                    <span className="material-symbols-outlined text-red-500 text-2xl shrink-0">error</span>
+                    <span>{error}</span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                    <button onClick={fetchData} className="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-800 text-xs font-bold rounded-lg transition-colors flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[16px]">refresh</span> Retry
+                    </button>
+                    {error.includes('session') && (
+                        <button onClick={handleLogout} className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[16px]">logout</span> Log Out
+                        </button>
+                    )}
+                </div>
             </div>
             )}
 
@@ -1626,8 +1640,9 @@ const Admin = () => {
                                                     <button onClick={() => openEditForm('diploma-course', course)} className="text-gray-300 hover:text-blue-500 transition-colors p-1"><span className="material-symbols-outlined text-[20px]">edit</span></button>
                                                     <button onClick={async () => {
                                                         if (!window.confirm('Delete this course?')) return;
-                                                        await fetch(`${API_URL}/api/diploma-courses/${course._id}`, { method: 'DELETE' });
-                                                        fetchData();
+                                                        const res = await authFetch(`${API_URL}/api/diploma-courses/${course._id}`, { method: 'DELETE' });
+                                                        if (res.ok) fetchData();
+                                                        else alert('Failed to delete course');
                                                     }} className="text-gray-300 hover:text-red-500 transition-colors p-1"><span className="material-symbols-outlined text-[20px]">delete</span></button>
                                                 </div>
                                             </div>

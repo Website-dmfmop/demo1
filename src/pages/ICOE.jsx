@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { icoeTranslations } from '../translations/icoe';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_URL } from '../config/api';
 
 export default function ICOE() {
     const { language } = useLanguage();

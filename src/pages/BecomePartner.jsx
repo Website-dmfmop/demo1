@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { subPageTranslations } from '../translations/subPages';
 import ReCAPTCHA from "../components/ui/SafeReCAPTCHA";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_URL } from '../config/api';
 
 const PARTNERSHIP_TYPES = [
     'Strategic Partnership',

@@ -1,3 +1,4 @@
+import { API_URL } from '../../../config/api';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProgressBar from '../../ui/ProgressBar';
@@ -119,7 +120,7 @@ const ProjectPitchForm = () => {
             }
 
             try {
-                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                // Using centralized API_URL
                 const res = await fetch(`${API_URL}/api/projects`, {
                     method: 'POST',
                     body: data

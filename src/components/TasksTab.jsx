@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FilterToolbar, FilterSelect, FilterSeparator } from './FilterToolbar';
 import { exportToCSV } from '../utils/exportUtils';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_URL } from '../config/api';
 
 const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavigateTaskId }) => {
     const [tasks, setTasks] = useState([]);
