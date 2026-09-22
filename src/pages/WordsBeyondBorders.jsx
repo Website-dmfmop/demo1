@@ -57,11 +57,11 @@ export default function WordsBeyondBorders() {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             id="wbb-visit-website-action"
-                                            className="inline-flex items-center gap-2 text-secondary hover:text-primary font-headline font-bold text-xs uppercase tracking-wider py-2 transition-colors group focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 rounded"
+                                            className="inline-flex items-center gap-3 bg-[#FE9832] text-white px-7 py-3.5 rounded-full font-headline font-bold text-sm uppercase tracking-wider shadow-xl shadow-[#FE9832]/30 hover:shadow-2xl hover:shadow-[#FE9832]/50 hover:-translate-y-1 transition-all duration-300 group focus:outline-none focus:ring-4 focus:ring-[#FE9832]/50"
                                             aria-label={language === 'hi' ? 'वर्ड्स बियॉन्ड बॉर्डर्स आधिकारिक वेबसाइट देखें' : 'Visit Words Beyond Borders Official Website'}
                                         >
                                             <span>{tc.visitWebsite}</span>
-                                            <span className="material-symbols-outlined text-sm transition-transform group-hover:translate-x-0.5">arrow_forward</span>
+                                            <span className="material-symbols-outlined text-[18px] bg-white/20 rounded-full p-1 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5">open_in_new</span>
                                         </a>
                                     </div>
                                 </div>

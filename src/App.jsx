@@ -44,6 +44,7 @@ import ExamRegistration from './pages/ExamRegistration';
 import LiveSection from './pages/LiveSection';
 import CourseTeaserToast from './components/Admissions/CourseTeaserToast';
 import RegisterNowFloater from './components/Admissions/RegisterNowFloater';
+import FloatingWBBLogo from './components/FloatingWBBLogo';
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
       <ScrollToTop />
       <Navbar />
       <FloatingLangToggle />
+      <FloatingWBBLogo />
       <CourseTeaserToast />
       <RegisterNowFloater />
       <Routes>

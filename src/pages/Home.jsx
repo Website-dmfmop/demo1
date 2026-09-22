@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { homeTranslations } from '../translations/home';
 import { commonTranslations } from '../translations/common';
+import { WORDS_BEYOND_BORDERS_LINK } from '../config/initiatives';
 
 /* ─── Animated Counter Hook ───────────────────────────────────────────── */
 function useCountUp(target, duration = 2000, startWhen = false) {
@@ -56,6 +57,55 @@ export default function Home() {
     const counterRef = useRef(null);
     const [counterStarted, setCounterStarted] = useState(false);
 
+    /* Hero Carousel Slides: Slide 1 is current hero text; Slides 2-10 are WBB event posters */
+    const heroSlides = [
+        { type: 'text' },
+        { type: 'image', src: '/wbb%20image%20slider/1.jpeg', alt: 'Words Beyond Borders - A Global Gathering of Literary Excellence' },
+        { type: 'image', src: '/wbb%20image%20slider/2.jpeg', alt: 'Words Beyond Borders - Organized by DMF & FOCAL' },
+        { type: 'image', src: '/wbb%20image%20slider/3.jpeg', alt: 'Words Beyond Borders - Target Audience & Student Engagement' },
+        { type: 'image', src: '/wbb%20image%20slider/4.jpeg', alt: 'Words Beyond Borders - Over 90 Speakers' },
+        { type: 'image', src: '/wbb%20image%20slider/5.jpeg', alt: 'Words Beyond Borders - Esteemed Speakers from Abroad' },
+        { type: 'image', src: '/wbb%20image%20slider/6.jpeg', alt: 'Words Beyond Borders - Esteemed Speakers from Abroad' },
+        { type: 'image', src: '/wbb%20image%20slider/7.jpeg', alt: 'Words Beyond Borders - Esteemed Speakers from Abroad' },
+        { type: 'image', src: '/wbb%20image%20slider/8.jpeg', alt: 'Words Beyond Borders - Esteemed Speakers from India' },
+        { type: 'image', src: '/wbb%20image%20slider/9.jpeg', alt: 'Words Beyond Borders - A Platform for Global Dialogue' },
+    ];
+
+    const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
+
+    // Swipe tracking state
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+    const minSwipeDistance = 50;
+
+    const onTouchStart = (e) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+        
+        if (isLeftSwipe) {
+            setCurrentHeroSlide((prev) => (prev + 1) % heroSlides.length);
+        } else if (isRightSwipe) {
+            setCurrentHeroSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+        }
+    };
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentHeroSlide((prev) => (prev + 1) % heroSlides.length);
+        }, 4000);
+
+        return () => clearInterval(timer);
+    }, [heroSlides.length, currentHeroSlide]);
+
     const [currentSlide, setCurrentSlide] = useState(0);
     const slideImages = [
         "/Images/home_page_slide_image_1.jpeg",
@@ -101,25 +151,127 @@ export default function Home() {
     return (
         <div>
             <main>
-                {/* Hero Section */}
-                <section className="relative h-[921px] flex items-end md:items-center overflow-hidden">
-                    <div className="absolute inset-0 z-0">
-                        <picture>
-                            <source media="(max-width: 768px)" srcSet="/Images/mobile_interface%20_image.png" />
-                            <img alt="Empowering Communities" className="w-full h-full object-cover object-center" src="/Images/1.png" />
-                        </picture>
-                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/60 via-primary/20 to-transparent"></div>
+                {/* Hero Section Carousel */}
+                <section 
+                    className="relative h-[921px] overflow-hidden group bg-[#00003c]"
+                    onTouchStart={onTouchStart}
+                    onTouchMove={onTouchMove}
+                    onTouchEnd={onTouchEnd}
+                >
+                    {heroSlides.map((slide, idx) => {
+                        const isActive = idx === currentHeroSlide;
+                        return (
+                            <div
+                                key={idx}
+                                className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                                    isActive ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
+                                }`}
+                                aria-hidden={!isActive}
+                            >
+                                {slide.type === 'text' ? (
+                                    /* Slide 1: Original Hero with Background and Highlighted Text */
+                                    <div className="relative w-full h-full flex items-end md:items-center">
+                                        <div className="absolute inset-0 z-0">
+                                            <picture>
+                                                <source media="(max-width: 768px)" srcSet="/Images/mobile_interface%20_image.png" />
+                                                <img alt="Empowering Communities" className="w-full h-full object-cover object-center" src="/Images/1.png" />
+                                            </picture>
+                                            <div className="absolute inset-0 bg-gradient-to-tr from-primary/60 via-primary/20 to-transparent"></div>
+                                        </div>
+                                        <div className="relative z-10 max-w-7xl mx-auto px-8 w-full pb-12 md:pb-0">
+                                            <div className="max-w-3xl">
+                                                <span className="inline-block px-4 py-1 mb-4 bg-secondary-container text-on-secondary-container text-xs font-bold tracking-widest uppercase rounded-full">
+                                                    {t.heroTag}
+                                                </span>
+                                                <h1 className="font-headline text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-8 tracking-tighter">
+                                                    {t.heroTitle1} <span className="text-secondary-container"><div>{t.heroTitle2} </div> <div>{t.heroTitle3}</div></span>
+                                                </h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    /* Slides 2-10: Words Beyond Borders Image Slides */
+                                    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+                                        {/* Ambient backdrop with preserved hero overlay styling */}
+                                        <div className="absolute inset-0 z-0">
+                                            <img 
+                                                src={slide.src} 
+                                                alt="" 
+                                                aria-hidden="true"
+                                                className="w-full h-full object-cover blur-2xl opacity-30 scale-110" 
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-tr from-[#00003c]/90 via-[#00003c]/50 to-[#00003c]/70"></div>
+                                        </div>
+                                        {/* High-res flyer image ensuring 100% text readability across devices */}
+                                        <div className="relative z-10 h-full w-full max-w-7xl mx-auto flex items-center justify-center px-4 md:px-8 py-16 md:py-8">
+                                            <a
+                                                href={WORDS_BEYOND_BORDERS_LINK}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="h-full flex items-center justify-center max-h-[820px] group/slide"
+                                                title="Words Beyond Borders - Visit wbblitfest.com"
+                                            >
+                                                <img
+                                                    src={slide.src}
+                                                    alt={slide.alt}
+                                                    className="max-h-[820px] max-w-full h-auto w-auto object-contain rounded-2xl shadow-2xl border border-white/10 group-hover/slide:scale-[1.01] transition-transform duration-300"
+                                                />
+                                            </a>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+
+                    {/* Navigation Arrows */}
+                    <button
+                        onClick={() => setCurrentHeroSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
+                        className="hidden md:flex absolute left-12 md:left-20 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/80 hover:bg-black border border-white/20 text-white items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all z-20 cursor-pointer shadow-lg"
+                        aria-label="Previous slide"
+                    >
+                        <span className="material-symbols-outlined font-bold text-2xl">chevron_left</span>
+                    </button>
+                    <button
+                        onClick={() => setCurrentHeroSlide((prev) => (prev + 1) % heroSlides.length)}
+                        className="hidden md:flex absolute right-12 md:right-20 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/80 hover:bg-black border border-white/20 text-white items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all z-20 cursor-pointer shadow-lg"
+                        aria-label="Next slide"
+                    >
+                        <span className="material-symbols-outlined font-bold text-2xl">chevron_right</span>
+                    </button>
+
+                    {/* Pagination Indicators */}
+                    <div className="absolute inset-x-0 bottom-4 md:bottom-6 flex justify-center items-center gap-2 z-20 pointer-events-auto">
+                        {heroSlides.map((_, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => setCurrentHeroSlide(idx)}
+                                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                                    idx === currentHeroSlide ? 'w-8 bg-[#fe9832]' : 'w-2 bg-white/50 hover:bg-white/80'
+                                }`}
+                                aria-label={`Go to slide ${idx + 1}`}
+                            />
+                        ))}
                     </div>
-                    <div className="relative z-10 max-w-7xl mx-auto px-8 w-full pb-12 md:pb-0">
-                        <div className="max-w-3xl">
-                            <span className="inline-block px-4 py-1 mb-4 bg-secondary-container text-on-secondary-container text-xs font-bold tracking-widest uppercase rounded-full">
-                                {t.heroTag}
-                            </span>
-                            <h1 className="font-headline text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-8 tracking-tighter">
-                                {t.heroTitle1} <span className="text-secondary-container"><div>{t.heroTitle2} </div> <div>{t.heroTitle3}</div></span>
-                            </h1>
-                        </div>
+
+                    {/* 4-Second Timer Progress Bar */}
+                    <div className="absolute bottom-0 left-0 w-full h-1.5 bg-black/20 z-20 pointer-events-none">
+                        <div 
+                            key={currentHeroSlide}
+                            className="h-full bg-[#fe9832] opacity-80"
+                            style={{ 
+                                animation: 'fillProgress 4s linear forwards' 
+                            }}
+                        />
                     </div>
+                    <style>
+                        {`
+                        @keyframes fillProgress {
+                            from { width: 0%; }
+                            to { width: 100%; }
+                        }
+                        `}
+                    </style>
                 </section>
 
                 {/* DMF About Strip */}
@@ -188,7 +340,7 @@ export default function Home() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                             {/* Positivity Column (MOP) */}
-                            <Link to="/what-we-do#movement-of-positivity" className="block relative bg-secondary-container p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl overflow-hidden cursor-pointer">
+                            <Link to="/movement-of-positivity" className="block relative bg-secondary-container p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl overflow-hidden cursor-pointer">
                                 <div className="absolute top-0 right-0 p-8 opacity-10 scale-150">
                                     <span className="material-symbols-outlined text-8xl" data-icon="sunny">sunny</span>
                                 </div>
@@ -216,7 +368,7 @@ export default function Home() {
                                 </div>
                             </Link>
                             {/* Creativity Column (Words Beyond Borders) */}
-                            <Link to="/what-we-do#words-beyond-borders" className="block relative bg-[#2e7d32] p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl overflow-hidden cursor-pointer">
+                            <Link to="/words-beyond-borders" className="block relative bg-[#2e7d32] p-12 rounded-xl group hover:-translate-y-2 transition-all duration-500 shadow-xl overflow-hidden cursor-pointer">
                                 <div className="absolute top-0 right-0 p-8 opacity-10 scale-150 text-white">
                                     <span className="material-symbols-outlined text-8xl" data-icon="diversity_3">diversity_3</span>
                                 </div>
