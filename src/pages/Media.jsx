@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { mediaTranslations } from '../translations/media';
 
 import { API_URL } from '../config/api';
+import { SOCIAL_LINKS as SOCIAL } from '../data/socialLinks';
 
 const TESTIMONIALS = [
     { name: 'Priya Sharma', role: 'German Language Graduate, ICOE', quote: 'The German A1 to B1 programme at ICOE completely transformed my career prospects. Within three months of completing the course, I received a placement offer from a healthcare facility in Germany.', icon: 'school', color: 'bg-primary' },
@@ -21,13 +22,7 @@ const MILESTONES = [
     { icon: 'handshake', num: '8+' },
 ];
 
-const SOCIAL = [
-    { platform: 'Facebook', handle: '@dmfmop', icon: 'thumb_up', color: 'bg-[#1877F2]', link: 'https://www.facebook.com/profile.php?id=61580411524775' },
-    { platform: 'Instagram', handle: '@dmf.mop', icon: 'photo_camera', color: 'bg-[#E1306C]', link: 'https://www.instagram.com/dmf.mop/' },
-    { platform: 'Twitter/X', handle: '@dmfmop', icon: 'rss_feed', color: 'bg-[#1DA1F2]', link: '#' },
-    { platform: 'YouTube', handle: 'DMF Foundation', icon: 'play_circle', color: 'bg-[#FF0000]', link: 'https://www.youtube.com/@dmfmop' },
-    { platform: 'LinkedIn', handle: 'DMF India', icon: 'work', color: 'bg-[#0A66C2]', link: 'https://www.linkedin.com/company/dr-dnyaneshwar-mulay-foundation/posts/?feedView=all' },
-];
+
 
 const TABS = ['All', 'Events', 'Community', 'Programmes', 'Visitors', 'MoU'];
 

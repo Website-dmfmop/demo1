@@ -45,6 +45,7 @@ import LiveSection from './pages/LiveSection';
 import CourseTeaserToast from './components/Admissions/CourseTeaserToast';
 import RegisterNowFloater from './components/Admissions/RegisterNowFloater';
 import FloatingWBBLogo from './components/FloatingWBBLogo';
+import FloatingSocialDock from './components/FloatingSocialDock';
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
       <FloatingWBBLogo />
       <CourseTeaserToast />
       <RegisterNowFloater />
+      <FloatingSocialDock />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
