@@ -218,7 +218,7 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
                                 <table className="w-full text-left text-sm whitespace-nowrap">
                                     <thead className="bg-gray-50 text-gray-500 font-semibold text-xs uppercase">
                                         <tr>
-                                            <th className="px-4 py-3 border-b">Name</th>
+                                            <th className="px-4 py-3 border-b">Profile & Name</th>
                                             <th className="px-4 py-3 border-b">Login ID</th>
                                             <th className="px-4 py-3 border-b">Role</th>
                                             <th className="px-4 py-3 border-b text-right">Actions</th>
@@ -238,7 +238,18 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
                                                     </td>
                                                 ) : (
                                                     <>
-                                                        <td className="px-4 py-3 font-medium">{u.name || '-'}</td>
+                                                        <td className="px-4 py-3">
+                                                            <div className="flex items-center gap-3">
+                                                                {u.profileImage ? (
+                                                                    <img src={u.profileImage} alt={u.name || u.loginId} className="w-8 h-8 rounded-full object-cover border border-gray-200" />
+                                                                ) : (
+                                                                    <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs uppercase">
+                                                                        {(u.name || u.loginId).charAt(0)}
+                                                                    </div>
+                                                                )}
+                                                                <span className="font-medium">{u.name || '-'}</span>
+                                                            </div>
+                                                        </td>
                                                         <td className="px-4 py-3 font-bold">{u.loginId}</td>
                                                         <td className="px-4 py-3 text-xs"><span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{u.role.replace(/_/g, ' ')}</span></td>
                                                         <td className="px-4 py-3 text-right">

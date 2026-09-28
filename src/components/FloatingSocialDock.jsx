@@ -1,9 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SOCIAL_LINKS } from '../data/socialLinks';
+import { useLocation } from 'react-router-dom';
 
 const FloatingSocialDock = () => {
     const [isOpen, setIsOpen] = useState(false);
     const dockRef = useRef(null);
+    const location = useLocation();
+
+    if (location.pathname.startsWith('/admin')) {
+        return null;
+    }
 
     useEffect(() => {
         const handleClickOutside = (event) => {

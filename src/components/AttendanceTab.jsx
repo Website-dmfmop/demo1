@@ -220,6 +220,7 @@ const AttendanceTab = ({ currentUser, isSuperDelegate, setExportHandler }) => {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-300">
+            {currentUser?.role !== 'SUPER_ADMIN' && (
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
                 <div>
                     <h3 className="font-headline font-bold text-2xl text-gray-800">Attendance Tracker</h3>
@@ -244,6 +245,7 @@ const AttendanceTab = ({ currentUser, isSuperDelegate, setExportHandler }) => {
                     )}
                 </div>
             </div>
+            )}
 
             {canViewAll && (
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row items-start md:items-center gap-4">

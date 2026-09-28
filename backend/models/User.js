@@ -22,6 +22,18 @@ const userSchema = new mongoose.Schema({
   isSystemAccount: {
     type: Boolean,
     default: false
+  },
+  email: {
+    type: String,
+    trim: true
+  },
+  phone: {
+    type: String,
+    trim: true
+  },
+  profileImage: {
+    type: String,
+    trim: true
   }
 }, { timestamps: true });
 

@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { useLocation } from 'react-router-dom';
 
 const FloatingLangToggle = () => {
     const { language, toggleLanguage } = useLanguage();
     const [rotating, setRotating] = useState(false);
+    const location = useLocation();
+
+    if (location.pathname.startsWith('/admin')) {
+        return null;
+    }
 
     const handleClick = () => {
         setRotating(true);

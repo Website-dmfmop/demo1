@@ -5,8 +5,11 @@ import {
 } from 'recharts';
 import TasksTab from '../components/TasksTab';
 import TeamTab from '../components/TeamTab';
+import DirectoryTab from '../components/DirectoryTab';
 import ProfileTab from '../components/ProfileTab';
 import AttendanceTab from '../components/AttendanceTab';
+import DailyTaskTab from '../components/DailyTaskTab';
+import LeaveRequestTab from '../components/LeaveRequestTab';
 import NotificationBell from '../components/NotificationBell';
 import { exportToCSV } from '../utils/exportUtils';
 import { SocketProvider } from '../context/SocketContext';
@@ -768,7 +771,7 @@ const Admin = () => {
     );
   }
 
-  const canExportCurrentView = ['admissions', 'live_session_admissions', 'competitive_exam_admissions', 'donations', 'courses', 'diploma_courses', 'competitive_exams', 'live_sessions', 'joinees', 'dmf_members', 'jobs', 'job-applications', 'partner-requests', 'slot-bookings', 'projects', 'tasks', 'attendance', 'team'].includes(activeTab);
+  const canExportCurrentView = ['admissions', 'live_session_admissions', 'competitive_exam_admissions', 'donations', 'courses', 'diploma_courses', 'competitive_exams', 'live_sessions', 'joinees', 'dmf_members', 'jobs', 'job-applications', 'partner-requests', 'slot-bookings', 'projects', 'tasks', 'attendance', 'daily_tasks', 'leave_requests', 'team'].includes(activeTab);
 
   const navigateToTask = (taskId) => {
       setActiveTab('tasks');
@@ -817,15 +820,54 @@ const Admin = () => {
                 <span className="material-symbols-outlined text-[20px]">co_present</span> Attendance
             </button>
 
+            <button
+                onClick={() => setActiveTab('daily_tasks')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'daily_tasks' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">edit_document</span> Daily Task Write
+            </button>
+
+            <button
+                onClick={() => setActiveTab('leave_requests')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'leave_requests' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">event_busy</span> Leave Request
+            </button>
+
             {currentUser?.role === 'SUPER_ADMIN' && (
-                <button
-                    onClick={() => setActiveTab('team')}
-                    className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                    activeTab === 'team' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                    }`}
-                >
-                    <span className="material-symbols-outlined text-[20px]">group</span> Team Management
-                </button>
+                <>
+                    <button
+                        onClick={() => setActiveTab('team')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'team' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">group</span> Team Management
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('directory')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'directory' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">badge</span> Employee Directory
+                    </button>
+                </>
+            )}
+
+            {currentUser?.role !== 'SUPER_ADMIN' && (
+            <button
+                onClick={() => setActiveTab('profile')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'profile' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">person</span> My Profile
+            </button>
             )}
 
             {(['SUPER_ADMIN', 'DIRECTOR'].includes(currentUser?.role) || isSuperDelegate) && (
@@ -1025,7 +1067,10 @@ const Admin = () => {
                 {activeTab === 'csr_partners' && 'CSR Partners'}
                 {activeTab === 'tasks' && 'Workspace Tasks'}
                 {activeTab === 'attendance' && 'Attendance Records'}
+                {activeTab === 'daily_tasks' && 'Daily Task Writes'}
+                {activeTab === 'leave_requests' && 'Leave Requests'}
                 {activeTab === 'team' && 'Team Management'}
+                {activeTab === 'directory' && 'Employee Directory'}
                 {activeTab === 'profile' && 'My Profile'}
             </h2>
           </div>
@@ -1077,7 +1122,10 @@ const Admin = () => {
                 {/* ---------- WORKSPACE TABS ---------- */}
                 {activeTab === 'tasks' && <TasksTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} setExportHandler={setExportHandler} externalNavigateTaskId={highlightedTaskId} />}
                 {activeTab === 'attendance' && <AttendanceTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} setExportHandler={setExportHandler} />}
+                {activeTab === 'daily_tasks' && <DailyTaskTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} setExportHandler={setExportHandler} />}
+                {activeTab === 'leave_requests' && <LeaveRequestTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} setExportHandler={setExportHandler} />}
                 {activeTab === 'team' && <TeamTab currentUser={currentUser} setExportHandler={setExportHandler} />}
+                {activeTab === 'directory' && <DirectoryTab />}
                 {activeTab === 'profile' && <ProfileTab currentUser={currentUser} />}
                 
                 {/* ---------- ADMISSIONS TAB ---------- */}

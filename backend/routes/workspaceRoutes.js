@@ -18,6 +18,8 @@ const RolePermission = require('../models/RolePermission');
 const Attendance = require('../models/Attendance');
 const WorkspaceMessage = require('../models/WorkspaceMessage');
 const WorkspaceChatState = require('../models/WorkspaceChatState');
+const DailyTask = require('../models/DailyTask');
+const LeaveRequest = require('../models/LeaveRequest');
 const { verifyToken, restrictTo } = require('../middleware/auth');
 
 const scrubSystemAccount = (user) => {
@@ -48,7 +50,19 @@ router.post('/login', async (req, res) => {
             { expiresIn: '24h' }
         );
         
-        res.json({ token, user: { id: user._id, role: user.role, loginId: user.loginId, name: user.name, isSystemAccount: user.isSystemAccount } });
+        res.json({ 
+            token, 
+            user: { 
+                id: user._id, 
+                role: user.role, 
+                loginId: user.loginId, 
+                name: user.name, 
+                isSystemAccount: user.isSystemAccount,
+                email: user.email,
+                phone: user.phone,
+                profileImage: user.profileImage
+            } 
+        });
     } catch (err) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
@@ -100,7 +114,7 @@ router.get('/users', verifyToken, async (req, res) => {
             ];
         }
         
-        let mongoQuery = User.find(query, 'name loginId role isSystemAccount');
+        let mongoQuery = User.find(query, 'name loginId role isSystemAccount profileImage email phone');
         
         // If searching, we might want to limit results
         if (req.query.limit) {
@@ -374,17 +388,20 @@ router.put('/tasks/:id/status', verifyToken, async (req, res) => {
 // Update Profile
 router.put('/users/profile', verifyToken, async (req, res) => {
     try {
-        const { name, password } = req.body;
+        const { name, password, email, phone, profileImage } = req.body;
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ error: 'User not found' });
         
         if (name !== undefined) user.name = name;
+        if (email !== undefined) user.email = email;
+        if (phone !== undefined) user.phone = phone;
+        if (profileImage !== undefined) user.profileImage = profileImage;
         if (password) {
             user.password = await bcrypt.hash(password, 10);
         }
         
         const updatedUser = await user.save();
-        res.json({ id: updatedUser._id, loginId: updatedUser.loginId, name: updatedUser.name, role: updatedUser.role });
+        res.json({ id: updatedUser._id, loginId: updatedUser.loginId, name: updatedUser.name, role: updatedUser.role, email: updatedUser.email, phone: updatedUser.phone, profileImage: updatedUser.profileImage });
     } catch (err) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
@@ -936,6 +953,92 @@ router.get('/workspace-chat/notifications', verifyToken, async (req, res) => {
         res.json(messages);
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+// --- DAILY TASKS ---
+router.post('/daily-tasks', verifyToken, async (req, res) => {
+    try {
+        const { date, description, links } = req.body;
+        const newDailyTask = new DailyTask({
+            user: req.user.id,
+            date: date || new Date(),
+            description,
+            links
+        });
+        const savedDailyTask = await newDailyTask.save();
+        res.status(201).json(savedDailyTask);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+router.get('/daily-tasks', verifyToken, async (req, res) => {
+    try {
+        const { role, id } = req.user;
+        let query = {};
+        if (!['SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'].includes(role) && !req.user.isSuperDelegate) {
+            query.user = id;
+        }
+        if (req.query.userId) {
+             if (['SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'].includes(role) || req.user.isSuperDelegate || req.query.userId === id) {
+                 query.user = req.query.userId;
+             }
+        }
+        const tasks = await DailyTask.find(query).populate('user', 'name loginId role').sort({ date: -1 });
+        res.json(tasks);
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// --- LEAVE REQUESTS ---
+router.post('/leave-requests', verifyToken, async (req, res) => {
+    try {
+        const { startDate, endDate, reason, type } = req.body;
+        const newLeave = new LeaveRequest({
+            user: req.user.id,
+            startDate,
+            endDate,
+            reason,
+            type: type || 'Casual'
+        });
+        const savedLeave = await newLeave.save();
+        res.status(201).json(savedLeave);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+router.get('/leave-requests', verifyToken, async (req, res) => {
+    try {
+        const { role, id } = req.user;
+        let query = {};
+        if (!['SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'].includes(role) && !req.user.isSuperDelegate) {
+            query.user = id;
+        }
+        const requests = await LeaveRequest.find(query)
+            .populate('user', 'name loginId role')
+            .populate('approvedBy', 'name loginId')
+            .sort({ createdAt: -1 });
+        res.json(requests);
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.put('/leave-requests/:id/status', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'), async (req, res) => {
+    try {
+        const { status } = req.body;
+        const leaveReq = await LeaveRequest.findById(req.params.id);
+        if (!leaveReq) return res.status(404).json({ error: 'Request not found' });
+        
+        leaveReq.status = status;
+        leaveReq.approvedBy = req.user.id;
+        const updatedReq = await leaveReq.save();
+        res.json(updatedReq);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
     }
 });
 
