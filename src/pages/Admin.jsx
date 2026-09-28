@@ -19,7 +19,22 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import { API_URL, authFetch } from '../config/api';
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('admin_active_tab') || 'admissions');
+  const [activeTab, setActiveTab] = useState(() => {
+      const storedTab = sessionStorage.getItem('admin_active_tab');
+      const storedUser = sessionStorage.getItem('adminUser');
+      const user = storedUser ? JSON.parse(storedUser) : null;
+      
+      const isSuperAdminOrDirector = user && (user.role === 'SUPER_ADMIN' || user.role === 'DIRECTOR');
+      
+      if (!isSuperAdminOrDirector) {
+          // Normal employees cannot see admissions, force them to tasks if they try to access protected tabs
+          if (!storedTab || ['admissions', 'donations', 'courses', 'dmf_members'].includes(storedTab)) {
+              return 'tasks';
+          }
+      }
+      
+      return storedTab || (isSuperAdminOrDirector ? 'admissions' : 'tasks');
+  });
   const [highlightedTaskId, setHighlightedTaskId] = useState(null);
   const [currentExportData, setCurrentExportData] = useState([]);
   const [exportHandler, setExportHandler] = useState(null);
@@ -520,6 +535,12 @@ const Admin = () => {
               sessionStorage.setItem('adminToken', data.token);
               sessionStorage.setItem('adminUser', JSON.stringify(data.user));
               setCurrentUser(data.user);
+              
+              const isSuperAdminOrDirector = (data.user.role === 'SUPER_ADMIN' || data.user.role === 'DIRECTOR');
+              const defaultTab = isSuperAdminOrDirector ? 'admissions' : 'tasks';
+              setActiveTab(defaultTab);
+              sessionStorage.setItem('admin_active_tab', defaultTab);
+              
               setIsAuthenticated(true);
           } else {
               alert(data.error || 'Invalid credentials');
