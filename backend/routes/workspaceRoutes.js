@@ -145,6 +145,28 @@ router.delete('/users/:id', verifyToken, restrictTo('SUPER_ADMIN_STRICT'), async
     }
 });
 
+// Update Profile
+router.put('/users/profile', verifyToken, async (req, res) => {
+    try {
+        const { name, password, email, phone, profileImage } = req.body;
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        
+        if (name !== undefined) user.name = name;
+        if (email !== undefined) user.email = email;
+        if (phone !== undefined) user.phone = phone;
+        if (profileImage !== undefined) user.profileImage = profileImage;
+        if (password) {
+            user.password = await bcrypt.hash(password, 10);
+        }
+        
+        const updatedUser = await user.save();
+        res.json({ id: updatedUser._id, loginId: updatedUser.loginId, name: updatedUser.name, role: updatedUser.role, email: updatedUser.email, phone: updatedUser.phone, profileImage: updatedUser.profileImage });
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 // Update user (name and optionally password)
 router.put('/users/:id', verifyToken, restrictTo('SUPER_ADMIN_STRICT'), async (req, res) => {
     try {
@@ -385,27 +407,7 @@ router.put('/tasks/:id/status', verifyToken, async (req, res) => {
     }
 });
 
-// Update Profile
-router.put('/users/profile', verifyToken, async (req, res) => {
-    try {
-        const { name, password, email, phone, profileImage } = req.body;
-        const user = await User.findById(req.user.id);
-        if (!user) return res.status(404).json({ error: 'User not found' });
-        
-        if (name !== undefined) user.name = name;
-        if (email !== undefined) user.email = email;
-        if (phone !== undefined) user.phone = phone;
-        if (profileImage !== undefined) user.profileImage = profileImage;
-        if (password) {
-            user.password = await bcrypt.hash(password, 10);
-        }
-        
-        const updatedUser = await user.save();
-        res.json({ id: updatedUser._id, loginId: updatedUser.loginId, name: updatedUser.name, role: updatedUser.role, email: updatedUser.email, phone: updatedUser.phone, profileImage: updatedUser.profileImage });
-    } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
+
 
 // Edit Task
 router.put('/tasks/:id', verifyToken, async (req, res) => {
