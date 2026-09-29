@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { exportToCSV } from '../utils/exportUtils';
+import { exportToExcel } from '../utils/exportUtils';
 import { API_URL } from '../config/api';
 
 const LeaveRequestTab = ({ currentUser, isSuperDelegate, setExportHandler }) => {
@@ -78,7 +78,7 @@ const LeaveRequestTab = ({ currentUser, isSuperDelegate, setExportHandler }) => 
                 'Applied At': new Date(r.createdAt).toLocaleString()
             }));
 
-            exportToCSV(exportData, `Leave_Requests_Export_${new Date().toISOString().split('T')[0]}.csv`);
+            exportToExcel(exportData, `Leave_Requests_Export_${new Date().toISOString().split('T')[0]}.xlsx`);
         };
 
         setExportHandler(() => handleExport);

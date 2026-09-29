@@ -1,3 +1,5 @@
+import * as XLSX from 'xlsx';
+
 export const exportToCSV = (dataToExport, filename) => {
     if (!dataToExport || dataToExport.length === 0) {
         return alert("No data available to export.");
@@ -73,4 +75,62 @@ export const exportToCSV = (dataToExport, filename) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+};
+
+export const exportToExcel = (dataToExport, filename) => {
+    if (!dataToExport || dataToExport.length === 0) {
+        return alert("No data available to export.");
+    }
+
+    const allKeys = new Set();
+    dataToExport.forEach(item => Object.keys(item).forEach(key => allKeys.add(key)));
+    const originalHeaders = Array.from(allKeys);
+
+    const timestampFields = ['createdAt', 'updatedAt', 'submittedAt', 'checkIn', 'checkOut', 'deadline', 'loginTime', 'logoutTime'];
+
+    const formatISTDate = (val) => {
+        if (!val) return { dateStr: '', timeStr: '' };
+        const d = new Date(val);
+        if (isNaN(d.getTime())) return { dateStr: String(val), timeStr: '' };
+
+        const dateOptions = { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' };
+        const timeOptions = { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true };
+
+        const dateStr = d.toLocaleDateString('en-GB', dateOptions).replace(/ /g, '-');
+        let timeStr = d.toLocaleTimeString('en-US', timeOptions);
+
+        if (typeof val === 'string' && !val.includes('T') && !val.includes(':')) {
+            timeStr = '';
+        }
+
+        return { dateStr, timeStr };
+    };
+
+    const formattedData = dataToExport.map(row => {
+        const newRow = {};
+        originalHeaders.forEach(header => {
+            let cell = row[header];
+            
+            if (timestampFields.includes(header)) {
+                const { dateStr, timeStr } = formatISTDate(cell);
+                let prefix = header.endsWith('At') ? header.replace('At', '') : header;
+                prefix = prefix.endsWith('Time') ? prefix.replace('Time', '') : prefix;
+                prefix = prefix.replace(/([A-Z])/g, ' $1').trim();
+                const capitalizedPrefix = prefix.charAt(0).toUpperCase() + prefix.slice(1);
+                newRow[`${capitalizedPrefix} Date`] = dateStr;
+                newRow[`${capitalizedPrefix} Time`] = timeStr;
+            } else {
+                if (cell === null || cell === undefined) cell = '';
+                else if (typeof cell === 'object') cell = JSON.stringify(cell);
+                else cell = String(cell);
+                newRow[header] = cell;
+            }
+        });
+        return newRow;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+    XLSX.writeFile(workbook, filename);
 };

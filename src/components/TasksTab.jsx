@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FilterToolbar, FilterSelect, FilterSeparator } from './FilterToolbar';
-import { exportToCSV } from '../utils/exportUtils';
+import { exportToExcel } from '../utils/exportUtils';
 
 import { API_URL } from '../config/api';
 
@@ -170,7 +170,7 @@ const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavi
             return;
         }
 
-        exportToCSV(exportData, `Attendance_Export_${currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}.csv`);
+        exportToExcel(exportData, `Attendance_Export_${currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}.xlsx`);
     };
 
     useEffect(() => {
@@ -178,7 +178,7 @@ const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavi
 
         const handleExport = () => {
             if (viewMode === 'list') {
-                exportToCSV(processedTasks, 'Tasks_Export.csv');
+                exportToExcel(processedTasks, 'Tasks_Export.xlsx');
             } else if (viewMode === 'calendar') {
                 exportAttendanceForCalendar();
             }

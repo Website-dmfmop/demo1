@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { exportToCSV } from '../utils/exportUtils';
+import { exportToExcel } from '../utils/exportUtils';
 import { API_URL } from '../config/api';
 
 const DailyTaskTab = ({ currentUser, isSuperDelegate, setExportHandler }) => {
@@ -73,7 +73,7 @@ const DailyTaskTab = ({ currentUser, isSuperDelegate, setExportHandler }) => {
                 'Submitted At': new Date(t.createdAt).toLocaleString()
             }));
 
-            exportToCSV(exportData, `Daily_Tasks_Export_${new Date().toISOString().split('T')[0]}.csv`);
+            exportToExcel(exportData, `Daily_Tasks_Export_${new Date().toISOString().split('T')[0]}.xlsx`);
         };
 
         setExportHandler(() => handleExport);

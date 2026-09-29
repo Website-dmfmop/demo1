@@ -10,18 +10,19 @@ import ProfileTab from '../components/ProfileTab';
 import AttendanceTab from '../components/AttendanceTab';
 import DailyTaskTab from '../components/DailyTaskTab';
 import LeaveRequestTab from '../components/LeaveRequestTab';
+import LetterRegistryTab from '../components/LetterRegistryTab';
 import NotificationBell from '../components/NotificationBell';
-import { exportToCSV } from '../utils/exportUtils';
+import { exportToExcel } from '../utils/exportUtils';
 import { SocketProvider } from '../context/SocketContext';
 import WorkspaceChat from '../components/WorkspaceChat';
 import ErrorBoundary from '../components/ErrorBoundary';
 
 import { API_URL, authFetch } from '../config/api';
 
-const Admin = () => {
+const Workspace = () => {
   const [activeTab, setActiveTab] = useState(() => {
-      const storedTab = sessionStorage.getItem('admin_active_tab');
-      return storedTab || 'admissions';
+      const storedTab = sessionStorage.getItem('workspace_active_tab');
+      return storedTab || 'tasks';
   });
   const [highlightedTaskId, setHighlightedTaskId] = useState(null);
   const [currentExportData, setCurrentExportData] = useState([]);
@@ -92,6 +93,12 @@ const Admin = () => {
     }
   }, [isAuthenticated, currentUser]);
 
+  useEffect(() => {
+    if (isAuthenticated && currentUser && currentUser.role === 'BRANCH_OFFICE') {
+        window.location.href = '/letter-record';
+    }
+  }, [isAuthenticated, currentUser]);
+
   // Forms State
   const [courseForm, setCourseForm] = useState({ courseName: '', description: '', category: 'General', brochure: null });
   const [showCourseForm, setShowCourseForm] = useState(false);
@@ -122,7 +129,7 @@ const Admin = () => {
     setShowAnalytics(false);
     setIsMobileMenuOpen(false);
     setExportHandler(null); // Reset on tab change
-    sessionStorage.setItem('admin_active_tab', activeTab);
+    sessionStorage.setItem('workspace_active_tab', activeTab);
     fetchData();
   }, [activeTab]);
 
@@ -244,20 +251,20 @@ const Admin = () => {
     }
   };
 
-  const handleExportCSV = () => {
+  const handleExportExcel = () => {
     if (exportHandler) {
       exportHandler();
       return;
     }
     
-    const filename = `${activeTab}_export.csv`;
+    const filename = `${activeTab}_export.xlsx`;
     let dataToExport = currentExportData;
 
     if (!dataToExport || dataToExport.length === 0) {
       return alert("No data available to export.");
     }
 
-    exportToCSV(dataToExport, filename);
+    exportToExcel(dataToExport, filename);
   };
 
   const updateSlotBookingStatus = async (id, newStatus) => {
@@ -525,13 +532,8 @@ const Admin = () => {
               setCurrentUser(data.user);
               
               const isSuperAdminOrDirector = (data.user.role === 'SUPER_ADMIN' || data.user.role === 'DIRECTOR');
-              if (!isSuperAdminOrDirector) {
-                  window.location.href = '/workspace';
-                  return;
-              }
-              const defaultTab = 'admissions';
-              setActiveTab(defaultTab);
-              sessionStorage.setItem('admin_active_tab', defaultTab);
+              setActiveTab('tasks');
+              sessionStorage.setItem('workspace_active_tab', 'tasks');
               
               setIsAuthenticated(true);
           } else {
@@ -546,7 +548,7 @@ const Admin = () => {
       setIsAuthenticated(false);
       sessionStorage.removeItem('adminToken');
       sessionStorage.removeItem('adminUser');
-      sessionStorage.removeItem('admin_active_tab');
+      sessionStorage.removeItem('workspace_active_tab');
       setCurrentUser(null);
       setPassword('');
       setLoginId('');
@@ -784,7 +786,7 @@ const Admin = () => {
     );
   }
 
-  const canExportCurrentView = ['admissions', 'live_session_admissions', 'competitive_exam_admissions', 'donations', 'courses', 'diploma_courses', 'competitive_exams', 'live_sessions', 'joinees', 'dmf_members', 'jobs', 'job-applications', 'partner-requests', 'slot-bookings', 'projects', 'tasks', 'attendance', 'daily_tasks', 'leave_requests', 'team'].includes(activeTab);
+  const canExportCurrentView = ['admissions', 'live_session_admissions', 'competitive_exam_admissions', 'donations', 'courses', 'diploma_courses', 'competitive_exams', 'live_sessions', 'joinees', 'dmf_members', 'jobs', 'job-applications', 'partner-requests', 'slot-bookings', 'projects', 'tasks', 'attendance', 'daily_tasks', 'leave_requests', 'team', 'letters'].includes(activeTab);
 
   const navigateToTask = (taskId) => {
       setActiveTab('tasks');
@@ -809,157 +811,92 @@ const Admin = () => {
         <div className="h-20 flex items-center justify-center border-b border-white/10 px-6">
             <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-3xl">dashboard_customize</span>
-                <span className="font-headline font-extrabold text-xl tracking-wide uppercase">Admin Portal</span>
+                <span className="font-headline font-extrabold text-xl tracking-wide uppercase">Workspace Portal</span>
             </div>
         </div>
         <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-2 mt-2">
-            {/* Workspace tabs migrated to /workspace */}
+            <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4">Workspace</p>
+            
+            <button
+                onClick={() => setActiveTab('tasks')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'tasks' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">task_alt</span> Tasks
+            </button>
 
-            {(['SUPER_ADMIN', 'DIRECTOR'].includes(currentUser?.role) || isSuperDelegate) && (
+            <button
+                onClick={() => setActiveTab('attendance')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'attendance' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">co_present</span> Attendance
+            </button>
+
+            <button
+                onClick={() => setActiveTab('daily_tasks')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'daily_tasks' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">edit_document</span> Daily Task Write
+            </button>
+
+            <button
+                onClick={() => setActiveTab('leave_requests')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'leave_requests' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">event_busy</span> Leave Request
+            </button>
+
+            {['SUPER_ADMIN', 'DIRECTOR', 'OPERATION_HEAD'].includes(currentUser?.role) && (
+                <button
+                    onClick={() => setActiveTab('letters')}
+                    className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                    activeTab === 'letters' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                    }`}
+                >
+                    <span className="material-symbols-outlined text-[20px]">mark_email_read</span> Letter Registry
+                </button>
+            )}
+
+            {currentUser?.role === 'SUPER_ADMIN' && (
                 <>
-                    <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4 mt-8">Dashboards</p>
                     <button
-                        onClick={() => setActiveTab('admissions')}
+                        onClick={() => setActiveTab('team')}
                         className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'admissions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        activeTab === 'team' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
                         }`}
                     >
-                        <span className="material-symbols-outlined text-[20px]">school</span> Admissions
+                        <span className="material-symbols-outlined text-[20px]">group</span> Team Management
                     </button>
                     <button
-                        onClick={() => setActiveTab('live_session_admissions')}
+                        onClick={() => setActiveTab('directory')}
                         className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'live_session_admissions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        activeTab === 'directory' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
                         }`}
                     >
-                        <span className="material-symbols-outlined text-[20px]">podcasts</span> Live Session Data
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('competitive_exam_admissions')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'competitive_exam_admissions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">how_to_reg</span> Comp. Exam Admissions
+                        <span className="material-symbols-outlined text-[20px]">badge</span> Employee Directory
                     </button>
                 </>
             )}
 
-            {(['SUPER_ADMIN', 'DIRECTOR'].includes(currentUser?.role) || isSuperDelegate) && (
-                <>
-                    <button
-                        onClick={() => setActiveTab('donations')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'donations' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">volunteer_activism</span> Donations
-                    </button>
-
-                    <button
-                        onClick={() => setActiveTab('joinees')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'joinees' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">group_add</span> Join Requests
-                    </button>
-
-                    <button
-                        onClick={() => setActiveTab('dmf_members')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'dmf_members' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">card_membership</span> DMF Members
-                    </button>
-
-                    <button
-                        onClick={() => setActiveTab('job-applications')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'job-applications' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">assignment_ind</span> Job Applications
-                    </button>
-
-                    <button
-                        onClick={() => setActiveTab('partner-requests')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'partner-requests' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">handshake</span> Partner Requests
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('slot-bookings')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'slot-bookings' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">event_available</span> Slot Bookings
-                    </button>
-
-                    <button
-                        onClick={() => setActiveTab('projects')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'projects' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">architecture</span> Project Pitches
-                    </button>
-
-                    <p className="px-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-4 mt-8">Manage System</p>
-                    <button
-                        onClick={() => setActiveTab('courses')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'courses' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">menu_book</span> Certificate Courses
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('diploma_courses')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'diploma_courses' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">workspace_premium</span> Diploma/Degree Courses
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('competitive_exams')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'competitive_exams' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">assignment</span> Competitive Exams
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('media')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'media' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">perm_media</span> Media Gallery
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('live_sessions')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'live_sessions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">live_tv</span> Live Sessions
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('jobs')}
-                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
-                        activeTab === 'jobs' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">work</span> Job Placements
-                    </button>
-                </>
+            {currentUser?.role !== 'SUPER_ADMIN' && (
+            <button
+                onClick={() => setActiveTab('profile')}
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                activeTab === 'profile' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+            >
+                <span className="material-symbols-outlined text-[20px]">person</span> My Profile
+            </button>
             )}
+
+            {/* Admin tabs migrated to /admin */}
         </nav>
         <div className="p-6 border-t border-white/10 space-y-4">
             <div className="bg-white/10 p-4 rounded-xl">
@@ -1014,6 +951,7 @@ const Admin = () => {
                 {activeTab === 'attendance' && 'Attendance Records'}
                 {activeTab === 'daily_tasks' && 'Daily Task Writes'}
                 {activeTab === 'leave_requests' && 'Leave Requests'}
+                {activeTab === 'letters' && 'Letter & Dispatch Registry'}
                 {activeTab === 'team' && 'Team Management'}
                 {activeTab === 'directory' && 'Employee Directory'}
                 {activeTab === 'profile' && 'My Profile'}
@@ -1022,9 +960,9 @@ const Admin = () => {
           <div className="flex items-center gap-3 md:gap-6 shrink-0">
             <NotificationBell currentUser={currentUser} />
             {canExportCurrentView && (
-                <button onClick={handleExportCSV} className="flex items-center gap-2 px-2 md:px-4 py-2 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg text-green-700 hover:text-green-800 transition-all text-sm font-semibold shadow-sm">
+                <button onClick={handleExportExcel} className="flex items-center gap-2 px-2 md:px-4 py-2 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg text-green-700 hover:text-green-800 transition-all text-sm font-semibold shadow-sm">
                     <span className="material-symbols-outlined text-[18px]">download</span>
-                    <span className="hidden md:inline">Export CSV</span>
+                    <span className="hidden md:inline">Export Excel</span>
                 </button>
             )}
             <button onClick={fetchData} className="flex items-center gap-2 px-2 md:px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-gray-600 hover:text-primary transition-all text-sm font-semibold shadow-sm">
@@ -1069,6 +1007,7 @@ const Admin = () => {
                 {activeTab === 'attendance' && <AttendanceTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} setExportHandler={setExportHandler} />}
                 {activeTab === 'daily_tasks' && <DailyTaskTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} setExportHandler={setExportHandler} />}
                 {activeTab === 'leave_requests' && <LeaveRequestTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} setExportHandler={setExportHandler} />}
+                {activeTab === 'letters' && <LetterRegistryTab currentUser={currentUser} setExportHandler={setExportHandler} />}
                 {activeTab === 'team' && <TeamTab currentUser={currentUser} setExportHandler={setExportHandler} />}
                 {activeTab === 'directory' && <DirectoryTab />}
                 {activeTab === 'profile' && <ProfileTab currentUser={currentUser} />}
@@ -3127,4 +3066,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default Workspace;

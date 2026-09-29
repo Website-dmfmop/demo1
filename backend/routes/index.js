@@ -11,5 +11,6 @@ router.use('/', require('./bookingRoutes.js'));
 router.use('/', require('./csrRoutes.js'));
 router.use('/', require('./fileRoutes.js'));
 router.use('/', require('./healthRoutes.js'));
+router.use('/api/letters', require('./letterRoutes.js'));
 
 module.exports = router;

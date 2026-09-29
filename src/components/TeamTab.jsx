@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { exportToCSV } from '../utils/exportUtils';
+import { exportToExcel } from '../utils/exportUtils';
 
 import { API_URL } from '../config/api';
 
@@ -54,7 +54,7 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
                 alert('No users available to export.');
                 return;
             }
-            exportToCSV(users, 'Team_Export.csv');
+            exportToExcel(users, 'Team_Export.xlsx');
         };
 
         setExportHandler(() => handleExport);
@@ -195,6 +195,7 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
                                     <option value="TECHNICAL_ASSOCIATE">Technical Associate</option>
                                     <option value="TRAINER">Trainer</option>
                                     <option value="INTERN">Intern</option>
+                                    <option value="BRANCH_OFFICE">Branch Office</option>
                                     <option value="OTHER">Other</option>
                                 </select>
                                 {form.role === 'OTHER' && (

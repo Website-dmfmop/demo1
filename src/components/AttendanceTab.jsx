@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { exportToCSV } from '../utils/exportUtils';
+import { exportToExcel } from '../utils/exportUtils';
 
 import { API_URL } from '../config/api';
 
@@ -94,7 +94,7 @@ const AttendanceTab = ({ currentUser, isSuperDelegate, setExportHandler }) => {
                 };
             });
 
-            exportToCSV(exportData, `Attendance_Export_${new Date().toISOString().split('T')[0]}.csv`);
+            exportToExcel(exportData, `Attendance_Export_${new Date().toISOString().split('T')[0]}.xlsx`);
         };
 
         setExportHandler(() => handleExport);
