@@ -92,6 +92,12 @@ const Admin = () => {
     }
   }, [isAuthenticated, currentUser]);
 
+  useEffect(() => {
+    if (isAuthenticated && currentUser && currentUser.role === 'BRANCH_OFFICE') {
+        window.location.href = '/letter-record';
+    }
+  }, [isAuthenticated, currentUser]);
+
   // Forms State
   const [courseForm, setCourseForm] = useState({ courseName: '', description: '', category: 'General', brochure: null });
   const [showCourseForm, setShowCourseForm] = useState(false);
