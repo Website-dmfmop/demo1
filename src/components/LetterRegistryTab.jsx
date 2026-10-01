@@ -15,7 +15,7 @@ const LetterRegistryTab = ({ currentUser, setExportHandler }) => {
     const [filterStatus, setFilterStatus] = useState('All');
 
     const initialFormState = {
-        referenceNumber: '',
+        referenceNumber: 'DMF/',
         dateOfIssue: new Date().toISOString().split('T')[0],
         recipientName: '',
         recipientOrganization: '',
@@ -181,6 +181,10 @@ const LetterRegistryTab = ({ currentUser, setExportHandler }) => {
                                 nextRef = lastRef;
                             }
                         }
+                        
+                        if (!nextRef.startsWith('DMF/')) {
+                            nextRef = 'DMF/';
+                        }
 
                         setForm({
                             ...initialFormState,
@@ -236,7 +240,20 @@ const LetterRegistryTab = ({ currentUser, setExportHandler }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-1">Reference Number</label>
-                            <input type="text" required value={form.referenceNumber} onChange={e => setForm({...form, referenceNumber: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" placeholder="e.g. DMF/2026/001" />
+                            <input 
+                                type="text" 
+                                required 
+                                value={form.referenceNumber} 
+                                onChange={e => {
+                                    let val = e.target.value.toUpperCase();
+                                    if (!val.startsWith('DMF/')) {
+                                        val = 'DMF/' + val.replace(/^DMF\/?/, '');
+                                    }
+                                    setForm({...form, referenceNumber: val});
+                                }} 
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" 
+                                placeholder="e.g. DMF/2026/001" 
+                            />
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-1">Date of Issue</label>
