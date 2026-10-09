@@ -63,6 +63,13 @@ const Admin = () => {
   const [editingId, setEditingId] = useState(null);
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
+  
+  const [loginStep, setLoginStep] = useState('credentials');
+  const [otp, setOtp] = useState('');
+  const [tempToken, setTempToken] = useState('');
+  const [maskedEmail, setMaskedEmail] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
+  
   const [isAuthenticated, setIsAuthenticated] = useState(sessionStorage.getItem('adminToken') ? true : false);
   const [currentUser, setCurrentUser] = useState(() => {
       const stored = sessionStorage.getItem('adminUser');
@@ -97,6 +104,14 @@ const Admin = () => {
         window.location.href = '/letter-record';
     }
   }, [isAuthenticated, currentUser]);
+
+  useEffect(() => {
+      let timer;
+      if (resendCooldown > 0) {
+          timer = setTimeout(() => setResendCooldown(c => c - 1), 1000);
+      }
+      return () => clearTimeout(timer);
+  }, [resendCooldown]);
 
   // Forms State
   const [courseForm, setCourseForm] = useState({ courseName: '', description: '', category: 'General', brochure: null });
@@ -517,12 +532,36 @@ const Admin = () => {
   };
 
   const handleLogin = async (e) => {
-      e.preventDefault();
+      if (e) e.preventDefault();
       try {
           const res = await fetch(`${API_URL}/api/login`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ loginId, password })
+          });
+          const data = await res.json();
+          if (res.ok) {
+              if (data.step === 'otp_required') {
+                  setTempToken(data.tempToken);
+                  setMaskedEmail(data.email);
+                  setLoginStep('otp');
+                  setResendCooldown(60);
+              }
+          } else {
+              alert(data.error || 'Invalid credentials');
+          }
+      } catch (err) {
+          alert('Login failed');
+      }
+  };
+
+  const handleVerifyOTP = async (e) => {
+      e.preventDefault();
+      try {
+          const res = await fetch(`${API_URL}/api/login/verify-otp`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ tempToken, otp })
           });
           const data = await res.json();
           if (res.ok) {
@@ -540,11 +579,16 @@ const Admin = () => {
               sessionStorage.setItem('admin_active_tab', defaultTab);
               
               setIsAuthenticated(true);
+              setLoginStep('credentials');
+              setOtp('');
           } else {
-              alert(data.error || 'Invalid credentials');
+              alert(data.error || 'Invalid OTP');
+              if (data.error && data.error.includes('expired')) {
+                  setLoginStep('credentials');
+              }
           }
       } catch (err) {
-          alert('Login failed');
+          alert('Verification failed');
       }
   };
 
@@ -556,6 +600,8 @@ const Admin = () => {
       setCurrentUser(null);
       setPassword('');
       setLoginId('');
+      setLoginStep('credentials');
+      setOtp('');
   };
 
   const createMedia = async (e) => {
@@ -759,32 +805,74 @@ const Admin = () => {
             <h1 className="text-3xl font-headline font-bold text-gray-800">Admin Login</h1>
             <p className="text-gray-500 font-medium font-body">Please enter credentials to continue</p>
           </div>
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Login ID</label>
-              <input 
-                type="text" 
-                value={loginId}
-                onChange={(e) => setLoginId(e.target.value)}
-                autoFocus
-                className="w-full px-6 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-bold tracking-widest"
-                placeholder="admin"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Password</label>
-              <input 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-6 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-bold tracking-widest"
-                placeholder="••••••••"
-              />
-            </div>
-            <button type="submit" className="w-full py-4 bg-primary text-white font-headline font-bold rounded-2xl shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all">
-              Unlock Dashboard
-            </button>
-          </form>
+          {loginStep === 'credentials' ? (
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Login ID</label>
+                <input 
+                  type="text" 
+                  value={loginId}
+                  onChange={(e) => setLoginId(e.target.value)}
+                  autoFocus
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-bold tracking-widest"
+                  placeholder="admin"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">Password</label>
+                <input 
+                  type="password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-bold tracking-widest"
+                  placeholder="••••••••"
+                />
+              </div>
+              <button type="submit" className="w-full py-4 bg-primary text-white font-headline font-bold rounded-2xl shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                Continue
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyOTP} className="space-y-6 animate-in fade-in">
+              <div className="text-center text-sm text-gray-500 mb-4">
+                Code sent to <span className="font-bold text-gray-700">{maskedEmail}</span>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">6-Digit Code</label>
+                <input 
+                  type="text" 
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  maxLength={6}
+                  autoFocus
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-bold tracking-[0.5em] text-center text-xl"
+                  placeholder="000000"
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <button type="submit" className="w-full py-4 bg-primary text-white font-headline font-bold rounded-2xl shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                  Verify & Unlock
+                </button>
+                <div className="flex items-center justify-between px-2">
+                  <button 
+                    type="button" 
+                    onClick={() => setLoginStep('credentials')} 
+                    className="text-xs font-bold text-gray-500 hover:text-primary transition-colors"
+                  >
+                    Back
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={handleLogin}
+                    disabled={resendCooldown > 0}
+                    className={`text-xs font-bold transition-colors ${resendCooldown > 0 ? 'text-gray-400' : 'text-primary hover:text-primary-hover'}`}
+                  >
+                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
+                  </button>
+                </div>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     );

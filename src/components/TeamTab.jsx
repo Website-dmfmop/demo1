@@ -221,7 +221,7 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
                             <div className="text-center text-gray-500 py-8">Loading...</div>
                         ) : (
                             <div className="overflow-x-auto">
-                                <table className="w-full text-left text-sm whitespace-nowrap">
+                                <table className="w-full text-left text-sm">
                                     <thead className="bg-gray-50 text-gray-500 font-semibold text-xs uppercase">
                                         <tr>
                                             <th className="px-4 py-3 border-b">Profile & Name</th>
@@ -262,13 +262,19 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
                                                         <td className="px-4 py-3 text-sm text-gray-600">{u.email || '-'}</td>
                                                         <td className="px-4 py-3 text-xs"><span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{u.role.replace(/_/g, ' ')}</span></td>
                                                         <td className="px-4 py-3 text-right">
-                                                            {u.role !== 'SUPER_ADMIN' && (
+                                                            {u.role !== 'SUPER_ADMIN' ? (
                                                                 <div className="flex justify-end gap-1">
                                                                     <button onClick={() => startEditingUser(u)} className="text-gray-400 hover:text-blue-500 transition-colors p-1" title="Edit User">
                                                                         <span className="material-symbols-outlined text-[18px]">edit</span>
                                                                     </button>
                                                                     <button onClick={() => deleteUser(u._id)} className="text-red-500 hover:text-red-700 transition-colors p-1" title="Delete User">
                                                                         <span className="material-symbols-outlined text-[18px]">delete</span>
+                                                                    </button>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="flex justify-end gap-1">
+                                                                    <button onClick={() => startEditingUser(u)} className="text-gray-400 hover:text-blue-500 transition-colors p-1" title="Edit Profile">
+                                                                        <span className="material-symbols-outlined text-[18px]">edit</span>
                                                                     </button>
                                                                 </div>
                                                             )}
@@ -288,7 +294,7 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 mt-6">
                 <h4 className="font-bold text-gray-800 border-b border-gray-100 pb-3 mb-6">Role Feature Permissions</h4>
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm whitespace-nowrap">
+                    <table className="w-full text-left text-sm">
                         <thead className="bg-gray-50 text-gray-500 font-semibold text-xs uppercase">
                             <tr>
                                 <th className="px-4 py-3 border-b">Role</th>

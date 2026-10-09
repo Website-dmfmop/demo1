@@ -4,6 +4,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/User');
+const OTP = require('../models/OTP');
+const { sendOTP } = require('../utils/emailService');
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 
 // ID Validation Middleware
@@ -43,10 +46,83 @@ router.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
 
+        if (!user.email) {
+            return res.status(401).json({ error: 'No email configured for this account. Please contact an administrator.' });
+        }
+
+        const recentOtp = await OTP.findOne({ userId: user._id }).sort({ createdAt: -1 });
+        if (recentOtp && (Date.now() - recentOtp.createdAt.getTime() < 60000)) {
+            return res.status(429).json({ error: 'Please wait before requesting another OTP.' });
+        }
+
+        await OTP.deleteMany({ userId: user._id });
+
+        const otpValue = crypto.randomInt(100000, 999999).toString();
+        const otpHash = await bcrypt.hash(otpValue, 10);
+        
+        await OTP.create({
+            userId: user._id,
+            otpHash,
+            expiresAt: new Date(Date.now() + 5 * 60 * 1000)
+        });
+
+        await sendOTP(user.email, otpValue);
+
+        const tempToken = jwt.sign(
+            { id: user._id, type: 'otp_pending' },
+            process.env.JWT_SECRET,
+            { expiresIn: '10m' }
+        );
+        
+        let maskedEmail = user.email;
+        if (user.email.includes('@')) {
+            const [name, domain] = user.email.split('@');
+            maskedEmail = `${name.substring(0, 2)}***@${domain}`;
+        }
+
+        res.json({ step: 'otp_required', tempToken, email: maskedEmail });
+    } catch (err) {
+        res.status(500).json({ error: err.message || 'Internal Server Error' });
+    }
+});
+
+router.post('/login/verify-otp', async (req, res) => {
+    try {
+        const { tempToken, otp } = req.body;
+        if (!tempToken || !otp) return res.status(400).json({ error: 'Token and OTP are required' });
+
+        let decoded;
+        try {
+            decoded = jwt.verify(tempToken, process.env.JWT_SECRET);
+        } catch (err) {
+            return res.status(401).json({ error: 'Session expired or invalid. Please login again.' });
+        }
+
+        if (decoded.type !== 'otp_pending') return res.status(401).json({ error: 'Invalid token type' });
+
+        const user = await User.findById(decoded.id);
+        if (!user) return res.status(401).json({ error: 'User not found' });
+
+        const otpRecord = await OTP.findOne({ userId: user._id }).sort({ createdAt: -1 });
+        if (!otpRecord) return res.status(401).json({ error: 'No OTP found or it has expired' });
+
+        if (otpRecord.attempts >= 3) {
+            await OTP.deleteMany({ userId: user._id });
+            return res.status(429).json({ error: 'Too many failed attempts. Please login again to receive a new OTP.' });
+        }
+
+        otpRecord.attempts += 1;
+        await otpRecord.save();
+
+        const isMatch = await bcrypt.compare(otp.toString(), otpRecord.otpHash);
+        if (!isMatch) return res.status(401).json({ error: 'Invalid OTP' });
+
+        await OTP.deleteMany({ userId: user._id });
+
         const token = jwt.sign(
             { id: user._id, role: user.role, loginId: user.loginId, name: user.name, isSystemAccount: user.isSystemAccount }, 
             process.env.JWT_SECRET, 
-            { expiresIn: '24h' }
+            { expiresIn: '72h' }
         );
         
         res.json({ 
@@ -173,8 +249,8 @@ router.put('/users/:id', verifyToken, restrictTo('SUPER_ADMIN_STRICT'), async (r
         const targetUser = await User.findById(req.params.id);
         if (!targetUser) return res.status(404).json({ error: 'User not found' });
         
-        if (targetUser.role === 'SUPER_ADMIN') {
-            return res.status(403).json({ error: 'Cannot modify a SUPER_ADMIN' });
+        if (targetUser.role === 'SUPER_ADMIN' && req.user.id !== targetUser._id.toString()) {
+            return res.status(403).json({ error: 'Cannot modify another SUPER_ADMIN' });
         }
 
         const { name, password, email } = req.body;

@@ -50,6 +50,11 @@ The backend requires specific environment variables defined in `/root/demo1/back
 | `JWT_SECRET` | **YES** | 256-bit cryptographic secret for admin tokens | 64-character hex string (generated via `openssl rand -hex 32`) |
 | `RECAPTCHA_SECRET_KEY` | **YES** | Google reCAPTCHA server secret | Google reCAPTCHA Admin Console |
 | `ALLOWED_ORIGINS` | **YES** | Comma-separated list of allowed origins | `https://dmfmop.org,https://www.dmfmop.org,http://localhost:5173` |
+| `SMTP_HOST` | **YES** | SMTP server for OTP emails | `smtp.gmail.com` |
+| `SMTP_PORT` | **YES** | SMTP port | `587` |
+| `SMTP_SECURE` | Optional | Use TLS/SSL | `false` |
+| `SMTP_USER` | **YES** | SMTP authentication username | `your-email@gmail.com` |
+| `SMTP_PASS` | **YES** | SMTP authentication password/app password | `your-app-password` |
 
 > [!IMPORTANT]
 > **Strict Validation**: The backend will deliberately abort startup if `MONGO_URI`, `JWT_SECRET`, or `RECAPTCHA_SECRET_KEY` is missing or empty. If `ALLOWED_ORIGINS` is missing, production CORS requests will be blocked.
