@@ -13,7 +13,7 @@ import LeaveRequestTab from '../components/LeaveRequestTab';
 import NotificationBell from '../components/NotificationBell';
 import { exportToCSV } from '../utils/exportUtils';
 import { SocketProvider } from '../context/SocketContext';
-import WorkspaceChat from '../components/WorkspaceChat';
+
 import ErrorBoundary from '../components/ErrorBoundary';
 
 import { API_URL, authFetch } from '../config/api';
@@ -3126,7 +3126,7 @@ const Admin = () => {
 
         </main>
       </div>
-      <WorkspaceChat currentUser={currentUser} navigateToTask={navigateToTask} />
+
     </div>
     </SocketProvider>
     </ErrorBoundary>

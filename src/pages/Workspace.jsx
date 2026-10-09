@@ -14,7 +14,7 @@ import LetterRegistryTab from '../components/LetterRegistryTab';
 import NotificationBell from '../components/NotificationBell';
 import { exportToExcel } from '../utils/exportUtils';
 import { SocketProvider } from '../context/SocketContext';
-import WorkspaceChat from '../components/WorkspaceChat';
+
 import ErrorBoundary from '../components/ErrorBoundary';
 
 import { API_URL, authFetch } from '../config/api';
@@ -3059,7 +3059,7 @@ const Workspace = () => {
 
         </main>
       </div>
-      <WorkspaceChat currentUser={currentUser} navigateToTask={navigateToTask} />
+
     </div>
     </SocketProvider>
     </ErrorBoundary>

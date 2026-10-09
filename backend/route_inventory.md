@@ -108,14 +108,3 @@
 | POST | /attendance/checkin | `workspaceRoutes.js` | Yes | Any |
 | POST | /attendance/checkout | `workspaceRoutes.js` | Yes | Any |
 | GET | /attendance | `workspaceRoutes.js` | Yes | Any |
-| GET | /workspace-chat | `workspaceRoutes.js` | Yes | Any |
-| POST | /workspace-chat | `workspaceRoutes.js` | Yes | Any |
-| PUT | /workspace-chat/:id | `workspaceRoutes.js` | Yes | Any |
-| DELETE | /workspace-chat/:id | `workspaceRoutes.js` | Yes | Any |
-| GET | /workspace-chat/state | `workspaceRoutes.js` | Yes | Any |
-| POST | /workspace-chat/state/sync | `workspaceRoutes.js` | Yes | Any |
-| GET | /workspace-chat/search | `workspaceRoutes.js` | Yes | Any |
-| PUT | /workspace-chat/:id/react | `workspaceRoutes.js` | Yes | Any |
-| PUT | /workspace-chat/:id/pin | `workspaceRoutes.js` | Yes | Any |
-| POST | /workspace-chat/state/save | `workspaceRoutes.js` | Yes | Any |
-| GET | /workspace-chat/notifications | `workspaceRoutes.js` | Yes | Any |
