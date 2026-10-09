@@ -153,7 +153,15 @@ git merge origin/main --ff-only
 cd /root/demo1/backend
 node scripts/preflight.js
 ```
-*Do not proceed if this check fails.*
+*If this fails because of missing environment variables, manually add them:*
+```bash
+# Example: Adding SMTP keys for email OTPs
+echo "SMTP_HOST=smtp.gmail.com" >> /root/demo1/backend/.env
+echo "SMTP_PORT=587" >> /root/demo1/backend/.env
+echo "SMTP_SECURE=false" >> /root/demo1/backend/.env
+echo "SMTP_USER=dmfmop.website@gmail.com" >> /root/demo1/backend/.env
+echo "SMTP_PASS=YOUR_16_CHAR_APP_PASSWORD" >> /root/demo1/backend/.env
+```
 
 ### Step 4: Update Backend Dependencies & Restart
 ```bash
