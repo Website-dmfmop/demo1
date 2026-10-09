@@ -71,7 +71,7 @@ router.post('/login', async (req, res) => {
 // Only SUPER_ADMIN can create users
 router.post('/users', verifyToken, restrictTo('SUPER_ADMIN_STRICT'), async (req, res) => {
     try {
-        const { name, loginId, password, role } = req.body;
+        const { name, loginId, password, role, email } = req.body;
         
         if (role === 'SUPER_ADMIN') {
             return res.status(403).json({ error: 'Cannot create a user with SUPER_ADMIN role' });
@@ -86,7 +86,8 @@ router.post('/users', verifyToken, restrictTo('SUPER_ADMIN_STRICT'), async (req,
             name,
             loginId,
             password: hashedPassword,
-            role
+            role,
+            email
         });
         
         const savedUser = await newUser.save();
@@ -176,8 +177,9 @@ router.put('/users/:id', verifyToken, restrictTo('SUPER_ADMIN_STRICT'), async (r
             return res.status(403).json({ error: 'Cannot modify a SUPER_ADMIN' });
         }
 
-        const { name, password } = req.body;
+        const { name, password, email } = req.body;
         if (name) targetUser.name = name;
+        if (email !== undefined) targetUser.email = email;
         if (password) {
             const salt = await bcrypt.genSalt(10);
             targetUser.password = await bcrypt.hash(password, salt);

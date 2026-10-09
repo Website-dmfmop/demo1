@@ -6,9 +6,9 @@ import { API_URL } from '../config/api';
 const TeamTab = ({ currentUser, setExportHandler }) => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [form, setForm] = useState({ name: '', loginId: '', password: '', role: 'TRAINER', customRole: '' });
+    const [form, setForm] = useState({ name: '', loginId: '', password: '', email: '', role: 'TRAINER', customRole: '' });
     const [editingUserId, setEditingUserId] = useState(null);
-    const [editUserForm, setEditUserForm] = useState({ name: '', password: '' });
+    const [editUserForm, setEditUserForm] = useState({ name: '', email: '', password: '' });
     const [permissions, setPermissions] = useState([]);
     const [error, setError] = useState(null);
 
@@ -104,7 +104,7 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
             });
             const data = await res.json();
             if (res.ok) {
-                setForm({ name: '', loginId: '', password: '', role: 'TRAINER', customRole: '' });
+                setForm({ name: '', loginId: '', password: '', email: '', role: 'TRAINER', customRole: '' });
                 fetchUsers();
                 alert('User created successfully');
             } else {
@@ -136,7 +136,7 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
 
     const startEditingUser = (user) => {
         setEditingUserId(user._id);
-        setEditUserForm({ name: user.name || '', password: '' });
+        setEditUserForm({ name: user.name || '', email: user.email || '', password: '' });
     };
 
     const submitEditUser = async (id) => {
@@ -149,6 +149,7 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
                 },
                 body: JSON.stringify({
                     name: editUserForm.name,
+                    email: editUserForm.email,
                     ...(editUserForm.password && { password: editUserForm.password })
                 })
             });
@@ -177,6 +178,10 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">Name</label>
                                 <input type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary" placeholder="Optional" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Email</label>
+                                <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary" placeholder="Optional" />
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">Login ID</label>
@@ -221,6 +226,7 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
                                         <tr>
                                             <th className="px-4 py-3 border-b">Profile & Name</th>
                                             <th className="px-4 py-3 border-b">Login ID</th>
+                                            <th className="px-4 py-3 border-b">Email</th>
                                             <th className="px-4 py-3 border-b">Role</th>
                                             <th className="px-4 py-3 border-b text-right">Actions</th>
                                         </tr>
@@ -229,10 +235,11 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
                                         {users.map(u => (
                                             <tr key={u._id} className="hover:bg-gray-50">
                                                 {editingUserId === u._id ? (
-                                                    <td colSpan="4" className="px-4 py-3">
+                                                    <td colSpan="5" className="px-4 py-3">
                                                         <div className="flex gap-2 items-center">
-                                                            <input type="text" placeholder="Name" value={editUserForm.name} onChange={e => setEditUserForm({...editUserForm, name: e.target.value})} className="px-3 py-1 border border-gray-300 rounded text-sm w-1/3" />
-                                                            <input type="password" placeholder="New Password (leave blank to keep)" value={editUserForm.password} onChange={e => setEditUserForm({...editUserForm, password: e.target.value})} className="px-3 py-1 border border-gray-300 rounded text-sm w-1/3" />
+                                                            <input type="text" placeholder="Name" value={editUserForm.name} onChange={e => setEditUserForm({...editUserForm, name: e.target.value})} className="px-3 py-1 border border-gray-300 rounded text-sm w-1/4" />
+                                                            <input type="email" placeholder="Email" value={editUserForm.email} onChange={e => setEditUserForm({...editUserForm, email: e.target.value})} className="px-3 py-1 border border-gray-300 rounded text-sm w-1/4" />
+                                                            <input type="password" placeholder="New Password (leave blank to keep)" value={editUserForm.password} onChange={e => setEditUserForm({...editUserForm, password: e.target.value})} className="px-3 py-1 border border-gray-300 rounded text-sm w-1/4" />
                                                             <button onClick={() => submitEditUser(u._id)} className="px-3 py-1 bg-primary text-white font-bold rounded text-sm hover:bg-primary-hover">Save</button>
                                                             <button onClick={() => setEditingUserId(null)} className="px-3 py-1 bg-gray-200 text-gray-700 font-bold rounded text-sm hover:bg-gray-300">Cancel</button>
                                                         </div>
@@ -252,6 +259,7 @@ const TeamTab = ({ currentUser, setExportHandler }) => {
                                                             </div>
                                                         </td>
                                                         <td className="px-4 py-3 font-bold">{u.loginId}</td>
+                                                        <td className="px-4 py-3 text-sm text-gray-600">{u.email || '-'}</td>
                                                         <td className="px-4 py-3 text-xs"><span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{u.role.replace(/_/g, ' ')}</span></td>
                                                         <td className="px-4 py-3 text-right">
                                                             {u.role !== 'SUPER_ADMIN' && (
