@@ -973,7 +973,7 @@ const Workspace = () => {
         </header>
 
         {/* PAGE CONTENT */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-8">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-4 md:p-8">
             
             {error && (
             <div className="max-w-6xl mx-auto bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-xl shadow-sm mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-medium">

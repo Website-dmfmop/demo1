@@ -475,7 +475,7 @@ const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavi
             days.push(
                 <div 
                     key={i} 
-                    className="bg-white p-2 min-h-[120px] hover:bg-gray-50 transition-colors cursor-pointer border border-transparent hover:border-gray-200"
+                    className="bg-white p-1 md:p-2 min-h-[80px] md:min-h-[120px] hover:bg-gray-50 transition-colors cursor-pointer border border-transparent hover:border-gray-200"
                     onClick={() => setSelectedDateTasks({ date: currentDate, assigned: assignedHere, due: dueHere, both: bothHere })}
                 >
                     <div className="font-bold text-gray-500 mb-2">{i}</div>
@@ -558,22 +558,22 @@ const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavi
                         <span className="font-bold text-sm">Attendance is not applicable for System Accounts.</span>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
-                            <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Total Working Days</div>
-                            <div className="text-2xl font-black text-gray-800">{totalWorkingDays}</div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 bg-gray-50 p-2 md:p-4 rounded-xl border border-gray-100">
+                        <div className="bg-white p-3 md:p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+                            <div className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 leading-tight">Total Working Days</div>
+                            <div className="text-xl md:text-2xl font-black text-gray-800">{totalWorkingDays}</div>
                         </div>
-                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
-                            <div className="text-xs font-bold text-green-600 uppercase tracking-wider mb-1">Present</div>
-                            <div className="text-2xl font-black text-green-700">{presentDays}</div>
+                        <div className="bg-white p-3 md:p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+                            <div className="text-[10px] md:text-xs font-bold text-green-600 uppercase tracking-wider mb-1 leading-tight">Present</div>
+                            <div className="text-xl md:text-2xl font-black text-green-700">{presentDays}</div>
                         </div>
-                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
-                            <div className="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Absent</div>
-                            <div className="text-2xl font-black text-red-700">{absentExplicit}</div>
+                        <div className="bg-white p-3 md:p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+                            <div className="text-[10px] md:text-xs font-bold text-red-600 uppercase tracking-wider mb-1 leading-tight">Absent</div>
+                            <div className="text-xl md:text-2xl font-black text-red-700">{absentExplicit}</div>
                         </div>
-                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
-                            <div className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Percentage</div>
-                            <div className="text-2xl font-black text-blue-700">{attendancePercentage}%</div>
+                        <div className="bg-white p-3 md:p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+                            <div className="text-[10px] md:text-xs font-bold text-blue-600 uppercase tracking-wider mb-1 leading-tight">Percentage</div>
+                            <div className="text-xl md:text-2xl font-black text-blue-700">{attendancePercentage}%</div>
                         </div>
                     </div>
                 )}
@@ -585,10 +585,10 @@ const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavi
                         <button onClick={nextMonth} className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 flex items-center justify-center"><span className="material-symbols-outlined text-[20px]">chevron_right</span></button>
                     </div>
                 </div>
-                <div className="overflow-x-auto">
-                    <div className="min-w-[600px] grid grid-cols-7 gap-px bg-gray-200 border border-gray-200 rounded-lg overflow-hidden">
+                <div className="overflow-x-auto w-full">
+                    <div className="min-w-full grid grid-cols-7 gap-px bg-gray-200 border border-gray-200 rounded-lg overflow-hidden">
                         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                            <div key={day} className="bg-gray-100 p-2 text-center text-xs font-bold text-gray-600 uppercase">{day}</div>
+                            <div key={day} className="bg-gray-100 p-1 md:p-2 text-center text-[10px] md:text-xs font-bold text-gray-600 uppercase">{window.innerWidth < 640 ? day.substring(0, 1) : day}</div>
                         ))}
                         {days}
                     </div>
@@ -603,7 +603,7 @@ const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavi
             
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full md:w-auto">
-                    <h3 className="font-headline font-bold text-2xl text-gray-800">Workspace Tasks</h3>
+                    <h3 className="font-headline font-bold text-xl md:text-2xl text-gray-800">Workspace Tasks</h3>
                     <div className="bg-gray-100 p-1 rounded-lg flex items-center">
                         <button onClick={() => setViewMode('list')} className={`px-4 py-1.5 text-sm font-bold rounded-md transition-colors ${viewMode === 'list' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>List</button>
                         <button onClick={() => setViewMode('calendar')} className={`px-4 py-1.5 text-sm font-bold rounded-md transition-colors flex items-center gap-1 ${viewMode === 'calendar' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}><span className="material-symbols-outlined text-[16px]">calendar_month</span> Calendar</button>
@@ -622,7 +622,7 @@ const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavi
                         <FilterToolbar 
                             searchQuery={searchQuery} 
                             setSearchQuery={setSearchQuery}
-                            searchPlaceholder="Search tasks by title, description, or names..."
+                            searchPlaceholder="Search tasks..."
                         >
                             <FilterSelect 
                                 value={filterEmployee}
@@ -801,7 +801,7 @@ const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavi
                                             ${highlightedTaskId === task._id ? 'border-primary ring-4 ring-primary/20 bg-primary/5 scale-[1.01]' : 'border-gray-200'}
                                         `}
                                     >
-                                <div className="flex justify-between items-start mb-4">
+                                <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
                                     {editingTaskId === task._id ? (
                                         <div className="w-full space-y-4 pr-4">
                                             <input type="text" value={editTaskForm.title} onChange={e => setEditTaskForm({...editTaskForm, title: e.target.value})} className="w-full text-xl font-bold px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary" />
@@ -826,17 +826,17 @@ const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavi
                                             </div>
                                         </div>
                                     ) : (
-                                        <div>
-                                            <h4 className="font-bold text-xl text-gray-800">{task.title}</h4>
-                                            <p className="text-xs text-gray-500 mt-1">
-                                                Assigned by <span className="font-bold">{task.assignedBy?.name || task.assignedBy?.loginId}</span> to <span className="font-bold">{task.assignedTo?.name || task.assignedTo?.loginId}</span>
-                                                {task.deadline && <span className="ml-3 text-red-500 font-semibold"><span className="material-symbols-outlined text-[14px] align-text-bottom mr-1">schedule</span>Deadline: {new Date(task.deadline).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })} {new Date(task.deadline).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</span>}
+                                        <div className="w-full">
+                                            <h4 className="font-bold text-lg md:text-xl text-gray-800 break-words">{task.title}</h4>
+                                            <p className="text-xs text-gray-500 mt-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                                                <span>Assigned by <span className="font-bold">{task.assignedBy?.name || task.assignedBy?.loginId}</span> to <span className="font-bold">{task.assignedTo?.name || task.assignedTo?.loginId}</span></span>
+                                                {task.deadline && <span className="text-red-500 font-semibold flex items-center"><span className="material-symbols-outlined text-[14px] align-text-bottom mr-1 shrink-0">schedule</span>Deadline: {new Date(task.deadline).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })} {new Date(task.deadline).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</span>}
                                             </p>
                                         </div>
                                     )}
                                     
                                     {editingTaskId !== task._id && (
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0 w-full sm:w-auto sm:justify-end shrink-0">
                                             <span className={`px-2 py-1 text-[10px] font-bold rounded uppercase tracking-wider ${priorityColors[task.priority || 'Medium']}`}>{task.priority || 'Medium'}</span>
                                             <span className={`px-3 py-1 text-xs font-bold rounded-full ${statusColors[task.status]}`}>{task.status.replace(/_/g, ' ')}</span>
                                             <select 
@@ -891,8 +891,8 @@ const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavi
                                     <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Task History</h5>
                                     <div className="space-y-2">
                                         {task.history.map((h, i) => (
-                                            <div key={i} className="text-xs text-gray-500 flex items-center gap-2">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+                                            <div key={i} className="text-xs text-gray-500 flex flex-wrap items-center gap-1 md:gap-2">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-gray-300 shrink-0"></span>
                                                 <span className="font-bold text-gray-700">{h.changedBy?.name || h.changedBy?.loginId}</span> 
                                                 {h.newStatus && h.newPriority ? (
                                                     <span>changed status to <span className="font-bold">{h.newStatus.replace(/_/g, ' ')}</span> and priority to <span className="font-bold">{h.newPriority}</span></span>
@@ -901,7 +901,7 @@ const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavi
                                                 ) : (
                                                     <span>changed status to <span className="font-bold">{h.newStatus ? h.newStatus.replace(/_/g, ' ') : ''}</span></span>
                                                 )}
-                                                <span className="text-gray-400 ml-auto">{new Date(h.timestamp).toLocaleString()}</span>
+                                                <span className="text-gray-400 w-full sm:w-auto sm:ml-auto">{new Date(h.timestamp).toLocaleString()}</span>
                                             </div>
                                         ))}
                                     </div>

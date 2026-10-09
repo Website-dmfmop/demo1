@@ -526,10 +526,10 @@ const WorkspaceChat = ({ currentUser, navigateToTask }) => {
     });
 
     return (
-        <div className="fixed bottom-0 right-0 z-50 md:bottom-6 md:right-6 md:font-sans w-full md:w-auto" role="log" aria-label="Workspace Chat">
+        <div className="fixed bottom-0 right-0 z-50 md:bottom-6 md:right-6 md:font-sans w-full md:w-auto pointer-events-none" role="log" aria-label="Workspace Chat">
             <AnimatePresence>
                 {isOpen && (
-                    <motion.div initial={{ opacity: 0, y: 50, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 50, scale: 0.95 }} className="absolute bottom-0 right-0 md:bottom-16 w-full h-[100dvh] md:h-[75vh] md:w-[450px] md:max-h-[750px] bg-white md:rounded-2xl shadow-2xl md:border border-gray-200 overflow-hidden flex flex-col">
+                    <motion.div initial={{ opacity: 0, y: 50, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 50, scale: 0.95 }} className="absolute bottom-0 right-0 md:bottom-16 w-full h-[100dvh] md:h-[75vh] md:w-[450px] md:max-h-[750px] bg-white md:rounded-2xl shadow-2xl md:border border-gray-200 overflow-hidden flex flex-col pointer-events-auto">
                         
                         <div className="bg-primary text-white p-3 flex justify-between items-center shrink-0 shadow-sm z-20 pt-safe">
                             <h3 className="font-bold flex items-center gap-2">
@@ -665,8 +665,8 @@ const WorkspaceChat = ({ currentUser, navigateToTask }) => {
             </AnimatePresence>
 
             {!isOpen && (
-                <button onClick={() => { setIsOpen(true); if (prefs.autoScrollToLatest !== false) setTimeout(() => scrollToBottom(false), 100); }} className="w-14 h-14 mb-6 mr-6 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex items-center justify-center bg-primary text-white hover:bg-primary-hover hover:scale-105 transition-all relative z-50">
-                    <span className="material-symbols-outlined text-[28px]">chat</span>
+                <button onClick={() => { setIsOpen(true); if (prefs.autoScrollToLatest !== false) setTimeout(() => scrollToBottom(false), 100); }} className="w-12 h-12 md:w-14 md:h-14 mb-4 mr-4 md:mb-6 md:mr-6 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex items-center justify-center bg-primary text-white hover:bg-primary-hover hover:scale-105 transition-all relative z-50 pointer-events-auto ml-auto">
+                    <span className="material-symbols-outlined text-[24px] md:text-[28px]">chat</span>
                     {unreadMentionsCount > 0 && <span className="absolute -top-2 -left-2 bg-blue-600 text-white text-[10px] font-bold h-6 px-2 flex items-center justify-center rounded-full border-2 border-white shadow-sm animate-pulse">@ {unreadMentionsCount}</span>}
                     {unreadMessagesCount > 0 && <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[11px] font-bold min-w-[24px] h-6 px-1.5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">{unreadMessagesCount}</span>}
                 </button>
