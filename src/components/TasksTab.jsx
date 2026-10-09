@@ -624,13 +624,15 @@ const TasksTab = ({ currentUser, isSuperDelegate, setExportHandler, externalNavi
                             setSearchQuery={setSearchQuery}
                             searchPlaceholder="Search tasks..."
                         >
-                            <FilterSelect 
-                                value={filterEmployee}
-                                onChange={setFilterEmployee}
-                                title={filterEmployee === 'All' ? 'All Employees' : uniqueEmployees.find(e => e.id === filterEmployee)?.name || ''}
-                                defaultLabel="All Employees"
-                                options={uniqueEmployees.map(emp => ({ value: emp.id, label: `${emp.name} (${emp.count})` }))}
-                            />
+                            {canCreateTask && (
+                                <FilterSelect 
+                                    value={filterEmployee}
+                                    onChange={setFilterEmployee}
+                                    title={filterEmployee === 'All' ? 'All Employees' : uniqueEmployees.find(e => e.id === filterEmployee)?.name || ''}
+                                    defaultLabel="All Employees"
+                                    options={uniqueEmployees.map(emp => ({ value: emp.id, label: `${emp.name} (${emp.count})` }))}
+                                />
+                            )}
                             
                             <FilterSelect 
                                 value={filterStatus}
