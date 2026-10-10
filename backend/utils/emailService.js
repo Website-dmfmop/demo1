@@ -16,7 +16,6 @@ const getTransporter = () => {
 const sendOTP = async (toEmail, otp) => {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
         console.warn('SMTP credentials not configured. OTP email not sent. Check backend/.env');
-        // We throw an error here so the API rejects the login if email service is missing
         throw new Error('Email service not configured. Please contact the administrator.');
     }
 

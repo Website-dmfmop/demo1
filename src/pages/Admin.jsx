@@ -10,6 +10,7 @@ import ProfileTab from '../components/ProfileTab';
 import AttendanceTab from '../components/AttendanceTab';
 import DailyTaskTab from '../components/DailyTaskTab';
 import LeaveRequestTab from '../components/LeaveRequestTab';
+import BlogAdminTab from '../components/BlogAdminTab';
 import NotificationBell from '../components/NotificationBell';
 import { exportToCSV } from '../utils/exportUtils';
 import { SocketProvider } from '../context/SocketContext';
@@ -1037,6 +1038,14 @@ const Admin = () => {
                         <span className="material-symbols-outlined text-[20px]">perm_media</span> Media Gallery
                     </button>
                     <button
+                        onClick={() => setActiveTab('blog')}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
+                        activeTab === 'blog' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[20px]">article</span> Blog Management
+                    </button>
+                    <button
                         onClick={() => setActiveTab('live_sessions')}
                         className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all font-semibold text-sm ${
                         activeTab === 'live_sessions' ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'text-white/80 hover:bg-white/10 hover:text-white'
@@ -1095,6 +1104,7 @@ const Admin = () => {
                 {activeTab === 'diploma_courses' && 'Diploma/Degree Course Management'}
                 {activeTab === 'competitive_exams' && 'Competitive Exam Management'}
                 {activeTab === 'media' && 'Media Management'}
+                {activeTab === 'blog' && 'Blog Management'}
                 {activeTab === 'live_sessions' && 'Live Sessions Management'}
                 {activeTab === 'joinees' && 'Join Requests'}
                 {activeTab === 'dmf_members' && 'DMF Members'}
@@ -1165,6 +1175,7 @@ const Admin = () => {
                 {activeTab === 'leave_requests' && <LeaveRequestTab currentUser={currentUser} isSuperDelegate={isSuperDelegate} setExportHandler={setExportHandler} />}
                 {activeTab === 'team' && <TeamTab currentUser={currentUser} setExportHandler={setExportHandler} />}
                 {activeTab === 'directory' && <DirectoryTab />}
+                {activeTab === 'blog' && <BlogAdminTab showToast={(msg) => alert(msg)} />}
                 {activeTab === 'profile' && <ProfileTab currentUser={currentUser} />}
                 
                 {/* ---------- ADMISSIONS TAB ---------- */}

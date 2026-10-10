@@ -21,6 +21,8 @@ import CSR from './pages/CSR';
 import JoinUs from './pages/JoinUs';
 import SitePolicy from './pages/SitePolicy';
 import LetterRecord from './pages/LetterRecord';
+import BlogListing from './pages/BlogListing';
+import BlogPost from './pages/BlogPost';
 
 import JobPlacement from './pages/JobPlacement';
 import MovementOfPositivity from './pages/MovementOfPositivity';
@@ -108,6 +110,8 @@ function App() {
           <Route path="/international-center-of-excellence" element={<CenterOfExcellence />} />
 
           <Route path="/media" element={<Media />} />
+          <Route path="/blog" element={<BlogListing />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route 
             path="/admin" 
             element={
