@@ -69,11 +69,12 @@ export const icoeTranslations = {
         hubSubtitle: "Preparing aspirational learners with essential foreign language capabilities and connecting qualified candidates directly with global career pathways.",
         ctaLanguages: "Explore Foreign Language Courses",
         ctaPlacement: "Explore International Job Opportunities",
+        ctaCSR: "Explore CSR Courses",
 
-        // Two Pillars
+        // Three Pillars
         twoPillarsTag: "Core Architecture",
-        twoPillarsTitle: "Two Pillars of Global Mobility",
-        twoPillarsSubtitle: "ICOE focuses on a direct, transparent relationship: acquiring valuable foreign language skills to qualify for verified international employment.",
+        twoPillarsTitle: "Three Pillars of Global & Professional Mobility",
+        twoPillarsSubtitle: "ICOE empowers candidates across foreign language fluency, overseas career opportunities, and specialized CSR & sustainability capabilities.",
         pillar1Tag: "Pillar 01",
         pillar1Title: "Foreign Language Courses",
         pillar1Desc: "Comprehensive language programs in Japanese and German, structured around recognized proficiency frameworks (JLPT and CEFR), emphasizing spoken fluency, grammar, and workplace readiness.",
@@ -82,6 +83,10 @@ export const icoeTranslations = {
         pillar2Title: "International Job Opportunities",
         pillar2Desc: "Curated international vacancies across healthcare kitchen support, logistics, and skilled technical roles with structured visa pathways and candidate guidance.",
         pillar2Highlight: "Vacancies in Japan & Europe • Structured Legal Process",
+        pillar3Tag: "Pillar 03",
+        pillar3Title: "CSR & Sustainability Courses",
+        pillar3Desc: "Specialized training in CSR program & project management, ESG & BRSR reporting, Lean Manufacturing, and Six Sigma fundamentals designed for NGOs, practitioners, and professionals.",
+        pillar3Highlight: "CSR Management • ESG & BRSR • Lean Six Sigma",
 
         // 3-Stage Journey
         journeyTag: "The Career Pathway",
@@ -112,6 +117,13 @@ export const icoeTranslations = {
         btnApplyJob: "Apply for Position",
         openingsLabel: "Openings",
         countryLabel: "Country",
+
+        // CSR Courses Section
+        csrSectionTag: "Pillar 3: CSR & Professional Skills",
+        csrSectionTitle: "CSR & Sustainability Courses",
+        csrSectionDesc: "Equipping individuals and organizations with essential knowledge in CSR program management, ESG reporting, and operational excellence for sustainable social impact.",
+        btnViewCSRCourses: "Explore All CSR Courses",
+        btnExploreCSR: "Explore CSR Courses",
 
         // Focused Testimonial
         testimonialTag: "Success Story",
@@ -197,11 +209,12 @@ export const icoeTranslations = {
         hubSubtitle: "महत्वाकांक्षी युवाओं को व्यावहारिक विदेशी भाषा कौशल प्रदान कर उन्हें सीधे वैश्विक करियर के अवसरों से जोड़ना।",
         ctaLanguages: "विदेशी भाषा पाठ्यक्रम देखें",
         ctaPlacement: "अंतर्राष्ट्रीय रोजगार अवसर देखें",
+        ctaCSR: "CSR पाठ्यक्रम देखें",
 
         // Two Pillars
         twoPillarsTag: "मुख्य आधार",
-        twoPillarsTitle: "वैश्विक करियर के दो सशक्त स्तंभ",
-        twoPillarsSubtitle: "ICOE भाषा सीखने और अंतर्राष्ट्रीय रोजगार के बीच एक सीधा, पारदर्शी संबंध स्थापित करता है।",
+        twoPillarsTitle: "वैश्विक एवं व्यावसायिक गतिशीलता के तीन सशक्त स्तंभ",
+        twoPillarsSubtitle: "ICOE भाषा प्रवीणता, अंतर्राष्ट्रीय रोजगार, और विशिष्ट CSR एवं संधारणीयता कौशल का एक सशक्त मंच प्रदान करता है।",
         pillar1Tag: "स्तंभ 01",
         pillar1Title: "विदेशी भाषा पाठ्यक्रम",
         pillar1Desc: "जापानी और जर्मन भाषाओं में व्यापक प्रशिक्षण, जो मान्यता प्राप्त मानकों (JLPT और CEFR) पर आधारित है तथा व्यावहारिक बातचीत और कार्यस्थल दक्षता पर केंद्रित है।",
@@ -210,6 +223,10 @@ export const icoeTranslations = {
         pillar2Title: "अंतर्राष्ट्रीय रोजगार अवसर",
         pillar2Desc: "स्वास्थ्य सेवा, रसद (लॉजिस्टिक्स) और कुशल तकनीकी क्षेत्रों में अंतर्राष्ट्रीय रिक्तियों के लिए पारदर्शी प्रक्रिया और मार्गदर्शन।",
         pillar2Highlight: "जापान एवं यूरोप में रोजगार • कानूनी और संरचित प्रक्रिया",
+        pillar3Tag: "स्तंभ 03",
+        pillar3Title: "CSR एवं संधारणीयता पाठ्यक्रम",
+        pillar3Desc: "CSR परियोजना प्रबंधन, ESG एवं BRSR रिपोर्टिंग, लीन मैन्युफैक्चरिंग, और सिक्स सिग्मा में विशेष प्रशिक्षण — सामाजिक प्रभाव के लिए तैयार।",
+        pillar3Highlight: "CSR प्रबंधन • ESG एवं BRSR • लीन सिक्स सिग्मा",
 
         // 3-Stage Journey
         journeyTag: "करियर पथ",
@@ -240,6 +257,13 @@ export const icoeTranslations = {
         btnApplyJob: "पद के लिए आवेदन करें",
         openingsLabel: "रिक्तियां",
         countryLabel: "देश",
+
+        // CSR Courses Section
+        csrSectionTag: "स्तंभ 3: CSR एवं व्यावसायिक कौशल",
+        csrSectionTitle: "CSR एवं संधारणीयता पाठ्यक्रम",
+        csrSectionDesc: "CSR कार्यक्रम प्रबंधन, ESG रिपोर्टिंग और परिचालन उत्कृष्टता में व्यावहारिक ज्ञान के साथ व्यक्तियों और संगठनों को सशक्त बनाना।",
+        btnViewCSRCourses: "सभी CSR पाठ्यक्रम देखें",
+        btnExploreCSR: "CSR पाठ्यक्रम देखें",
 
         // Focused Testimonial
         testimonialTag: "सफलता की कहानी",

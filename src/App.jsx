@@ -43,6 +43,7 @@ import GnmAdmission from './pages/GnmAdmission';
 import LanguageCourseAdmission from './pages/LanguageCourseAdmission';
 import TechnicalCourseAdmission from './pages/TechnicalCourseAdmission';
 import OtherCourseAdmission from './pages/OtherCourseAdmission';
+import CSRCourses from './pages/CSRCourses';
 import WhatWeDo from './pages/WhatWeDo';
 import ExamRegistration from './pages/ExamRegistration';
 import LiveSection from './pages/LiveSection';
@@ -96,6 +97,7 @@ function App() {
           <Route path="/icoe/competitive-exams" element={<CompetitiveExamsHub />} />
           <Route path="/icoe/competitive-exams/register" element={<ExamRegistration />} />
           <Route path="/icoe/job-placement" element={<JobPlacement />} />
+          <Route path="/icoe/csr-courses" element={<CSRCourses />} />
 
           {/* ── Backwards-Compatible Legacy Routes (Aliases) ── */}
           <Route path="/admission" element={<Admission />} />
@@ -107,6 +109,7 @@ function App() {
           <Route path="/competitive-exams-hub" element={<CompetitiveExamsHub />} />
           <Route path="/competitive-exams-hub/register" element={<ExamRegistration />} />
           <Route path="/job-placement" element={<JobPlacement />} />
+          <Route path="/csr-courses" element={<CSRCourses />} />
           <Route path="/international-center-of-excellence" element={<CenterOfExcellence />} />
 
           <Route path="/media" element={<Media />} />

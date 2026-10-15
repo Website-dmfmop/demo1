@@ -75,6 +75,11 @@ const Navbar = () => {
                                     <span className="material-symbols-outlined text-[#2e7d32] text-[18px]">work</span>
                                     <span>{t.navInternationalJobs}</span>
                                 </Link>
+
+                                <Link to="/icoe/csr-courses" className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-800 hover:bg-primary/5 hover:text-primary font-semibold transition-colors">
+                                    <span className="material-symbols-outlined text-[#e65100] text-[18px]">volunteer_activism</span>
+                                    <span>{t.navCSRCourses}</span>
+                                </Link>
                             </div>
                         </div>
 
@@ -138,6 +143,10 @@ const Navbar = () => {
                             <Link to="/icoe/job-placement" onClick={() => setMenuOpen(false)} className="text-white font-medium text-sm hover:text-secondary-container transition-colors flex items-center gap-2">
                                 <span className="material-symbols-outlined text-sm text-[#2e7d32]">work</span>
                                 <span>{t.navInternationalJobs}</span>
+                            </Link>
+                            <Link to="/icoe/csr-courses" onClick={() => setMenuOpen(false)} className="text-white font-medium text-sm hover:text-secondary-container transition-colors flex items-center gap-2">
+                                <span className="material-symbols-outlined text-sm text-[#e65100]">volunteer_activism</span>
+                                <span>{t.navCSRCourses}</span>
                             </Link>
                         </div>
                     </div>

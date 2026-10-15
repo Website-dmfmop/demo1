@@ -92,7 +92,7 @@ export default function LanguageCourseAdmission() {
                     <p className="text-gray-500">No language courses are currently listed. Please check back later.</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                     {courses.map(course => (
                         <div 
                             key={course._id} 

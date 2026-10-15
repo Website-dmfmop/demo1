@@ -1632,6 +1632,7 @@ const Admin = () => {
                                         <select value={courseForm.category} onChange={e => setCourseForm({...courseForm, category: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
                                             <option>General</option>
                                             <option>Language</option>
+                                            <option>CSR</option>
                                             <option>Technical Skills</option>
                                             <option>Soft Skills</option>
                                         </select>

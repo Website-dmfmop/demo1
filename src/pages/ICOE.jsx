@@ -12,8 +12,10 @@ export default function ICOE() {
 
     const [languageCourses, setLanguageCourses] = useState([]);
     const [jobs, setJobs] = useState([]);
+    const [csrCourses, setCsrCourses] = useState([]);
     const [loadingCourses, setLoadingCourses] = useState(true);
     const [loadingJobs, setLoadingJobs] = useState(true);
+    const [loadingCsr, setLoadingCsr] = useState(true);
 
     useEffect(() => {
         if (location.hash) {
@@ -53,6 +55,21 @@ export default function ICOE() {
             .catch(err => {
                 console.error('Error fetching jobs:', err);
                 setLoadingJobs(false);
+            });
+    }, []);
+
+    // Fetch verified CSR courses from API
+    useEffect(() => {
+        fetch(`${API_URL}/api/courses`)
+            .then(res => res.json())
+            .then(data => {
+                const filtered = data.filter(c => c.category === 'CSR');
+                setCsrCourses(filtered);
+                setLoadingCsr(false);
+            })
+            .catch(err => {
+                console.error('Error fetching CSR courses:', err);
+                setLoadingCsr(false);
             });
     }, []);
 
@@ -125,6 +142,14 @@ export default function ICOE() {
                                     <span className="material-symbols-outlined text-[18px]">work</span>
                                     <span>{t.ctaPlacement}</span>
                                 </button>
+
+                                <button
+                                    onClick={() => scrollTo('csr')}
+                                    className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-headline font-bold text-xs uppercase tracking-widest rounded-xl transition-all duration-300 active:scale-95 backdrop-blur-sm"
+                                >
+                                    <span className="material-symbols-outlined text-[18px]">volunteer_activism</span>
+                                    <span>{t.ctaCSR || 'CSR Courses'}</span>
+                                </button>
                             </div>
 
                             {/* Highlight Row */}
@@ -136,6 +161,10 @@ export default function ICOE() {
                                 <div className="flex items-center gap-2">
                                     <span className="material-symbols-outlined text-[#fe9832] text-lg">verified</span>
                                     <span>Verified Overseas Employment Openings</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-[#fe9832] text-lg">volunteer_activism</span>
+                                    <span>CSR & Sustainability Training Programs</span>
                                 </div>
                             </div>
                         </div>
@@ -179,7 +208,7 @@ export default function ICOE() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
                         {/* Pillar 1: Foreign Languages */}
                         <div className="bg-surface-container-low rounded-3xl p-8 sm:p-10 border border-outline-variant/20 shadow-sm flex flex-col justify-between hover:shadow-md transition-all group">
                             <div>
@@ -248,6 +277,43 @@ export default function ICOE() {
                                 className="inline-flex items-center justify-between w-full px-6 py-4 bg-secondary-container text-on-secondary-container rounded-xl font-headline font-bold text-xs uppercase tracking-widest hover:bg-[#ffaa4d] transition-all shadow-sm group-hover:shadow"
                             >
                                 <span>{t.btnBrowseJobs}</span>
+                                <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">
+                                    arrow_forward
+                                </span>
+                            </Link>
+                        </div>
+
+                        {/* Pillar 3: CSR Courses */}
+                        <div className="bg-surface-container-low rounded-3xl p-8 sm:p-10 border border-outline-variant/20 shadow-sm flex flex-col justify-between hover:shadow-md transition-all group">
+                            <div>
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="w-14 h-14 rounded-2xl bg-[#e65100]/10 text-[#e65100] flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-3xl">volunteer_activism</span>
+                                    </div>
+                                    <span className="text-xs font-black px-3 py-1 rounded-full bg-surface text-primary border border-outline-variant/20 uppercase tracking-widest">
+                                        {t.pillar3Tag || 'Pillar 03'}
+                                    </span>
+                                </div>
+
+                                <h3 className="font-headline text-2xl font-bold text-primary mb-3">
+                                    {t.pillar3Title || 'CSR & Sustainability Courses'}
+                                </h3>
+
+                                <p className="text-on-surface-variant text-sm md:text-base leading-relaxed mb-6 font-body">
+                                    {t.pillar3Desc || 'Specialized training in CSR program & project management, ESG & BRSR reporting, Lean Manufacturing, and Six Sigma fundamentals.'}
+                                </p>
+
+                                <div className="bg-white/80 rounded-xl p-4 border border-outline-variant/10 mb-6 text-xs text-primary font-semibold flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-[#e65100] text-base">verified</span>
+                                    <span>{t.pillar3Highlight || 'CSR Management • ESG & BRSR • Lean Six Sigma'}</span>
+                                </div>
+                            </div>
+
+                            <Link
+                                to="/icoe/csr-courses"
+                                className="inline-flex items-center justify-between w-full px-6 py-4 bg-[#e65100] text-white rounded-xl font-headline font-bold text-xs uppercase tracking-widest hover:bg-[#bf360c] transition-all shadow-sm group-hover:shadow"
+                            >
+                                <span>{t.btnViewCSRCourses || 'Explore CSR Courses'}</span>
                                 <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">
                                     arrow_forward
                                 </span>
@@ -500,6 +566,81 @@ export default function ICOE() {
                 </div>
             </section>
 
+            {/* ── 5B. CSR COURSES SECTION ──────────────────────────── */}
+            <section id="csr" className="py-20 bg-surface px-6 md:px-12 border-b border-outline-variant/10">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                        <div>
+                            <span className="font-label text-[#e65100] text-xs font-bold tracking-widest uppercase mb-2 block">
+                                {t.csrSectionTag || 'Pillar 3: CSR Training'}
+                            </span>
+                            <h2 className="font-headline text-3xl md:text-4xl font-extrabold text-primary">
+                                {t.csrSectionTitle || 'CSR Training Programs'}
+                            </h2>
+                            <p className="text-on-surface-variant text-sm md:text-base mt-2 max-w-xl">
+                                {t.csrSectionDesc || 'Build expertise in corporate social responsibility, sustainability reporting, and operational excellence with our curated training programs.'}
+                            </p>
+                        </div>
+                        <Link
+                            to="/icoe/csr-courses"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#e65100]/10 text-[#e65100] hover:bg-[#e65100] hover:text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all self-start md:self-auto shadow-sm"
+                        >
+                            <span>{t.btnViewCSRCourses || 'Explore All CSR Courses'}</span>
+                            <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                        </Link>
+                    </div>
+
+                    {loadingCsr ? (
+                        <div className="py-12 flex justify-center items-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        </div>
+                    ) : csrCourses.length === 0 ? (
+                        <div className="bg-surface-container-low rounded-2xl p-10 text-center border border-outline-variant/10 max-w-xl mx-auto">
+                            <span className="material-symbols-outlined text-4xl text-gray-400 mb-3 block">volunteer_activism</span>
+                            <h4 className="font-headline font-bold text-primary text-lg mb-1">CSR Courses Coming Soon</h4>
+                            <p className="text-xs text-on-surface-variant mb-4">New CSR training programs are being developed. Check back soon for course listings.</p>
+                            <Link to="/icoe/csr-courses" className="text-xs text-[#e65100] font-bold underline">Visit CSR Courses Page</Link>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {csrCourses.slice(0, 3).map((course) => (
+                                <div
+                                    key={course._id}
+                                    className="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/15 shadow-sm flex flex-col justify-between hover:shadow-md transition-all hover:-translate-y-1"
+                                >
+                                    <div>
+                                        <div className="flex items-center justify-between gap-2 mb-4">
+                                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#e65100]/10 text-[#e65100] text-xs font-bold">
+                                                <span className="material-symbols-outlined text-sm">volunteer_activism</span>
+                                                CSR
+                                            </span>
+                                        </div>
+
+                                        <h3 className="font-headline font-bold text-primary text-lg mb-2">
+                                            {course.courseName}
+                                        </h3>
+
+                                        <p className="text-on-surface-variant text-xs leading-relaxed line-clamp-3 mb-6 font-body">
+                                            {course.description}
+                                        </p>
+                                    </div>
+
+                                    <div className="pt-4 border-t border-outline-variant/10">
+                                        <Link
+                                            to="/icoe/csr-courses"
+                                            className="w-full inline-flex items-center justify-center gap-2 py-2.5 bg-surface-container text-primary hover:bg-[#e65100] hover:text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all"
+                                        >
+                                            <span>Learn More</span>
+                                            <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                        </Link>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </section>
+
             {/* ── 6. AUTHENTIC LANGUAGE & PLACEMENT TESTIMONIAL ───── */}
             <section className="py-20 bg-surface px-6 md:px-12 border-b border-outline-variant/10">
                 <div className="max-w-4xl mx-auto">
@@ -571,6 +712,14 @@ export default function ICOE() {
                         >
                             <span className="material-symbols-outlined text-[18px]">work</span>
                             <span>{t.btnExploreJobs}</span>
+                        </Link>
+
+                        <Link
+                            to="/icoe/csr-courses"
+                            className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-headline font-bold text-xs uppercase tracking-widest rounded-xl transition-all duration-300 active:scale-95 backdrop-blur-sm"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">volunteer_activism</span>
+                            <span>{t.btnExploreCSR || 'Explore CSR Courses'}</span>
                         </Link>
                     </div>
                 </div>
