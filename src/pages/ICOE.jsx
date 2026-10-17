@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { icoeTranslations } from '../translations/icoe';
 
 import { API_URL } from '../config/api';
+import PartnerInstitutions from '../components/PartnerInstitutions';
 
 export default function ICOE() {
     const { language } = useLanguage();
@@ -681,6 +682,15 @@ export default function ICOE() {
                     </div>
                 </div>
             </section>
+
+            {/* ── Partner Institutions & Collaborators ──────────── */}
+            <PartnerInstitutions
+                tag={t.ecosystemTag}
+                title={t.partnerTitle}
+                subtitle={language === 'hi'
+                    ? 'कौशल विकास, सामाजिक नवाचार और वैश्विक प्लेसमेंट के लिए हमारे प्रमुख सहयोगी संस्थान।'
+                    : 'Key partner institutions & collaborators for skilling, social innovation, and global placement pathways.'}
+            />
 
             {/* ── 7. FINAL ACTION BANNER ──────────────────────────── */}
             <section className="py-16 bg-[#00003c] text-white px-6 md:px-12">

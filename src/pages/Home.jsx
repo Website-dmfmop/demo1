@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { homeTranslations } from '../translations/home';
 import { commonTranslations } from '../translations/common';
 import { WORDS_BEYOND_BORDERS_LINK } from '../config/initiatives';
+import PartnerInstitutions from '../components/PartnerInstitutions';
 
 /* ─── Animated Counter Hook ───────────────────────────────────────────── */
 function useCountUp(target, duration = 2000, startWhen = false) {
@@ -494,6 +495,9 @@ export default function Home() {
                         </div>
                     </div>
                 </section>
+
+                {/* Our Partners Section */}
+                <PartnerInstitutions />
             </main>
         </div>
     );

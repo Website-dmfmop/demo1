@@ -40,6 +40,11 @@ export const homeTranslations = {
 
         sdgTag: "Our Goals",
         sdgTitle: "Sustainable Development Goals",
+
+        partnersTag: "COLLABORATIONS & ECOSYSTEM",
+        partnersTitle: "Our Partners",
+        partnersDesc: "DMF proudly collaborates with esteemed government bodies, defence institutions, leading universities, and technology organisations to drive sustainable social change.",
+        btnBecomePartner: "Become a Partner",
     },
     hi: {
         heroTag: "DMF • सकारात्मकता का आंदोलन",
@@ -82,5 +87,10 @@ export const homeTranslations = {
 
         sdgTag: "हमारे लक्ष्य",
         sdgTitle: "सतत विकास लक्ष्य",
+
+        partnersTag: "सहयोग और पारिस्थितिकी तंत्र",
+        partnersTitle: "हमारे सहयोगी",
+        partnersDesc: "DMF स्थायी सामाजिक परिवर्तन को बढ़ावा देने के लिए प्रतिष्ठित सरकारी निकायों, रक्षा संस्थानों, प्रमुख विश्वविद्यालयों और प्रौद्योगिकी संगठनों के साथ गर्व से सहयोग करता है।",
+        btnBecomePartner: "भागीदार बनें",
     },
 };
