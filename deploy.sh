@@ -4,6 +4,8 @@ echo "======================================"
 echo "    DMF Website Automated Deploy      "
 echo "======================================"
 
+TARGET="${1:-all}"
+
 # 1. Go to project root
 cd /root/demo1 || { echo "Directory /root/demo1 not found! Aborting."; exit 1; }
 
@@ -15,40 +17,45 @@ git stash
 echo "=> Pulling latest code from origin main..."
 git pull origin main
 
-# 4. Backend Setup
-echo "=> Setting up Backend..."
-cd backend || exit 1
+# 4. Backend Setup (runs when target is 'all' or 'backend')
+if [ "$TARGET" = "all" ] || [ "$TARGET" = "backend" ] || [ "$TARGET" = "--backend" ]; then
+  echo "=> Setting up Backend..."
+  cd /root/demo1/backend || exit 1
 
-echo "=> Running Preflight Check..."
-node scripts/preflight.js
-if [ $? -ne 0 ]; then
-  echo "=> Preflight check failed! Aborting deployment. Please fix backend/.env variables."
-  exit 1
+  echo "=> Running Preflight Check..."
+  node scripts/preflight.js
+  if [ $? -ne 0 ]; then
+    echo "=> Preflight check failed! Please fix backend/.env variables."
+    if [ "$TARGET" = "backend" ] || [ "$TARGET" = "--backend" ]; then
+      exit 1
+    fi
+  else
+    echo "=> Installing backend dependencies..."
+    npm install --omit=dev
+
+    echo "=> Restarting PM2 process..."
+    pm2 restart all --update-env
+  fi
 fi
 
-echo "=> Installing backend dependencies..."
-npm install --omit=dev
+# 5. Frontend Setup (runs when target is 'all' or 'frontend')
+if [ "$TARGET" = "all" ] || [ "$TARGET" = "frontend" ] || [ "$TARGET" = "--frontend" ]; then
+  echo "=> Setting up Frontend..."
+  cd /root/demo1 || exit 1
 
-echo "=> Restarting PM2 process..."
-# Restarts all running PM2 processes and loads the latest environment variables
-pm2 restart all --update-env
+  echo "=> Installing frontend dependencies..."
+  npm install
 
-# 5. Frontend Setup
-echo "=> Setting up Frontend..."
-cd /root/demo1 || exit 1
+  echo "=> Building frontend (Vite)..."
+  npm run build
 
-echo "=> Installing frontend dependencies..."
-npm install
-
-echo "=> Building frontend (Vite)..."
-npm run build
-
-echo "=> Deploying to Nginx webroot..."
-# Ensure directory exists and copy files
-mkdir -p /var/www/dmfmop-frontend
-rm -rf /var/www/dmfmop-frontend/*
-cp -a build/. /var/www/dmfmop-frontend/
+  echo "=> Deploying to Nginx webroot..."
+  # Ensure directory exists and copy files
+  mkdir -p /var/www/dmfmop-frontend
+  rm -rf /var/www/dmfmop-frontend/*
+  cp -a build/. /var/www/dmfmop-frontend/
+fi
 
 echo "======================================"
-echo "      Deployment Successful!          "
+echo "      Deployment Complete!            "
 echo "======================================"
