@@ -9,8 +9,10 @@ TARGET="${1:-all}"
 # 1. Go to project root
 cd /root/demo1 || { echo "Directory /root/demo1 not found! Aborting."; exit 1; }
 
-# 2. Stash any local changes on the server safely
-echo "=> Stashing any local changes to prevent conflicts..."
+# 2. Reset generated build files and stash any local changes safely
+echo "=> Cleaning local build artifacts and stashing changes to prevent conflicts..."
+git checkout -- build/ 2>/dev/null || true
+git clean -fd build/ 2>/dev/null || true
 git stash
 
 # 3. Pull latest code from GitHub
