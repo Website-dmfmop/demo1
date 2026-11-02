@@ -99,13 +99,6 @@ export default function Home() {
         }
     };
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentHeroSlide((prev) => (prev + 1) % heroSlides.length);
-        }, 4000);
-
-        return () => clearInterval(timer);
-    }, [heroSlides.length, currentHeroSlide]);
 
     const [currentSlide, setCurrentSlide] = useState(0);
     const slideImages = [
@@ -228,14 +221,14 @@ export default function Home() {
                     {/* Navigation Arrows */}
                     <button
                         onClick={() => setCurrentHeroSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
-                        className="hidden md:flex absolute left-12 md:left-20 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/80 hover:bg-black border border-white/20 text-white items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all z-20 cursor-pointer shadow-lg"
+                        className="flex absolute left-4 md:left-12 lg:left-16 top-1/2 -translate-y-1/2 w-11 h-11 md:w-12 md:h-12 rounded-full bg-black/70 hover:bg-black/90 border border-white/30 text-white items-center justify-center backdrop-blur-md opacity-85 hover:opacity-100 hover:scale-105 active:scale-95 transition-all z-20 cursor-pointer shadow-xl"
                         aria-label="Previous slide"
                     >
                         <span className="material-symbols-outlined font-bold text-2xl">chevron_left</span>
                     </button>
                     <button
                         onClick={() => setCurrentHeroSlide((prev) => (prev + 1) % heroSlides.length)}
-                        className="hidden md:flex absolute right-12 md:right-20 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/80 hover:bg-black border border-white/20 text-white items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all z-20 cursor-pointer shadow-lg"
+                        className="flex absolute right-4 md:right-12 lg:right-16 top-1/2 -translate-y-1/2 w-11 h-11 md:w-12 md:h-12 rounded-full bg-black/70 hover:bg-black/90 border border-white/30 text-white items-center justify-center backdrop-blur-md opacity-85 hover:opacity-100 hover:scale-105 active:scale-95 transition-all z-20 cursor-pointer shadow-xl"
                         aria-label="Next slide"
                     >
                         <span className="material-symbols-outlined font-bold text-2xl">chevron_right</span>
@@ -247,32 +240,13 @@ export default function Home() {
                             <button
                                 key={idx}
                                 onClick={() => setCurrentHeroSlide(idx)}
-                                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                                    idx === currentHeroSlide ? 'w-8 bg-[#fe9832]' : 'w-2 bg-white/50 hover:bg-white/80'
+                                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                                    idx === currentHeroSlide ? 'w-8 bg-[#fe9832]' : 'w-2.5 bg-white/50 hover:bg-white/80'
                                 }`}
                                 aria-label={`Go to slide ${idx + 1}`}
                             />
                         ))}
                     </div>
-
-                    {/* 4-Second Timer Progress Bar */}
-                    <div className="absolute bottom-0 left-0 w-full h-1.5 bg-black/20 z-20 pointer-events-none">
-                        <div 
-                            key={currentHeroSlide}
-                            className="h-full bg-[#fe9832] opacity-80"
-                            style={{ 
-                                animation: 'fillProgress 4s linear forwards' 
-                            }}
-                        />
-                    </div>
-                    <style>
-                        {`
-                        @keyframes fillProgress {
-                            from { width: 0%; }
-                            to { width: 100%; }
-                        }
-                        `}
-                    </style>
                 </section>
 
                 {/* DMF About Strip */}
