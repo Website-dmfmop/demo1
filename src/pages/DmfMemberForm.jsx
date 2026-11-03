@@ -57,7 +57,7 @@ const DmfMemberForm = () => {
                 try {
                     const errData = await res.json();
                     errMsg = errData.error || errMsg;
-                } catch (e) {}
+                } catch (e) { }
                 alert('Submission failed: ' + errMsg);
             }
         } catch (err) {
@@ -86,8 +86,8 @@ const DmfMemberForm = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-2">{language === 'hi' ? 'पूरा नाम' : 'Full Name'}</label>
-                                    <input 
-                                        type="text" required 
+                                    <input
+                                        type="text" required
                                         value={formData.name}
                                         onChange={e => setFormData({ ...formData, name: e.target.value })}
                                         className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-400"
@@ -96,8 +96,8 @@ const DmfMemberForm = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-2">{language === 'hi' ? 'ईमेल पता' : 'Email Address'}</label>
-                                    <input 
-                                        type="email" required 
+                                    <input
+                                        type="email" required
                                         value={formData.email}
                                         onChange={e => setFormData({ ...formData, email: e.target.value })}
                                         className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-400"
@@ -109,8 +109,8 @@ const DmfMemberForm = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-2">{language === 'hi' ? 'फोन नंबर' : 'Phone Number'}</label>
-                                    <input 
-                                        type="tel" required 
+                                    <input
+                                        type="tel" required
                                         value={formData.phone}
                                         onChange={e => setFormData({ ...formData, phone: e.target.value })}
                                         className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-400"
@@ -119,8 +119,8 @@ const DmfMemberForm = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-2">{language === 'hi' ? 'व्यवसाय' : 'Occupation'}</label>
-                                    <input 
-                                        type="text" required 
+                                    <input
+                                        type="text" required
                                         value={formData.occupation}
                                         onChange={e => setFormData({ ...formData, occupation: e.target.value })}
                                         className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-400"
@@ -132,8 +132,8 @@ const DmfMemberForm = () => {
                             <div className="grid grid-cols-1 gap-6">
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-2">{language === 'hi' ? 'वर्तमान पता' : 'Current Address'}</label>
-                                    <input 
-                                        type="text" required 
+                                    <input
+                                        type="text" required
                                         value={formData.address}
                                         onChange={e => setFormData({ ...formData, address: e.target.value })}
                                         className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-400"
@@ -145,8 +145,8 @@ const DmfMemberForm = () => {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-2">{language === 'hi' ? 'शहर' : 'City'}</label>
-                                    <input 
-                                        type="text" required 
+                                    <input
+                                        type="text" required
                                         value={formData.city}
                                         onChange={e => setFormData({ ...formData, city: e.target.value })}
                                         className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-400"
@@ -155,8 +155,8 @@ const DmfMemberForm = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-2">{language === 'hi' ? 'राज्य' : 'State'}</label>
-                                    <input 
-                                        type="text" required 
+                                    <input
+                                        type="text" required
                                         value={formData.state}
                                         onChange={e => setFormData({ ...formData, state: e.target.value })}
                                         className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-400"
@@ -165,8 +165,8 @@ const DmfMemberForm = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-2">{language === 'hi' ? 'देश' : 'Country'}</label>
-                                    <input 
-                                        type="text" required 
+                                    <input
+                                        type="text" required
                                         value={formData.country}
                                         onChange={e => setFormData({ ...formData, country: e.target.value })}
                                         className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-400"
@@ -177,10 +177,10 @@ const DmfMemberForm = () => {
 
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-2">{language === 'hi' ? 'आप क्यों जुड़ना चाहते हैं? (वैकल्पिक)' : 'Why do you want to join? (Optional)'}</label>
-                                <textarea 
+                                <textarea
                                     value={formData.message}
                                     onChange={e => setFormData({ ...formData, message: e.target.value })}
-                                    className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none placeholder-gray-400" 
+                                    className="w-full px-5 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none placeholder-gray-400"
                                     rows="3"
                                     placeholder={language === 'hi' ? 'हमें बताएं कि आप DMF सदस्य बनने के लिए क्यों प्रेरित हैं...' : 'Tell us a little about your motivation to become a DMF member...'}
                                 ></textarea>
@@ -218,19 +218,19 @@ const DmfMemberForm = () => {
                                         </div>
                                         <div>
                                             <span className="block text-xs text-gray-500 uppercase tracking-wider">Bank Name</span>
-                                            <span className="font-semibold">Bank Of Maharashtra</span>
+                                            <span className="font-semibold">HDFC</span>
                                         </div>
                                         <div>
                                             <span className="block text-xs text-gray-500 uppercase tracking-wider">Branch</span>
-                                            <span className="font-semibold">Khadki Bazar, Pune - 411003</span>
+                                            <span className="font-semibold">Pune</span>
                                         </div>
                                         <div>
                                             <span className="block text-xs text-gray-500 uppercase tracking-wider">Account No</span>
-                                            <span className="font-bold text-lg text-primary tracking-wider">60551831984</span>
+                                            <span className="font-bold text-lg text-primary tracking-wider">50200124275122</span>
                                         </div>
                                         <div>
                                             <span className="block text-xs text-gray-500 uppercase tracking-wider">IFSC CODE</span>
-                                            <span className="font-bold text-md text-gray-900">MAHB0000007</span>
+                                            <span className="font-bold text-md text-gray-900">HDFC0002054</span>
                                         </div>
                                         <div>
                                             <span className="block text-xs text-gray-500 uppercase tracking-wider">Account Type</span>
@@ -251,8 +251,8 @@ const DmfMemberForm = () => {
                             </div>
 
                             <div className="pt-4">
-                                <button 
-                                    type="submit" 
+                                <button
+                                    type="submit"
                                     disabled={isSubmitting}
                                     className="w-full px-10 py-4 bg-primary hover:bg-primary-hover text-white font-headline font-bold rounded-2xl shadow-md cursor-pointer transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >

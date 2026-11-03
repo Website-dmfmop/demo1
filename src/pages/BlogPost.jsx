@@ -3,6 +3,48 @@ import { useParams, Link } from 'react-router-dom';
 import { API_URL } from '../config/api';
 import DOMPurify from 'dompurify';
 
+if (typeof DOMPurify.addHook === 'function') {
+    DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+        if (node.style) {
+            if (node.style.width && !node.style.width.endsWith('%')) {
+                node.style.maxWidth = '100%';
+            }
+            if (node.style.minWidth && !node.style.minWidth.endsWith('%')) {
+                node.style.minWidth = '0';
+            }
+            if (node.style.whiteSpace === 'nowrap') {
+                node.style.whiteSpace = 'normal';
+            }
+        }
+        if (node.tagName === 'A') {
+            node.setAttribute('target', '_blank');
+            node.setAttribute('rel', 'noopener noreferrer');
+        }
+    });
+}
+
+const sanitizeContent = (html) => {
+    if (!html) return '';
+
+    // Convert all non-breaking spaces (&nbsp;, &#160;, \u00A0) to standard spaces.
+    // When rich text is pasted from Word or Google Docs into the Quill editor,
+    // spaces are saved as non-breaking spaces. Since browsers cannot break lines
+    // at non-breaking spaces, words at line ends are forced to be split mid-word.
+    // Replacing them with normal spaces allows the browser to wrap complete words
+    // to the next line naturally.
+    const normalized = html
+        .replace(/&nbsp;/gi, ' ')
+        .replace(/&#160;/gi, ' ')
+        .replace(/&amp;nbsp;/gi, ' ')
+        .replace(/\u00A0/g, ' ')
+        .replace(/[\u2000-\u200B\u202F\u205F]/g, ' ');
+
+    return DOMPurify.sanitize(normalized, {
+        ADD_TAGS: ['iframe'],
+        ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'target']
+    });
+};
+
 export default function BlogPost() {
     const { slug } = useParams();
     const [blog, setBlog] = useState(null);
@@ -69,7 +111,7 @@ export default function BlogPost() {
                         <span>•</span>
                         <span className="text-secondary-fixed-dim">{blog.category}</span>
                     </div>
-                    <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight">
+                    <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight break-words">
                         {blog.title}
                     </h1>
                     <div className="flex items-center justify-center gap-4 text-white/70 text-sm">
@@ -84,10 +126,11 @@ export default function BlogPost() {
             <div className="max-w-4xl mx-auto px-4 sm:px-8 -mt-32 relative z-20">
                 <div className="bg-surface-container-lowest rounded-2xl shadow-xl overflow-hidden border border-outline-variant/10">
                     <img src={`${API_URL}${blog.featuredImage}`} alt={blog.title} className="w-full aspect-[16/9] md:aspect-[21/9] object-cover" />
-                    
-                    <div className="p-8 md:p-12 lg:p-16">
-                        <div className="prose prose-lg max-w-none prose-headings:font-headline prose-headings:text-primary prose-p:text-on-surface-variant prose-a:text-secondary-container hover:prose-a:text-primary prose-img:rounded-xl"
-                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.mainContent) }}
+
+                    <div className="p-6 sm:p-8 md:p-12 lg:p-16 min-w-0">
+                        <div
+                            className="blog-content min-w-0"
+                            dangerouslySetInnerHTML={{ __html: sanitizeContent(blog.mainContent) }}
                         ></div>
                     </div>
                 </div>

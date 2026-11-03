@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed": "#ffdcc2",
+            "primary-fixed": "#e0e0ff",
+            "on-error-container": "#93000a",
+            "on-primary-fixed": "#00006e",
+            "surface-variant": "#e1e3e4",
+            "secondary": "#8f4e00",
+            "on-surface-variant": "#464653",
+            "on-primary-fixed-variant": "#3239a3",
+            "background": "#f8f9fa",
+            "surface-container-high": "#e7e8e9",
+            "surface-container-low": "#f3f4f5",
+            "on-secondary-container": "#683700",
+            "primary-fixed-dim": "#bfc2ff",
+            "on-tertiary-fixed": "#012200",
+            "outline": "#767684",
+            "on-tertiary-fixed-variant": "#035300",
+            "surface-container-highest": "#e1e3e4",
+            "surface-bright": "#f8f9fa",
+            "surface": "#f8f9fa",
+            "secondary-container": "#fe9832",
+            "inverse-on-surface": "#f0f1f2",
+            "tertiary-container": "#012900",
+            "surface-container": "#edeeef",
+            "on-tertiary-container": "#319e23",
+            "on-secondary-fixed": "#2e1500",
+            "on-primary-container": "#777eea",
+            "outline-variant": "#c6c5d5",
+            "tertiary-fixed": "#8dfc75",
+            "on-background": "#191c1d",
+            "on-tertiary": "#ffffff",
+            "on-secondary": "#ffffff",
+            "inverse-primary": "#bfc2ff",
+            "surface-dim": "#d9dadb",
+            "on-primary": "#ffffff",
+            "on-error": "#ffffff",
+            "on-surface": "#191c1d",
+            "error": "#ba1a1a",
+            "tertiary-fixed-dim": "#72de5c",
+            "surface-tint": "#4b53bc",
+            "surface-container-lowest": "#ffffff",
+            "primary-container": "#000080",
+            "primary": "#00003c",
+            "inverse-surface": "#2e3132",
+            "secondary-fixed-dim": "#ffb77a",
+            "on-secondary-fixed-variant": "#6d3a00",
+            "error-container": "#ffdad6",
+            "tertiary": "#000f00"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "fontFamily": {
+            "headline": ["Manrope"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          }
+        },
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Manrope', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-background text-on-background selection:bg-secondary-fixed">
+  <!-- Top Navigation Bar -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-[#00003c] dark:bg-[#000028] shadow-lg backdrop-blur-md bg-opacity-70">
+    <div class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+      <a class="text-lg font-extrabold tracking-tighter text-white" href="#">Dyaneshawar Mulay Foundation</a>
+      <div class="hidden md:flex items-center gap-8">
+        <a class="font-manrope tracking-tight leading-relaxed uppercase font-semibold text-xs text-white/80 hover:text-white transition-colors"
+          href="#">Home</a>
+        <a class="font-manrope tracking-tight leading-relaxed uppercase font-semibold text-xs text-white/80 hover:text-white transition-colors"
+          href="#">About</a>
+        <a class="font-manrope tracking-tight leading-relaxed uppercase font-semibold text-xs text-white border-b-2 border-[#fe9832] pb-1"
+          href="#">Missions</a>
+        <a class="font-manrope tracking-tight leading-relaxed uppercase font-semibold text-xs text-white/80 hover:text-white transition-colors"
+          href="#">Projects</a>
+        <a class="font-manrope tracking-tight leading-relaxed uppercase font-semibold text-xs text-white/80 hover:text-white transition-colors"
+          href="#">Events</a>
+      </div>
+      <button
+        class="bg-secondary-container text-on-secondary-container font-manrope tracking-tight leading-relaxed uppercase font-semibold text-xs px-6 py-2 rounded-md hover:bg-[#000080] hover:text-white transition-all duration-300 active:scale-95">
+        DONATE NOW
+      </button>
+    </div>
+  </nav>
+  <main class="pt-20">
+    <!-- Hero Section -->
+    <section class="relative min-h-[819px] flex items-center overflow-hidden bg-primary py-24">
+      <div class="absolute inset-0 opacity-40">
+        <img alt="" class="w-full h-full object-cover"
+          data-alt="professional wide shot of a prestigious international conference hall with soft ambient lighting and architectural depth"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5JkutDCjIwVx8OkJvN-cZMzGRiakcMtSnpRZbHZOFeXRcyTkw1fG3486zqGE3UYMSRsVI9gFLo4OOf3BKCrg-zl9-PivqhdpZ6gdnwyuR0Xj9fs4g33VSB1pRErwvkP8ZiCx-2QDZOGcgOLHmcPMHwmnucJLrjBqPv5caVgxtCzEvQwWNov0hq468KOMeB-HRqZuXwkxsBsqbDIAAhVtRxPIawj4rsIckp3epJQtFVRriCRBnuCRh9CXyCTL-UiUmDmkTwoCRU6RJ" />
+        <div class="absolute inset-0 bg-gradient-to-tr from-primary via-primary/80 to-transparent"></div>
+      </div>
+      <div class="relative max-w-7xl mx-auto px-8 w-full z-10">
+        <div class="max-w-3xl">
+          <span
+            class="font-label text-secondary-container uppercase tracking-widest text-sm font-bold mb-4 block">DIPLOMACY
+            • HUMANITY • JUSTICE</span>
+          <h1 class="text-white text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1]">
+            Our Missions for a <span class="text-secondary-container">Just Society</span>
+          </h1>
+          <p class="text-white/80 text-xl font-body max-w-2xl mb-10 leading-relaxed">
+            Guided by the values of Dr. Dyaneshawar Mulay, we bridge the gap between global diplomatic vision and local
+            social action to empower every citizen.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <button
+              class="bg-secondary-container text-on-secondary-container px-8 py-4 font-bold rounded-md hover:shadow-xl transition-all">Participate
+              in Change</button>
+            <button
+              class="border border-white/30 text-white px-8 py-4 font-bold rounded-md hover:bg-white/10 transition-all backdrop-blur-sm">Download
+              Charter</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Core Mission Pillars -->
+    <section class="py-24 bg-surface px-8">
+      <div class="max-w-7xl mx-auto">
+        <div class="mb-16">
+          <span class="text-secondary font-bold tracking-widest uppercase text-xs mb-2 block">FOUNDATIONAL
+            PRINCIPLES</span>
+          <h2 class="text-4xl font-extrabold text-primary mb-4">Core Mission Pillars</h2>
+          <div class="w-24 h-1 bg-secondary-container"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <!-- Pillar 1: Justice -->
+          <div class="relative group bg-surface-container-low p-8 border-l-4 border-primary">
+            <div class="mb-6">
+              <span class="material-symbols-outlined text-5xl text-primary" data-icon="gavel">gavel</span>
+            </div>
+            <h3 class="text-2xl font-bold text-primary mb-4">Justice</h3>
+            <p class="text-on-surface-variant leading-relaxed mb-6">
+              Ensuring fair legal representation and social equity for marginalized communities. We work to dismantle
+              systemic barriers through legal aid and awareness initiatives.
+            </p>
+            <ul class="space-y-3">
+              <li class="flex items-center gap-2 text-sm font-medium text-primary">
+                <span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span> Legal Aid
+                Clinics
+              </li>
+              <li class="flex items-center gap-2 text-sm font-medium text-primary">
+                <span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span> Rights
+                Advocacy
+              </li>
+            </ul>
+          </div>
+          <!-- Pillar 2: Liberty -->
+          <div class="relative group bg-surface-container-low p-8 border-l-4 border-secondary-container">
+            <div class="mb-6">
+              <span class="material-symbols-outlined text-5xl text-secondary"
+                data-icon="auto_awesome">auto_awesome</span>
+            </div>
+            <h3 class="text-2xl font-bold text-primary mb-4">Liberty</h3>
+            <p class="text-on-surface-variant leading-relaxed mb-6">
+              Promoting freedom of expression and intellectual growth. We believe liberty is the bedrock of progress and
+              foster environments where diverse voices can flourish.
+            </p>
+            <ul class="space-y-3">
+              <li class="flex items-center gap-2 text-sm font-medium text-primary">
+                <span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span> Creative
+                Platforms
+              </li>
+              <li class="flex items-center gap-2 text-sm font-medium text-primary">
+                <span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span> Free Press
+                Support
+              </li>
+            </ul>
+          </div>
+          <!-- Pillar 3: Equality -->
+          <div class="relative group bg-surface-container-low p-8 border-l-4 border-on-tertiary-container">
+            <div class="mb-6">
+              <span class="material-symbols-outlined text-5xl text-on-tertiary-container"
+                data-icon="balance">balance</span>
+            </div>
+            <h3 class="text-2xl font-bold text-primary mb-4">Equality</h3>
+            <p class="text-on-surface-variant leading-relaxed mb-6">
+              Leveling the playing field through education and economic empowerment. Our programs target the roots of
+              inequality to create sustainable generational change.
+            </p>
+            <ul class="space-y-3">
+              <li class="flex items-center gap-2 text-sm font-medium text-primary">
+                <span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span> Merit
+                Scholarships
+              </li>
+              <li class="flex items-center gap-2 text-sm font-medium text-primary">
+                <span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span> Skill
+                Development
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Path to Impact -->
+    <section class="py-24 bg-surface-container overflow-hidden">
+      <div class="max-w-7xl mx-auto px-8">
+        <div class="flex flex-col md:flex-row gap-16 items-center">
+          <div class="w-full md:w-1/2 relative">
+            <div class="absolute -top-12 -left-12 w-64 h-64 bg-secondary-container/10 rounded-full blur-3xl"></div>
+            <div class="relative z-10 border-[12px] border-white shadow-2xl">
+              <img alt="" class="w-full aspect-[4/5] object-cover"
+                data-alt="candid shot of a diverse group of professionals in a boardroom meeting discussing policy documents in a bright airy office"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhL1Jt19Ln3KhgHjSa8pUNnJ1oxLDJKnFfUYNJZb_-cRukPN2MfI4nKUnQdZgZayUJ8jVpsO6z9hbUCAvvlHf8eEhqtVFLgjLiIn5dKjxGBUC2iM1sLVwWj_V6wtXs-XX9zFTC0OQIAHoFifUJUKi6zjPTVlGDKOXvVFcVltoXKtdIsGXWQpsit0v9uV8dIc2WQOfJ5wRa7Ob5tS87zEdCPPm1LXMHMUHu9CnvlNQv3oPlAV1Y1Ui2_n2QFs5Cvey6W-Dd85r-7-75" />
+            </div>
+            <div class="absolute -bottom-8 -right-8 bg-primary text-white p-8 max-w-xs shadow-xl">
+              <p class="font-headline italic text-lg leading-relaxed">"Diplomacy is not just for cabinets, it is for the
+                people."</p>
+              <p class="mt-4 text-xs font-bold uppercase tracking-widest text-secondary-container">— Dr. Dyaneshawar
+                Mulay</p>
+            </div>
+          </div>
+          <div class="w-full md:w-1/2">
+            <span class="text-secondary font-bold tracking-widest uppercase text-xs mb-2 block">STRATEGIC
+              FRAMEWORK</span>
+            <h2 class="text-4xl font-extrabold text-primary mb-8 leading-tight">The Path to Impact</h2>
+            <div class="space-y-12">
+              <div class="flex gap-6">
+                <div class="flex-shrink-0 w-12 h-12 bg-primary text-white flex items-center justify-center rounded-md">1
+                </div>
+                <div>
+                  <h4 class="text-xl font-bold text-primary mb-2">Diplomatic Discourse</h4>
+                  <p class="text-on-surface-variant">Utilizing international relations and high-level dialogue to
+                    influence policy and secure resources for social upliftment.</p>
+                </div>
+              </div>
+              <div class="flex gap-6">
+                <div
+                  class="flex-shrink-0 w-12 h-12 bg-secondary-container text-on-secondary-container flex items-center justify-center rounded-md">
+                  2</div>
+                <div>
+                  <h4 class="text-xl font-bold text-primary mb-2">Community Engagement</h4>
+                  <p class="text-on-surface-variant">Working directly with grassroots leaders to implement solutions
+                    that are culturally relevant and sustainably managed.</p>
+                </div>
+              </div>
+              <div class="flex gap-6">
+                <div
+                  class="flex-shrink-0 w-12 h-12 bg-on-tertiary-container text-white flex items-center justify-center rounded-md">
+                  3</div>
+                <div>
+                  <h4 class="text-xl font-bold text-primary mb-2">Policy Advocacy</h4>
+                  <p class="text-on-surface-variant">Bridging the gap between lived experience and legislative action by
+                    presenting data-driven research to government bodies.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- CTA Section -->
+    <section class="py-24 px-8 relative overflow-hidden bg-[#00003c]">
+      <div class="absolute top-0 left-0 w-full h-full opacity-10">
+        <div class="grid grid-cols-6 h-full w-full">
+          <div class="border-r border-white/20"></div>
+          <div class="border-r border-white/20"></div>
+          <div class="border-r border-white/20"></div>
+          <div class="border-r border-white/20"></div>
+          <div class="border-r border-white/20"></div>
+          <div></div>
+        </div>
+      </div>
+      <div class="max-w-4xl mx-auto text-center relative z-10">
+        <h2 class="text-white text-4xl md:text-5xl font-extrabold mb-8">Join the Movement for Change</h2>
+        <p class="text-white/70 text-lg mb-12 max-w-2xl mx-auto">
+          Your contribution, whether through time, resources, or advocacy, helps us build a society that mirrors our
+          highest ideals of justice and liberty.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <a class="w-full sm:w-auto bg-secondary-container text-on-secondary-container px-10 py-5 font-bold rounded-md hover:shadow-[0_0_30px_rgba(254,152,50,0.4)] transition-all"
+            href="#">Become a Volunteer</a>
+          <a class="w-full sm:w-auto border border-white/30 text-white px-10 py-5 font-bold rounded-md hover:bg-white/5 transition-all"
+            href="#">Support Our Missions</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <!-- Footer -->
+  <footer class="bg-[#00003c] dark:bg-black border-t-4 border-t-[#fe9832] border-b-4 border-b-[#2e7d32]">
+    <div class="flex flex-col md:flex-row justify-between items-start w-full px-12 py-16 gap-8 max-w-7xl mx-auto">
+      <div class="max-w-md">
+        <div class="text-2xl font-bold text-white mb-6">Dr. Dyaneshawar Mulay Foundation</div>
+        <p class="font-manrope text-white/70 text-sm leading-relaxed mb-8">
+          Fostering a global community rooted in the diplomatic spirit and humanitarian values.
+        </p>
+        <div class="flex gap-4">
+          <a class="text-white hover:text-[#fe9832] transition-colors" href="#"><span class="material-symbols-outlined"
+              data-icon="public">public</span></a>
+          <a class="text-white hover:text-[#fe9832] transition-colors" href="#"><span class="material-symbols-outlined"
+              data-icon="groups">groups</span></a>
+          <a class="text-white hover:text-[#fe9832] transition-colors" href="#"><span class="material-symbols-outlined"
+              data-icon="mail">mail</span></a>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-12">
+        <div>
+          <h5 class="text-[#fe9832] font-bold font-manrope uppercase tracking-widest text-xs mb-6">Quick Links</h5>
+          <ul class="space-y-4">
+            <li><a class="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]"
+                href="#">Contact Us</a></li>
+            <li><a class="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]"
+                href="#">Privacy Policy</a></li>
+            <li><a class="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]"
+                href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="text-[#fe9832] font-bold font-manrope uppercase tracking-widest text-xs mb-6">Missions</h5>
+          <ul class="space-y-4">
+            <li><a class="text-[#fe9832] font-bold" href="#">Justice</a></li>
+            <li><a class="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]"
+                href="#">Liberty</a></li>
+            <li><a class="text-gray-300 hover:text-white transition-all hover:underline decoration-[#fe9832]"
+                href="#">Equality</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div
+      class="max-w-7xl mx-auto px-12 pb-8 border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-gray-400 text-xs">© 2024 Dr. Dyaneshawar Mulay Foundation. All Rights Reserved.</p>
+      <div class="flex gap-6 text-xs text-gray-400">
+        <a class="hover:text-white" href="#">Terms of Service</a>
+        <a class="hover:text-white" href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </footer>
+  <!--div class = "max-auto px px-12 pb-8 border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between item-cnter gap-4
+p class = text-gray-400 text -xs"
+div class= "flex gap-6 text-gray-400
+a class = hover:text-white " 
+a class = "hover:text-white text-gray-400
+body class="bg-background text-on-background selecting:bg-secondry-fixed 
+div class="flex flex-col md:flex-row justifiy-between item-start w-full px-12 py-16 gap-8 max-w-7xl max auto"
+body class="bg-background text-on-background selecting:bg-secondary-fixed"
+a class-gray-300 hover:text-while transition-all hover : under line decoration
+div class="max-auto px px-12 pb-8 border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between item-cen"
+div class= flex flex-col md:flex-row justifiy-between item-start w-full px-2 py-16 gap-8 max-w-7xl max auto"
+class div flex -->
+</body>
+
+</html>

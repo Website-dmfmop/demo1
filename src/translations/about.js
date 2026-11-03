@@ -3,7 +3,7 @@ export const aboutTranslations = {
         // Biography
         passportMan: "Passport Man of India",
         founderTag: "FOUNDER & PRESIDENT",
-        founderName: "Dr. Dnyaneshwar Mulay",
+        founderName: "Dr. Dnyaneshwar Mulay (IFS:1983)",
         bioP1: "Dr. Dnyaneshwar Mulay is a distinguished career diplomat of the Indian Foreign Service and the Founder & President of the Dr. Dnyaneshwar Mulay Foundation. He previously served as Secretary in the Ministry of External Affairs, Government of India, and as an Advisor to the National Skill Development Corporation.",
         bioP2: "Since 2019, DMF is a globally recognized organization with deep roots in India, committed to providing innovative and beneficial solutions. During flood emergencies in Kolhapur Sangali district in Maharashtra and subsequently during COVID-19, DMF strengthened its work and today conducts significant activities contributing to social change.",
         bioP3: "The non-profit organization specializes in Social Innovation, Urban & Rural mobilization, Capacity Skill building, and Transforming Rural & Urban Education Through Digital Classrooms and Innovation Labs.",

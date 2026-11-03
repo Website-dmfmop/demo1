@@ -11,10 +11,11 @@ const { validateObjectId } = require('../middleware/validation');
 // --- Helper Functions ---
 
 const sanitizeOptions = {
-    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2', 'h3', 'u', 's', 'span']),
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2', 'h3', 'u', 's', 'span', 'iframe']),
     allowedAttributes: {
         ...sanitizeHtml.defaults.allowedAttributes,
         'img': ['src', 'alt', 'width', 'height'],
+        'iframe': ['src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen', 'class', 'style'],
         '*': ['style', 'class']
     }
 };
@@ -102,6 +103,12 @@ router.post('/api/blogs', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 'OP
         else if (!data.featuredImage) return res.status(400).json({ error: 'Featured image is required' });
 
         if (data.mainContent) {
+            data.mainContent = data.mainContent
+                .replace(/&nbsp;/gi, ' ')
+                .replace(/&#160;/gi, ' ')
+                .replace(/&amp;nbsp;/gi, ' ')
+                .replace(/\u00A0/g, ' ')
+                .replace(/[\u2000-\u200B\u202F\u205F]/g, ' ');
             data.mainContent = sanitizeHtml(data.mainContent, sanitizeOptions);
         }
 
@@ -125,6 +132,12 @@ router.put('/api/blogs/:id', verifyToken, restrictTo('SUPER_ADMIN', 'DIRECTOR', 
         if (req.file) data.featuredImage = '/uploads/public/' + req.file.filename;
 
         if (data.mainContent) {
+            data.mainContent = data.mainContent
+                .replace(/&nbsp;/gi, ' ')
+                .replace(/&#160;/gi, ' ')
+                .replace(/&amp;nbsp;/gi, ' ')
+                .replace(/\u00A0/g, ' ')
+                .replace(/[\u2000-\u200B\u202F\u205F]/g, ' ');
             data.mainContent = sanitizeHtml(data.mainContent, sanitizeOptions);
         }
 
